@@ -14,6 +14,7 @@ import { OrganizationModule } from '@organization/organization.module';
 import { LocationModule } from '@location/location.module';
 import { SkillModule } from '@skill/skill.module';
 import { PaymentModule } from '@payment/payment.module';
+import { AdminModule } from '@admin/admin.module';
 import { SocialModule } from '@social/social.module';
 import { PartnerModule } from '@partner/partner.module';
 import { NotificationModule } from '@notification/notification.module';
@@ -74,6 +75,7 @@ import { CachingModule } from '@shared/cross-cutting/caching/caching.module';
     LocationModule,
     SkillModule,
     PaymentModule,
+    AdminModule,
     SocialModule,
     PartnerModule,
     NotificationModule,

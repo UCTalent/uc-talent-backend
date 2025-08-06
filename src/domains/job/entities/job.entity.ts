@@ -13,6 +13,7 @@ import { Web3Event } from './web3-event.entity';
 import { Skill } from '@skill/entities/skill.entity';
 import { ChoiceOption } from './choice-option.entity';
 import { ReferralLink } from './referral-link.entity';
+import { PaymentDistribution } from '@payment/entities/payment-distribution.entity';
 
 export enum JobStatus {
   PENDING_TO_REVIEW = 'pending_to_review',
@@ -228,6 +229,9 @@ export class Job extends BaseEntity {
     inverseJoinColumn: { name: 'choiceOptionId', referencedColumnName: 'id' },
   })
   choiceOptions: ChoiceOption[];
+
+  @OneToMany(() => PaymentDistribution, (paymentDistribution) => paymentDistribution.job)
+  paymentDistributions: PaymentDistribution[];
 
   // Static properties
   static readonly FINISHED_STATUS = ['hired', 'closed', 'expired', 'cancelled'];

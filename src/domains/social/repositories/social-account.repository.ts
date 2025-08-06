@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SocialAccount } from '@social/entities/social-account.entity';
+import { SocialAccount, SocialProvider, SocialAccountStatus } from '@domains/social/entities/social-account.entity';
 import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
@@ -46,17 +46,72 @@ export class SocialAccountRepository implements IBaseRepository<SocialAccount> {
     await this.repository.restore(id);
   }
 
+  // Legacy method for backward compatibility
   async findByUserId(userId: string): Promise<SocialAccount[]> {
-    return this.repository.find({
-      where: { userId },
-      relations: ['user'],
+    return this.findByUser(userId);
+  }
+
+  async findByProviderAndUid(provider: SocialProvider, uid: string): Promise<SocialAccount | null> {
+    return this.repository.findOne({
+      where: { provider, uid },
+      relations: ['user']
     });
   }
 
-  async findByProviderAndUid(provider: string, uid: string): Promise<SocialAccount | null> {
+  async findByUserAndProvider(userId: string, provider: SocialProvider): Promise<SocialAccount | null> {
     return this.repository.findOne({
-      where: { provider, uid },
-      relations: ['user'],
+      where: { userId, provider }
     });
+  }
+
+  async findByUser(userId: string): Promise<SocialAccount[]> {
+    return this.repository.find({
+      where: { userId },
+      order: { createdAt: 'DESC' }
+    });
+  }
+
+  async findActiveByUser(userId: string): Promise<SocialAccount[]> {
+    return this.repository.find({
+      where: { userId, status: SocialAccountStatus.ACTIVE },
+      order: { createdAt: 'DESC' }
+    });
+  }
+
+  async findExpiredTokens(): Promise<SocialAccount[]> {
+    return this.repository
+      .createQueryBuilder('social_account')
+      .where('social_account.expiresAt < :now', { now: new Date() })
+      .andWhere('social_account.refreshToken IS NOT NULL')
+      .andWhere('social_account.status = :status', { status: SocialAccountStatus.ACTIVE })
+      .getMany();
+  }
+
+  async findByProvider(provider: SocialProvider): Promise<SocialAccount[]> {
+    return this.repository.find({
+      where: { provider },
+      relations: ['user']
+    });
+  }
+
+  async searchByMetadata(searchTerm: string, provider?: SocialProvider): Promise<SocialAccount[]> {
+    const queryBuilder = this.repository
+      .createQueryBuilder('social_account')
+      .leftJoinAndSelect('social_account.user', 'user')
+      .where(
+        `(
+          social_account.metadata->>'displayName' ILIKE :search OR
+          social_account.metadata->>'email' ILIKE :search OR
+          social_account.metadata->>'headline' ILIKE :search OR
+          social_account.metadata->>'bio' ILIKE :search
+        )`,
+        { search: `%${searchTerm}%` }
+      );
+
+    if (provider) {
+      queryBuilder.andWhere('social_account.provider = :provider', { provider });
+    }
+
+    return queryBuilder.getMany();
   }
 } 

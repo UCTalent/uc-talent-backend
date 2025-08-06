@@ -5,46 +5,55 @@ import { Job } from '@job/entities/job.entity';
 
 export enum PaymentStatus {
   PENDING = 'pending',
-  CLAIMED = 'claimed',
-  PAID = 'paid',
+  FAILED = 'failed',
+  COMPLETED = 'completed',
 }
 
 @Entity('payment_distributions')
 export class PaymentDistribution extends BaseEntity {
-  @Column()
-  recipientType: string;
-
-  @Column()
-  recipientId: string;
-
-  @Column({ nullable: true })
-  jobId: string;
-
-  @Column({ type: 'bigint', default: 0 })
+  @Column({ name: 'amount_cents', type: 'bigint', default: 0 })
   amountCents: number;
 
-  @Column({ default: 'USD' })
-  currency: string;
+  @Column({ name: 'amount_currency', default: 'USDT' })
+  amountCurrency: string;
 
-  @Column({
-    type: 'enum',
-    enum: PaymentStatus,
-    default: PaymentStatus.PENDING,
-  })
-  status: PaymentStatus;
-
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ name: 'claimed_at', nullable: true })
   claimedAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
-  paidAt: Date;
+  @Column({ type: 'text', nullable: true })
+  notes: string;
+
+  @Column({ name: 'payment_type' })
+  paymentType: string; // referral_success, apply_success, close_no_hiring
+
+  @Column({ type: 'decimal', precision: 5, scale: 2 })
+  percentage: number;
+
+  @Column({ name: 'recipient_type', nullable: true })
+  recipientType: string;
+
+  @Column({ name: 'recipient_id', nullable: true })
+  recipientId: string;
+
+  @Column()
+  role: string; // candidate, referrer, hiring_manager, platform_fee
+
+  @Column({ default: 'pending' })
+  status: string; // pending, failed, completed
+
+  @Column({ name: 'transaction_hash', nullable: true })
+  transactionHash: string;
+
+  // Foreign Keys
+  @Column({ name: 'job_id' })
+  jobId: string;
 
   // Relationships
-  @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({ name: 'recipientId' })
-  recipient: User;
-
-  @ManyToOne(() => Job, { nullable: true })
-  @JoinColumn({ name: 'jobId' })
+  @ManyToOne(() => Job, job => job.paymentDistributions)
+  @JoinColumn({ name: 'job_id' })
   job: Job;
+
+  @ManyToOne(() => User, user => user.paymentDistributions, { nullable: true })
+  @JoinColumn({ name: 'recipient_id' })
+  recipient: User;
 } 

@@ -52,4 +52,8 @@ export class PaymentDistributionRepository implements IBaseRepository<PaymentDis
       relations: ['job'],
     });
   }
+
+  async findOne(options: any): Promise<PaymentDistribution | null> {
+    return this.repository.findOne(options);
+  }
 } 

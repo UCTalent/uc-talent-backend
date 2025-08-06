@@ -30,6 +30,7 @@
       "@location/*": ["src/domains/location/*"],
       "@skill/*": ["src/domains/skill/*"],
       "@payment/*": ["src/domains/payment/*"],
+      "@admin/*": ["src/domains/admin/*"],
       "@social/*": ["src/domains/social/*"],
       "@partner/*": ["src/domains/partner/*"],
       "@notification/*": ["src/domains/notification/*"],

@@ -1,20 +1,32 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 import { PartnerHost } from './partner-host.entity';
 
+export enum NetworkType {
+  COTI_V2 = 'coti_v2',
+  BASE = 'base',
+  BNB = 'bnb',
+  ETHEREUM = 'ethereum'
+}
+
 @Entity('partner_host_networks')
 export class PartnerHostNetwork extends BaseEntity {
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: NetworkType
+  })
+  @Index()
+  network: NetworkType;
+
+  @Column({ default: false })
+  default: boolean;
+
+  // Foreign Keys
+  @Column({ name: 'partner_host_id' })
   partnerHostId: string;
 
-  @Column()
-  network: string;
-
-  @Column({ nullable: true })
-  source: string;
-
   // Relationships
-  @ManyToOne(() => PartnerHost, (host) => host.networks)
-  @JoinColumn({ name: 'partnerHostId' })
+  @ManyToOne(() => PartnerHost, partnerHost => partnerHost.networks)
+  @JoinColumn({ name: 'partner_host_id' })
   partnerHost: PartnerHost;
 } 

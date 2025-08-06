@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Partner } from '@partner/entities/partner.entity';
+import { Partner } from '@domains/partner/entities/partner.entity';
 import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
@@ -14,13 +14,13 @@ export class PartnerRepository implements IBaseRepository<Partner> {
   async findById(id: string): Promise<Partner | null> {
     return this.repository.findOne({
       where: { id },
-      relations: ['hosts'],
+      relations: ['partnerHosts'],
     });
   }
 
   async findAll(): Promise<Partner[]> {
     return this.repository.find({
-      relations: ['hosts'],
+      relations: ['partnerHosts'],
     });
   }
 
@@ -44,5 +44,33 @@ export class PartnerRepository implements IBaseRepository<Partner> {
 
   async restore(id: string): Promise<void> {
     await this.repository.restore(id);
+  }
+
+  async findBySlug(slug: string): Promise<Partner | null> {
+    return this.repository.findOne({ where: { slug } });
+  }
+
+  async findByName(name: string): Promise<Partner | null> {
+    return this.repository.findOne({ where: { name } });
+  }
+
+  async findUcTalentPartners(): Promise<Partner[]> {
+    return this.repository.find({
+      where: { isUcTalent: true },
+      relations: ['partnerHosts']
+    });
+  }
+
+  async findWithStats(): Promise<Partner[]> {
+    return this.repository
+      .createQueryBuilder('partner')
+      .leftJoinAndSelect('partner.partnerHosts', 'hosts')
+      .addSelect('COUNT(DISTINCT hosts.id)', 'hostsCount')
+      .addSelect('COUNT(DISTINCT networks.id)', 'networksCount')
+      .addSelect('COUNT(DISTINCT jobs.id)', 'jobsCount')
+      .leftJoin('hosts.networks', 'networks')
+      .leftJoin('hosts.jobs', 'jobs')
+      .groupBy('partner.id')
+      .getMany();
   }
 } 

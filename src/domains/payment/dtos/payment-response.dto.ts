@@ -1,33 +1,44 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaymentStatus } from '@payment/entities/payment-distribution.entity';
 
 export class PaymentDistributionResponseDto {
   @ApiProperty({ description: 'Payment distribution ID', example: '123e4567-e89b-12d3-a456-426614174000' })
   id: string;
 
-  @ApiProperty({ description: 'Recipient type', example: 'user' })
-  recipientType: string;
-
-  @ApiProperty({ description: 'Recipient ID', example: '123e4567-e89b-12d3-a456-426614174000' })
-  recipientId: string;
-
-  @ApiProperty({ description: 'Job ID', example: '123e4567-e89b-12d3-a456-426614174000', required: false })
-  jobId?: string;
-
   @ApiProperty({ description: 'Amount in cents', example: 100000 })
   amountCents: number;
 
-  @ApiProperty({ description: 'Currency', example: 'USD' })
-  currency: string;
-
-  @ApiProperty({ description: 'Payment status', enum: PaymentStatus, example: PaymentStatus.PENDING })
-  status: PaymentStatus;
+  @ApiProperty({ description: 'Amount currency', example: 'USDT' })
+  amountCurrency: string;
 
   @ApiProperty({ description: 'Claimed at', example: '2024-01-15T00:00:00.000Z', required: false })
   claimedAt?: Date;
 
-  @ApiProperty({ description: 'Paid at', example: '2024-01-15T00:00:00.000Z', required: false })
-  paidAt?: Date;
+  @ApiProperty({ description: 'Notes', example: 'Payment for successful referral', required: false })
+  notes?: string;
+
+  @ApiProperty({ description: 'Payment type', example: 'referral_success' })
+  paymentType: string;
+
+  @ApiProperty({ description: 'Percentage', example: 10.5 })
+  percentage: number;
+
+  @ApiProperty({ description: 'Recipient type', example: 'user', required: false })
+  recipientType?: string;
+
+  @ApiProperty({ description: 'Recipient ID', example: '123e4567-e89b-12d3-a456-426614174000', required: false })
+  recipientId?: string;
+
+  @ApiProperty({ description: 'Role', example: 'referrer' })
+  role: string;
+
+  @ApiProperty({ description: 'Status', example: 'pending' })
+  status: string;
+
+  @ApiProperty({ description: 'Transaction hash', example: '0xabc123...', required: false })
+  transactionHash?: string;
+
+  @ApiProperty({ description: 'Job ID', example: '123e4567-e89b-12d3-a456-426614174000' })
+  jobId: string;
 
   @ApiProperty({ description: 'Payment distribution created at', example: '2024-01-15T00:00:00.000Z' })
   createdAt: Date;

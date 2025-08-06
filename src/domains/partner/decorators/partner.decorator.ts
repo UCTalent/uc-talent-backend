@@ -1,0 +1,15 @@
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+
+export const PartnerHost = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    return request.partnerHost;
+  },
+);
+
+export const Partner = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    return request.partner;
+  },
+);

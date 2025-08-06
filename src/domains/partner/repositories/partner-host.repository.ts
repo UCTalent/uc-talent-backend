@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PartnerHost } from '@partner/entities/partner-host.entity';
+import { PartnerHost } from '@domains/partner/entities/partner-host.entity';
 import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class PartnerHostRepository implements IBaseRepository<PartnerHost> {
@@ -51,5 +52,40 @@ export class PartnerHostRepository implements IBaseRepository<PartnerHost> {
       where: { host },
       relations: ['partner', 'networks'],
     });
+  }
+
+  async findBySlug(slug: string): Promise<PartnerHost | null> {
+    return this.repository.findOne({ where: { slug } });
+  }
+
+  async findByAccessToken(accessToken: string): Promise<PartnerHost | null> {
+    return this.repository.findOne({ 
+      where: { accessToken },
+      relations: ['partner', 'networks']
+    });
+  }
+
+  async findByPartner(partnerId: string): Promise<PartnerHost[]> {
+    return this.repository.find({
+      where: { partnerId },
+      relations: ['networks', 'jobs']
+    });
+  }
+
+  async findWithStats(): Promise<PartnerHost[]> {
+    return this.repository
+      .createQueryBuilder('host')
+      .leftJoinAndSelect('host.partner', 'partner')
+      .leftJoinAndSelect('host.networks', 'networks')
+      .addSelect('COUNT(jobs.id)', 'jobsCount')
+      .addSelect('COUNT(networks.id)', 'networksCount')
+      .leftJoin('host.jobs', 'jobs')
+      .groupBy('host.id')
+      .addGroupBy('partner.id')
+      .getMany();
+  }
+
+  async generateAccessToken(): Promise<string> {
+    return crypto.randomBytes(20).toString('hex');
   }
 } 
