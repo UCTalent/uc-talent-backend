@@ -1,0 +1,1195 @@
+{
+  "projectName": "UC Talent Backend",
+  "description": "Domain Driven Design structure for NestJS migration from Rails",
+  "version": "1.0.0",
+  "architecture": {
+    "pattern": "Domain Driven Design (DDD)",
+    "framework": "NestJS",
+    "language": "TypeScript",
+    "database": "PostgreSQL",
+    "orm": "TypeORM",
+    "authentication": "JWT + OAuth2",
+    "backgroundJobs": "BullMQ",
+    "email": "Nodemailer + AWS SES",
+    "graphql": "@nestjs/graphql",
+    "validation": "class-validator",
+    "testing": "Jest"
+  },
+  "domains": [
+    {
+      "name": "User",
+      "description": "User management and authentication domain",
+      "entities": [
+        {
+          "name": "User",
+          "properties": {
+            "id": "string (UUID)",
+            "email": "string (unique)",
+            "name": "string",
+            "phoneNumber": "string",
+            "phoneNumberCountry": "string",
+            "encryptedPassword": "string",
+            "firebaseUid": "string (unique)",
+            "firebaseProvider": "string",
+            "thirdwebMetadata": "jsonb",
+            "provider": "string[]",
+            "uid": "string[]",
+            "refCode": "string",
+            "locationCityId": "string",
+            "isClickConfirmedForm": "boolean",
+            "confirmationToken": "string",
+            "confirmedAt": "datetime",
+            "resetPasswordToken": "string",
+            "resetPasswordSentAt": "datetime",
+            "signInCount": "number",
+            "currentSignInAt": "datetime",
+            "lastSignInAt": "datetime",
+            "currentSignInIp": "string",
+            "lastSignInIp": "string",
+            "lockedAt": "datetime",
+            "unlockToken": "string",
+            "failedAttempts": "number",
+            "rememberCreatedAt": "datetime",
+            "unconfirmedEmail": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          },
+          "relationships": [
+            "hasOne: Talent",
+            "hasMany: WalletAddress",
+            "hasMany: PaymentDistribution",
+            "hasMany: Note",
+            "hasMany: SocialAccount",
+            "hasMany: AccessGrant (OAuth2)",
+            "hasMany: AccessToken (OAuth2)",
+            "belongsTo: City"
+          ]
+        }
+      ],
+      "valueObjects": [
+        {
+          "name": "Email",
+          "validation": "email format"
+        },
+        {
+          "name": "PhoneNumber",
+          "validation": "phone format"
+        },
+        {
+          "name": "Password",
+          "validation": "encrypted"
+        }
+      ],
+      "repositories": [
+        "UserRepository"
+      ],
+      "services": [
+        "UserService",
+        "AuthenticationService",
+        "OAuth2Service"
+      ],
+      "controllers": [
+        "UserController",
+        "AuthController",
+        "SocialAuthController"
+      ],
+      "dtos": [
+        "CreateUserDto",
+        "UpdateUserDto",
+        "LoginDto",
+        "RegisterDto",
+        "ChangeEmailDto",
+        "ChangeInfoDto"
+      ],
+      "events": [
+        "UserCreatedEvent",
+        "UserConfirmedEvent",
+        "UserUpdatedEvent"
+      ]
+    },
+    {
+      "name": "Talent",
+      "description": "Talent profile and job matching domain",
+      "entities": [
+        {
+          "name": "Talent",
+          "properties": {
+            "id": "string (UUID)",
+            "userId": "string",
+            "about": "string",
+            "employmentStatus": "enum: available_now, open_to_opportunities, just_browsing",
+            "englishProficiency": "enum: basic, conversational, fluent, native",
+            "experienceLevel": "number: 0,1,2,4,6,10,15",
+            "managementLevel": "number",
+            "status": "enum: new_profile, under_review, active, disabled",
+            "step": "number",
+            "headline": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          },
+          "relationships": [
+            "belongsTo: User",
+            "hasMany: Experience",
+            "hasMany: Education",
+            "hasMany: ExternalLink",
+            "hasMany: UploadedResume",
+            "hasMany: RecommendationJob",
+            "hasManyToMany: Speciality",
+            "hasManyToMany: Skill",
+            "hasManyToMany: Role"
+          ]
+        },
+        {
+          "name": "Experience",
+          "properties": {
+            "id": "string (UUID)",
+            "talentId": "string",
+            "title": "string",
+            "company": "string",
+            "location": "string",
+            "startDate": "date",
+            "endDate": "date",
+            "current": "boolean",
+            "description": "text",
+            "jobType": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        {
+          "name": "Education",
+          "properties": {
+            "id": "string (UUID)",
+            "talentId": "string",
+            "institution": "string",
+            "degree": "string",
+            "fieldOfStudy": "string",
+            "startDate": "date",
+            "endDate": "date",
+            "current": "boolean",
+            "description": "text",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        {
+          "name": "UploadedResume",
+          "properties": {
+            "id": "string (UUID)",
+            "talentId": "string",
+            "resumeFile": "string (file path)",
+            "status": "enum: active, inactive",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        }
+      ],
+      "valueObjects": [
+        {
+          "name": "EmploymentStatus",
+          "enum": ["available_now", "open_to_opportunities", "just_browsing"]
+        },
+        {
+          "name": "EnglishProficiency",
+          "enum": ["basic", "conversational", "fluent", "native"]
+        },
+        {
+          "name": "ExperienceLevel",
+          "enum": [0, 1, 2, 4, 6, 10, 15]
+        }
+      ],
+      "repositories": [
+        "TalentRepository",
+        "ExperienceRepository",
+        "EducationRepository",
+        "UploadedResumeRepository"
+      ],
+      "services": [
+        "TalentService",
+        "ExperienceService",
+        "EducationService",
+        "ResumeService"
+      ],
+      "controllers": [
+        "TalentController"
+      ],
+      "dtos": [
+        "CreateTalentDto",
+        "UpdateTalentDto",
+        "CreateExperienceDto",
+        "UpdateExperienceDto",
+        "CreateEducationDto",
+        "UpdateEducationDto",
+        "UploadResumeDto"
+      ],
+      "events": [
+        "TalentCreatedEvent",
+        "TalentUpdatedEvent",
+        "ResumeUploadedEvent"
+      ]
+    },
+    {
+      "name": "Job",
+      "description": "Job posting and management domain",
+      "entities": [
+        {
+          "name": "Job",
+          "properties": {
+            "id": "string (UUID)",
+            "jobNumber": "bigint (unique)",
+            "title": "string",
+            "about": "text",
+            "experienceLevel": "number",
+            "managementLevel": "number",
+            "jobType": "string",
+            "responsibilities": "text",
+            "minimumQualifications": "text",
+            "preferredRequirement": "text",
+            "benefits": "text",
+            "directManager": "string",
+            "directManagerTitle": "string",
+            "directManagerProfile": "string",
+            "directManagerLogo": "string",
+            "locationType": "enum: remote, on_site, hybrid",
+            "locationValue": "string",
+            "salaryFromCents": "bigint",
+            "salaryFromCurrency": "string",
+            "salaryToCents": "bigint",
+            "salaryToCurrency": "string",
+            "salaryType": "string",
+            "referralCents": "bigint",
+            "referralCurrency": "string",
+            "referralType": "string",
+            "referralInfo": "jsonb",
+            "applyMethod": "string",
+            "applyTarget": "string",
+            "englishLevel": "string",
+            "status": "enum: pending_to_review, published, closed, expired",
+            "priority": "string",
+            "source": "string",
+            "network": "string",
+            "postedDate": "datetime",
+            "expiredDate": "datetime",
+            "addressToken": "string",
+            "chainId": "string",
+            "createdBy": "string",
+            "updatedBy": "string",
+            "organizationId": "string",
+            "specialityId": "string",
+            "cityId": "string",
+            "countryId": "string",
+            "regionId": "string",
+            "globalRegionId": "string",
+            "partnerHostId": "uuid",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          },
+          "relationships": [
+            "belongsTo: Organization",
+            "belongsTo: Speciality",
+            "belongsTo: City",
+            "belongsTo: Country",
+            "belongsTo: Region",
+            "belongsTo: PartnerHost",
+            "hasMany: JobApply",
+            "hasMany: JobReferral",
+            "hasMany: JobClosureReason",
+            "hasMany: Web3Event",
+            "hasManyToMany: Skill",
+            "hasManyToMany: ChoiceOption"
+          ]
+        },
+        {
+          "name": "JobApply",
+          "properties": {
+            "id": "string (UUID)",
+            "jobId": "string",
+            "talentId": "string",
+            "uploadedResumeId": "string",
+            "status": "enum: new, email_sent, under_review, interviewing, offering, hired, rejected",
+            "note": "text",
+            "jobReferralId": "string",
+            "signature": "string",
+            "personalSign": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        {
+          "name": "JobReferral",
+          "properties": {
+            "id": "string (UUID)",
+            "jobId": "string",
+            "referrerId": "string",
+            "candidateEmail": "string",
+            "candidateName": "string",
+            "status": "enum: pending, completed",
+            "signature": "string",
+            "personalSign": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        {
+          "name": "JobClosureReason",
+          "properties": {
+            "id": "string (UUID)",
+            "jobId": "string",
+            "otherReason": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        }
+      ],
+      "valueObjects": [
+        {
+          "name": "JobStatus",
+          "enum": ["pending_to_review", "published", "closed", "expired"]
+        },
+        {
+          "name": "LocationType",
+          "enum": ["remote", "on_site", "hybrid"]
+        },
+        {
+          "name": "Money",
+          "properties": {
+            "amount": "bigint (cents)",
+            "currency": "string"
+          }
+        }
+      ],
+      "repositories": [
+        "JobRepository",
+        "JobApplyRepository",
+        "JobReferralRepository",
+        "JobClosureReasonRepository"
+      ],
+      "services": [
+        "JobService",
+        "JobApplyService",
+        "JobReferralService",
+        "JobSearchService"
+      ],
+      "controllers": [
+        "JobController",
+        "JobApplyController",
+        "JobReferralController"
+      ],
+      "dtos": [
+        "CreateJobDto",
+        "UpdateJobDto",
+        "JobFilterDto",
+        "ApplyJobDto",
+        "CreateReferralDto",
+        "UpdateReferralInfoDto"
+      ],
+      "events": [
+        "JobCreatedEvent",
+        "JobPublishedEvent",
+        "JobClosedEvent",
+        "JobAppliedEvent",
+        "ReferralCreatedEvent"
+      ]
+    },
+    {
+      "name": "Organization",
+      "description": "Company and organization management domain",
+      "entities": [
+        {
+          "name": "Organization",
+          "properties": {
+            "id": "string (UUID)",
+            "name": "string",
+            "about": "text",
+            "website": "string",
+            "github": "string",
+            "linkedin": "string",
+            "twitter": "string",
+            "logo": "string",
+            "cityId": "string",
+            "countryId": "string",
+            "industryId": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          },
+          "relationships": [
+            "belongsTo: City",
+            "belongsTo: Country",
+            "belongsTo: Industry",
+            "hasMany: Job"
+          ]
+        }
+      ],
+      "repositories": [
+        "OrganizationRepository"
+      ],
+      "services": [
+        "OrganizationService"
+      ],
+      "controllers": [
+        "OrganizationController"
+      ],
+      "dtos": [
+        "CreateOrganizationDto",
+        "UpdateOrganizationDto",
+        "OrganizationSearchDto"
+      ]
+    },
+    {
+      "name": "Location",
+      "description": "Geographic location management domain",
+      "entities": [
+        {
+          "name": "City",
+          "properties": {
+            "id": "string (UUID)",
+            "name": "string",
+            "nameAscii": "string",
+            "countryId": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        {
+          "name": "Country",
+          "properties": {
+            "id": "string (UUID)",
+            "name": "string",
+            "code": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        {
+          "name": "Region",
+          "properties": {
+            "id": "string (UUID)",
+            "name": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        }
+      ],
+      "repositories": [
+        "CityRepository",
+        "CountryRepository",
+        "RegionRepository"
+      ],
+      "services": [
+        "LocationService"
+      ],
+      "controllers": [
+        "LocationController"
+      ]
+    },
+    {
+      "name": "Skill",
+      "description": "Skills and specialities management domain",
+      "entities": [
+        {
+          "name": "Skill",
+          "properties": {
+            "id": "string (UUID)",
+            "name": "string",
+            "roleId": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        {
+          "name": "Speciality",
+          "properties": {
+            "id": "string (UUID)",
+            "name": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        {
+          "name": "Role",
+          "properties": {
+            "id": "string (UUID)",
+            "name": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        }
+      ],
+      "repositories": [
+        "SkillRepository",
+        "SpecialityRepository",
+        "RoleRepository"
+      ],
+      "services": [
+        "SkillService",
+        "SpecialityService",
+        "RoleService"
+      ],
+      "controllers": [
+        "SkillController",
+        "SpecialityController",
+        "RoleController"
+      ]
+    },
+    {
+      "name": "Payment",
+      "description": "Payment and wallet management domain",
+      "entities": [
+        {
+          "name": "PaymentDistribution",
+          "properties": {
+            "id": "string (UUID)",
+            "recipientType": "string",
+            "recipientId": "string",
+            "jobId": "string",
+            "amountCents": "bigint",
+            "currency": "string",
+            "status": "enum: pending, claimed, paid",
+            "claimedAt": "datetime",
+            "paidAt": "datetime",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        {
+          "name": "WalletAddress",
+          "properties": {
+            "id": "string (UUID)",
+            "ownerType": "string",
+            "ownerId": "string",
+            "address": "string",
+            "chainName": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        }
+      ],
+      "repositories": [
+        "PaymentDistributionRepository",
+        "WalletAddressRepository"
+      ],
+      "services": [
+        "PaymentService",
+        "WalletService"
+      ],
+      "controllers": [
+        "PaymentDistributionController"
+      ]
+    },
+    {
+      "name": "Social",
+      "description": "Social accounts and external links domain",
+      "entities": [
+        {
+          "name": "SocialAccount",
+          "properties": {
+            "id": "string (UUID)",
+            "userId": "string",
+            "provider": "string",
+            "uid": "string",
+            "email": "string",
+            "name": "string",
+            "avatar": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        {
+          "name": "ExternalLink",
+          "properties": {
+            "id": "string (UUID)",
+            "talentId": "string",
+            "title": "string",
+            "url": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        }
+      ],
+      "repositories": [
+        "SocialAccountRepository",
+        "ExternalLinkRepository"
+      ],
+      "services": [
+        "SocialAccountService",
+        "ExternalLinkService"
+      ],
+      "controllers": [
+        "SocialAccountController"
+      ]
+    },
+    {
+      "name": "Partner",
+      "description": "Partner and referral management domain",
+      "entities": [
+        {
+          "name": "Partner",
+          "properties": {
+            "id": "string (UUID)",
+            "name": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        {
+          "name": "PartnerHost",
+          "properties": {
+            "id": "uuid",
+            "partnerId": "string",
+            "host": "string",
+            "isUcTalent": "boolean",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        {
+          "name": "PartnerHostNetwork",
+          "properties": {
+            "id": "string (UUID)",
+            "partnerHostId": "uuid",
+            "network": "string",
+            "source": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        }
+      ],
+      "repositories": [
+        "PartnerRepository",
+        "PartnerHostRepository",
+        "PartnerHostNetworkRepository"
+      ],
+      "services": [
+        "PartnerService"
+      ]
+    },
+    {
+      "name": "Notification",
+      "description": "Email and notification management domain",
+      "entities": [
+        {
+          "name": "Note",
+          "properties": {
+            "id": "string (UUID)",
+            "userId": "string",
+            "title": "string",
+            "content": "text",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        }
+      ],
+      "repositories": [
+        "NoteRepository"
+      ],
+      "services": [
+        "EmailService",
+        "NotificationService"
+      ],
+      "mailers": [
+        "JobMailer",
+        "UserMailer"
+      ]
+    }
+  ],
+  "shared": {
+    "infrastructure": {
+      "database": {
+        "type": "postgresql",
+        "migrations": "TypeORM migrations",
+        "seeds": "Database seeding"
+      },
+      "authentication": {
+        "jwt": "JWT strategy",
+        "oauth2": "OAuth2 with Doorkeeper",
+        "firebase": "Firebase authentication",
+        "thirdweb": "Web3 authentication"
+      },
+      "backgroundJobs": {
+        "queue": "BullMQ",
+        "scheduler": "BullMQ scheduler",
+        "jobs": [
+          "JobApplyBackgroundJob",
+          "JobRecommendationJob",
+          "ImportDataJob",
+          "Web3EventJob"
+        ]
+      },
+      "email": {
+        "provider": "AWS SES",
+        "templates": "Email templates",
+        "mailers": [
+          "JobSesMailer",
+          "UserSesMailer"
+        ]
+      },
+      "fileStorage": {
+        "provider": "AWS S3",
+        "activeStorage": "File uploads"
+      },
+      "search": {
+        "provider": "PostgreSQL full-text search",
+        "pgSearch": "Search functionality"
+      },
+      "events": {
+        "store": "Event Store",
+        "publisher": "Event publishing",
+        "handlers": "Event handlers"
+      }
+    },
+    "crossCutting": {
+      "validation": {
+        "pipes": "Validation pipes",
+        "decorators": "Validation decorators"
+      },
+      "authorization": {
+        "guards": "Authorization guards",
+        "policies": "Pundit-like policies"
+      },
+      "logging": {
+        "interceptors": "Logging interceptors",
+        "providers": "Logging providers"
+      },
+      "caching": {
+        "redis": "Redis caching",
+        "interceptors": "Cache interceptors"
+      },
+      "rateLimiting": {
+        "throttler": "Rate limiting",
+        "guards": "Throttler guards"
+      }
+    }
+  },
+  "modules": [
+    {
+      "name": "UserModule",
+      "imports": ["TypeOrmModule", "JwtModule"],
+      "providers": [
+        "UserService",
+        "UserRepository",
+        "AuthenticationService",
+        "OAuth2Service"
+      ],
+      "controllers": [
+        "UserController",
+        "AuthController",
+        "SocialAuthController"
+      ],
+      "exports": ["UserService", "AuthenticationService"]
+    },
+    {
+      "name": "TalentModule",
+      "imports": ["TypeOrmModule", "UserModule"],
+      "providers": [
+        "TalentService",
+        "TalentRepository",
+        "ExperienceService",
+        "EducationService",
+        "ResumeService"
+      ],
+      "controllers": ["TalentController"],
+      "exports": ["TalentService"]
+    },
+    {
+      "name": "JobModule",
+      "imports": ["TypeOrmModule", "UserModule", "TalentModule"],
+      "providers": [
+        "JobService",
+        "JobRepository",
+        "JobApplyService",
+        "JobReferralService",
+        "JobSearchService"
+      ],
+      "controllers": [
+        "JobController",
+        "JobApplyController",
+        "JobReferralController"
+      ],
+      "exports": ["JobService"]
+    },
+    {
+      "name": "OrganizationModule",
+      "imports": ["TypeOrmModule"],
+      "providers": ["OrganizationService", "OrganizationRepository"],
+      "controllers": ["OrganizationController"],
+      "exports": ["OrganizationService"]
+    },
+    {
+      "name": "LocationModule",
+      "imports": ["TypeOrmModule"],
+      "providers": ["LocationService", "CityRepository", "CountryRepository", "RegionRepository"],
+      "controllers": ["LocationController"],
+      "exports": ["LocationService"]
+    },
+    {
+      "name": "SkillModule",
+      "imports": ["TypeOrmModule"],
+      "providers": [
+        "SkillService",
+        "SpecialityService",
+        "RoleService",
+        "SkillRepository",
+        "SpecialityRepository",
+        "RoleRepository"
+      ],
+      "controllers": [
+        "SkillController",
+        "SpecialityController",
+        "RoleController"
+      ],
+      "exports": ["SkillService", "SpecialityService", "RoleService"]
+    },
+    {
+      "name": "PaymentModule",
+      "imports": ["TypeOrmModule"],
+      "providers": ["PaymentService", "WalletService", "PaymentDistributionRepository", "WalletAddressRepository"],
+      "controllers": ["PaymentDistributionController"],
+      "exports": ["PaymentService"]
+    },
+    {
+      "name": "SocialModule",
+      "imports": ["TypeOrmModule"],
+      "providers": [
+        "SocialAccountService",
+        "ExternalLinkService",
+        "SocialAccountRepository",
+        "ExternalLinkRepository"
+      ],
+      "controllers": ["SocialAccountController"],
+      "exports": ["SocialAccountService"]
+    },
+    {
+      "name": "PartnerModule",
+      "imports": ["TypeOrmModule"],
+      "providers": [
+        "PartnerService",
+        "PartnerRepository",
+        "PartnerHostRepository",
+        "PartnerHostNetworkRepository"
+      ],
+      "exports": ["PartnerService"]
+    },
+    {
+      "name": "NotificationModule",
+      "imports": ["BullModule", "MailerModule"],
+      "providers": [
+        "EmailService",
+        "NotificationService",
+        "NoteRepository",
+        "JobMailer",
+        "UserMailer"
+      ],
+      "exports": ["EmailService", "NotificationService"]
+    },
+    {
+      "name": "GraphQLModule",
+      "imports": ["GraphQLModule.forRoot"],
+      "providers": [
+        "UserResolver",
+        "TalentResolver",
+        "JobResolver",
+        "OrganizationResolver"
+      ]
+    },
+    {
+      "name": "BackgroundJobModule",
+      "imports": ["BullModule.forRoot"],
+      "providers": [
+        "JobApplyProcessor",
+        "JobRecommendationProcessor",
+        "ImportDataProcessor",
+        "Web3EventProcessor"
+      ]
+    }
+  ],
+  "apiEndpoints": {
+    "rest": {
+      "prefix": "/api/v1",
+      "endpoints": [
+        {
+          "path": "/auth",
+          "methods": ["POST"],
+          "actions": ["firebase_auth", "thirdweb_auth"]
+        },
+        {
+          "path": "/users",
+          "methods": ["GET", "PUT", "POST"],
+          "actions": ["change_email", "change_info", "upload_profile_picture"]
+        },
+        {
+          "path": "/talents",
+          "methods": ["GET", "POST", "PUT"],
+          "actions": ["create", "show_me", "submit_me", "upload_resumes"]
+        },
+        {
+          "path": "/jobs",
+          "methods": ["GET", "POST", "PATCH"],
+          "actions": ["index", "show", "create", "apply", "closed_job", "update_referral_info"]
+        },
+        {
+          "path": "/organizations",
+          "methods": ["GET", "POST", "PUT"],
+          "actions": ["index", "show", "create", "update", "search"]
+        },
+        {
+          "path": "/locations",
+          "methods": ["GET"],
+          "actions": ["index"]
+        },
+        {
+          "path": "/skills",
+          "methods": ["GET"],
+          "actions": ["index"]
+        },
+        {
+          "path": "/specialities",
+          "methods": ["GET"],
+          "actions": ["index"]
+        },
+        {
+          "path": "/roles",
+          "methods": ["GET"],
+          "actions": ["index"]
+        },
+        {
+          "path": "/experiences",
+          "methods": ["GET", "POST", "PUT", "DELETE"],
+          "actions": ["index", "show", "create", "update", "destroy"]
+        },
+        {
+          "path": "/educations",
+          "methods": ["GET", "POST", "PUT", "DELETE"],
+          "actions": ["index", "show", "create", "update", "destroy"]
+        },
+        {
+          "path": "/job_applies",
+          "methods": ["GET", "PATCH"],
+          "actions": ["index", "update_status"]
+        },
+        {
+          "path": "/job_referrals",
+          "methods": ["GET"],
+          "actions": ["index"]
+        },
+        {
+          "path": "/payment_distributions",
+          "methods": ["PUT"],
+          "actions": ["claim"]
+        },
+        {
+          "path": "/social_accounts",
+          "methods": ["GET", "POST", "DELETE"],
+          "actions": ["index", "link", "unlink"]
+        },
+        {
+          "path": "/config/job_filters",
+          "methods": ["GET"],
+          "actions": ["job_filters"]
+        },
+        {
+          "path": "/auto-complete/job-search",
+          "methods": ["GET"],
+          "actions": ["job_search"]
+        }
+      ]
+    },
+    "graphql": {
+      "path": "/graphql",
+      "playground": "/graphiql",
+      "queries": [
+        "jobs",
+        "job",
+        "users",
+        "user",
+        "talents",
+        "talent",
+        "talent_me",
+        "organizations"
+      ],
+      "mutations": [
+        "createJob",
+        "updateJob",
+        "applyJob",
+        "createTalent",
+        "updateTalent"
+      ]
+    }
+  },
+  "databaseSchema": {
+    "tables": [
+      {
+        "name": "users",
+        "columns": [
+          {"name": "id", "type": "uuid", "primary": true},
+          {"name": "email", "type": "varchar", "unique": true},
+          {"name": "name", "type": "varchar"},
+          {"name": "phone_number", "type": "varchar"},
+          {"name": "encrypted_password", "type": "varchar"},
+          {"name": "firebase_uid", "type": "varchar", "unique": true},
+          {"name": "thirdweb_metadata", "type": "jsonb"},
+          {"name": "created_at", "type": "timestamp"},
+          {"name": "updated_at", "type": "timestamp"}
+        ]
+      },
+      {
+        "name": "talents",
+        "columns": [
+          {"name": "id", "type": "uuid", "primary": true},
+          {"name": "user_id", "type": "uuid", "foreign_key": "users.id"},
+          {"name": "about", "type": "text"},
+          {"name": "employment_status", "type": "varchar"},
+          {"name": "english_proficiency", "type": "varchar"},
+          {"name": "experience_level", "type": "integer"},
+          {"name": "status", "type": "varchar"},
+          {"name": "created_at", "type": "timestamp"},
+          {"name": "updated_at", "type": "timestamp"}
+        ]
+      },
+      {
+        "name": "jobs",
+        "columns": [
+          {"name": "id", "type": "uuid", "primary": true},
+          {"name": "job_number", "type": "bigint", "unique": true},
+          {"name": "title", "type": "varchar"},
+          {"name": "about", "type": "text"},
+          {"name": "experience_level", "type": "integer"},
+          {"name": "management_level", "type": "integer"},
+          {"name": "status", "type": "varchar"},
+          {"name": "organization_id", "type": "uuid", "foreign_key": "organizations.id"},
+          {"name": "created_by", "type": "uuid", "foreign_key": "users.id"},
+          {"name": "created_at", "type": "timestamp"},
+          {"name": "updated_at", "type": "timestamp"}
+        ]
+      }
+    ]
+  },
+  "migrationStrategy": {
+    "phases": [
+      {
+        "phase": 1,
+        "name": "Core Infrastructure",
+        "tasks": [
+          "Setup NestJS project structure",
+          "Configure TypeORM with PostgreSQL",
+          "Setup JWT authentication",
+          "Configure BullMQ for background jobs",
+          "Setup GraphQL with @nestjs/graphql"
+        ]
+      },
+      {
+        "phase": 2,
+        "name": "Core Domains",
+        "tasks": [
+          "Implement User domain",
+          "Implement Talent domain",
+          "Implement Job domain",
+          "Setup basic CRUD operations"
+        ]
+      },
+      {
+        "phase": 3,
+        "name": "Supporting Domains",
+        "tasks": [
+          "Implement Organization domain",
+          "Implement Location domain",
+          "Implement Skill domain",
+          "Implement Payment domain"
+        ]
+      },
+      {
+        "phase": 4,
+        "name": "Advanced Features",
+        "tasks": [
+          "Implement GraphQL resolvers",
+          "Setup background job processors",
+          "Implement email services",
+          "Setup file uploads"
+        ]
+      },
+      {
+        "phase": 5,
+        "name": "Integration & Testing",
+        "tasks": [
+          "Write comprehensive tests",
+          "Setup CI/CD pipeline",
+          "Performance optimization",
+          "Documentation"
+        ]
+      }
+    ]
+  },
+  "dependencies": {
+    "core": [
+      "@nestjs/common",
+      "@nestjs/core",
+      "@nestjs/platform-express",
+      "@nestjs/typeorm",
+      "@nestjs/jwt",
+      "@nestjs/passport",
+      "@nestjs/graphql",
+      "@nestjs/bull",
+      "@nestjs/config",
+      "typeorm",
+      "pg",
+      "bullmq",
+      "class-validator",
+      "class-transformer",
+      "passport",
+      "passport-jwt",
+      "passport-oauth2",
+      "bcrypt",
+      "jsonwebtoken",
+      "nodemailer",
+      "aws-sdk"
+    ],
+    "development": [
+      "@nestjs/testing",
+      "@nestjs/cli",
+      "jest",
+      "supertest",
+      "ts-jest",
+      "@types/jest",
+      "@types/node"
+    ],
+    "graphql": [
+      "graphql",
+      "apollo-server-express",
+      "@nestjs/apollo"
+    ]
+  },
+  "environmentVariables": {
+    "database": [
+      "DATABASE_URL",
+      "DATABASE_HOST",
+      "DATABASE_PORT",
+      "DATABASE_USERNAME",
+      "DATABASE_PASSWORD",
+      "DATABASE_NAME"
+    ],
+    "authentication": [
+      "JWT_SECRET",
+      "JWT_EXPIRES_IN",
+      "FIREBASE_PROJECT_ID",
+      "FIREBASE_PRIVATE_KEY",
+      "FIREBASE_CLIENT_EMAIL"
+    ],
+    "aws": [
+      "AWS_ACCESS_KEY_ID",
+      "AWS_SECRET_ACCESS_KEY",
+      "AWS_REGION",
+      "AWS_S3_BUCKET",
+      "AWS_SES_FROM_EMAIL"
+    ],
+    "redis": [
+      "REDIS_URL",
+      "REDIS_HOST",
+      "REDIS_PORT"
+    ],
+    "app": [
+      "NODE_ENV",
+      "PORT",
+      "FRONTEND_URL",
+      "API_BASE_URL"
+    ]
+  }
+} 

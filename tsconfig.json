@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2020",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/*": ["src/*"],
+      "@domains/*": ["src/domains/*"],
+      "@shared/*": ["src/shared/*"],
+      "@infrastructure/*": ["src/infrastructure/*"],
+      "@application/*": ["src/application/*"],
+      "@user/*": ["src/domains/user/*"],
+      "@talent/*": ["src/domains/talent/*"],
+      "@job/*": ["src/domains/job/*"],
+      "@organization/*": ["src/domains/organization/*"],
+      "@location/*": ["src/domains/location/*"],
+      "@skill/*": ["src/domains/skill/*"],
+      "@payment/*": ["src/domains/payment/*"],
+      "@social/*": ["src/domains/social/*"],
+      "@partner/*": ["src/domains/partner/*"],
+      "@notification/*": ["src/domains/notification/*"],
+      "@auth/*": ["src/domains/auth/*"],
+      "@guards/*": ["src/shared/cross-cutting/authorization/guards/*"],
+      "@interceptors/*": ["src/shared/cross-cutting/logging/interceptors/*"],
+      "@strategies/*": ["src/infrastructure/authentication/strategies/*"],
+      "@processors/*": ["src/infrastructure/background-jobs/processors/*"]
+    }
+  }
+}
