@@ -28,7 +28,7 @@ import { EmailModule } from '@infrastructure/email/email.module';
 
 // Shared cross-cutting modules
 import { ValidationModule } from '@shared/cross-cutting/validation/validation.module';
-import { AuthorizationModule } from '@shared/cross-cutting/authorization/authorization.module';
+import { AuthorizationModule } from '@shared/cross-cutting/authorization';
 import { LoggingModule } from '@shared/cross-cutting/logging/logging.module';
 import { CachingModule } from '@shared/cross-cutting/caching/caching.module';
 

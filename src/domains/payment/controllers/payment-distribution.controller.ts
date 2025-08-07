@@ -8,8 +8,8 @@ import {
 } from '@payment/dtos/payment-response.dto';
 import { ClaimPaymentDto } from '@payment/dtos/claim-payment.dto';
 import { UpdateBlockchainStatusDto } from '@payment/dtos/update-blockchain-status.dto';
-import { JwtAuthGuard } from '@shared/cross-cutting/authorization/guards/jwt-auth.guard';
-import { CurrentUser } from '@shared/cross-cutting/authorization/decorators/current-user.decorator';
+import { JwtAuthGuard } from '@shared/cross-cutting/authorization';
+import { CurrentUser } from '@shared/cross-cutting/authorization';
 import { User } from '@user/entities/user.entity';
 
 @ApiTags('payment-distributions')

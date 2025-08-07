@@ -6,6 +6,7 @@ import { UpdateUserStatusDto } from '@admin/dtos/update-user-status.dto';
 import { AdminJobQueryDto } from '@admin/dtos/admin-job-query.dto';
 import { UpdateJobStatusDto } from '@admin/dtos/update-job-status.dto';
 import { BulkJobActionDto } from '@admin/dtos/bulk-job-action.dto';
+import { AdminGuard, AdminUser, CurrentAdmin } from '@shared/cross-cutting/authorization';
 
 @ApiTags('admin')
 @Controller('api/admin')
@@ -13,7 +14,7 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Get('dashboard')
-  @UseGuards() // Add AdminGuard here
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Get dashboard statistics' })
   @ApiResponse({
     status: 200,
@@ -51,12 +52,12 @@ export class AdminController {
       }
     }
   })
-  async getDashboard() {
+  async getDashboard(@CurrentAdmin() admin: AdminUser) {
     return this.adminService.getDashboardStats();
   }
 
   @Get('users')
-  @UseGuards() // Add AdminGuard here
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Get users list' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -90,12 +91,12 @@ export class AdminController {
       }
     }
   })
-  async getUsers(@Query() query: AdminUserQueryDto) {
+  async getUsers(@Query() query: AdminUserQueryDto, @CurrentAdmin() admin: AdminUser) {
     return this.adminService.getUsers(query);
   }
 
   @Patch('users/:id/status')
-  @UseGuards() // Add AdminGuard here
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Update user status' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({
@@ -118,13 +119,14 @@ export class AdminController {
   })
   async updateUserStatus(
     @Param('id') id: string,
-    @Body() body: UpdateUserStatusDto
+    @Body() body: UpdateUserStatusDto,
+    @CurrentAdmin() admin: AdminUser
   ) {
     return this.adminService.updateUserStatus(id, body);
   }
 
   @Get('jobs')
-  @UseGuards() // Add AdminGuard here
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Get jobs list' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -159,12 +161,12 @@ export class AdminController {
       }
     }
   })
-  async getJobs(@Query() query: AdminJobQueryDto) {
+  async getJobs(@Query() query: AdminJobQueryDto, @CurrentAdmin() admin: AdminUser) {
     return this.adminService.getJobs(query);
   }
 
   @Patch('jobs/:id/status')
-  @UseGuards() // Add AdminGuard here
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Update job status' })
   @ApiParam({ name: 'id', description: 'Job ID' })
   @ApiResponse({
@@ -187,13 +189,14 @@ export class AdminController {
   })
   async updateJobStatus(
     @Param('id') id: string,
-    @Body() body: UpdateJobStatusDto
+    @Body() body: UpdateJobStatusDto,
+    @CurrentAdmin() admin: AdminUser
   ) {
     return this.adminService.updateJobStatus(id, body);
   }
 
   @Post('jobs/bulk-actions')
-  @UseGuards() // Add AdminGuard here
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Execute bulk job actions' })
   @ApiResponse({
     status: 200,
@@ -213,12 +216,12 @@ export class AdminController {
       }
     }
   })
-  async bulkJobActions(@Body() body: BulkJobActionDto) {
+  async bulkJobActions(@Body() body: BulkJobActionDto, @CurrentAdmin() admin: AdminUser) {
     return this.adminService.executeBulkJobAction(body);
   }
 
   @Get('talents')
-  @UseGuards() // Add AdminGuard here
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Get talents list' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -231,7 +234,7 @@ export class AdminController {
     status: 200,
     description: 'Talents list retrieved successfully'
   })
-  async getTalents(@Query() query: any) {
+  async getTalents(@Query() query: any, @CurrentAdmin() admin: AdminUser) {
     // TODO: Implement talent management
     return {
       success: true,
@@ -248,14 +251,14 @@ export class AdminController {
   }
 
   @Post('talents/:id/review')
-  @UseGuards() // Add AdminGuard here
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Review talent profile' })
   @ApiParam({ name: 'id', description: 'Talent ID' })
   @ApiResponse({
     status: 200,
     description: 'Talent review completed successfully'
   })
-  async reviewTalent(@Param('id') id: string, @Body() body: any) {
+  async reviewTalent(@Param('id') id: string, @Body() body: any, @CurrentAdmin() admin: AdminUser) {
     // TODO: Implement talent review
     return {
       success: true,
@@ -268,7 +271,7 @@ export class AdminController {
   }
 
   @Get('payment-distributions')
-  @UseGuards() // Add AdminGuard here
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Get payment distributions' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -281,7 +284,7 @@ export class AdminController {
     status: 200,
     description: 'Payment distributions retrieved successfully'
   })
-  async getPaymentDistributions(@Query() query: any) {
+  async getPaymentDistributions(@Query() query: any, @CurrentAdmin() admin: AdminUser) {
     // TODO: Implement payment management
     return {
       success: true,
@@ -298,14 +301,14 @@ export class AdminController {
   }
 
   @Post('payment-distributions/:id/approve')
-  @UseGuards() // Add AdminGuard here
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Approve payment' })
   @ApiParam({ name: 'id', description: 'Payment distribution ID' })
   @ApiResponse({
     status: 200,
     description: 'Payment approved successfully'
   })
-  async approvePayment(@Param('id') id: string, @Body() body: any) {
+  async approvePayment(@Param('id') id: string, @Body() body: any, @CurrentAdmin() admin: AdminUser) {
     // TODO: Implement payment approval
     return {
       success: true,
@@ -318,29 +321,29 @@ export class AdminController {
   }
 
   @Get('settings')
-  @UseGuards() // Add AdminGuard here
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Get system settings' })
   @ApiResponse({
     status: 200,
     description: 'System settings retrieved successfully'
   })
-  async getSystemSettings() {
+  async getSystemSettings(@CurrentAdmin() admin: AdminUser) {
     return this.adminService.getSystemSettings();
   }
 
   @Patch('settings')
-  @UseGuards() // Add AdminGuard here
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Update system settings' })
   @ApiResponse({
     status: 200,
     description: 'System settings updated successfully'
   })
-  async updateSystemSettings(@Body() settings: Record<string, any>) {
+  async updateSystemSettings(@Body() settings: Record<string, any>, @CurrentAdmin() admin: AdminUser) {
     return this.adminService.updateSystemSettings(settings);
   }
 
   @Get('audit-logs')
-  @UseGuards() // Add AdminGuard here
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Get audit logs' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
@@ -352,7 +355,7 @@ export class AdminController {
     status: 200,
     description: 'Audit logs retrieved successfully'
   })
-  async getAuditLogs(@Query() query: any) {
+  async getAuditLogs(@Query() query: any, @CurrentAdmin() admin: AdminUser) {
     return this.adminService.getAuditLogs(query);
   }
 } 

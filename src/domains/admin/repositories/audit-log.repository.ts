@@ -84,4 +84,46 @@ export class AuditLogRepository implements IBaseRepository<AuditLog> {
     const auditLog = this.repository.create(data);
     return this.repository.save(auditLog);
   }
+
+  // New method for admin service
+  async findWithFilters(options: {
+    action?: string;
+    adminId?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    skip?: number;
+    take?: number;
+  }): Promise<{ data: AuditLog[]; total: number }> {
+    const queryBuilder = this.repository.createQueryBuilder('auditLog')
+      .leftJoinAndSelect('auditLog.admin', 'admin');
+
+    if (options.action) {
+      queryBuilder.andWhere('auditLog.action = :action', { action: options.action });
+    }
+
+    if (options.adminId) {
+      queryBuilder.andWhere('auditLog.adminId = :adminId', { adminId: options.adminId });
+    }
+
+    if (options.dateFrom) {
+      queryBuilder.andWhere('auditLog.createdAt >= :dateFrom', { dateFrom: options.dateFrom });
+    }
+
+    if (options.dateTo) {
+      queryBuilder.andWhere('auditLog.createdAt <= :dateTo', { dateTo: options.dateTo });
+    }
+
+    queryBuilder.orderBy('auditLog.createdAt', 'DESC');
+
+    if (options.skip !== undefined) {
+      queryBuilder.skip(options.skip);
+    }
+
+    if (options.take !== undefined) {
+      queryBuilder.take(options.take);
+    }
+
+    const [data, total] = await queryBuilder.getManyAndCount();
+    return { data, total };
+  }
 } 

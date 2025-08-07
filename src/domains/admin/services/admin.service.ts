@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan, In } from 'typeorm';
 import { Admin } from '@admin/entities/admin.entity';
 import { AuditLog } from '@admin/entities/audit-log.entity';
@@ -7,6 +6,8 @@ import { SystemSetting } from '@admin/entities/system-setting.entity';
 import { AdminRepository } from '@admin/repositories/admin.repository';
 import { AuditLogRepository } from '@admin/repositories/audit-log.repository';
 import { SystemSettingRepository } from '@admin/repositories/system-setting.repository';
+import { JobRepository } from '@job/repositories/job.repository';
+import { JobStatus } from '@job/entities/job.entity';
 import { AdminUserQueryDto } from '@admin/dtos/admin-user-query.dto';
 import { UpdateUserStatusDto } from '@admin/dtos/update-user-status.dto';
 import { AdminJobQueryDto } from '@admin/dtos/admin-job-query.dto';
@@ -16,36 +17,32 @@ import { BulkJobActionDto } from '@admin/dtos/bulk-job-action.dto';
 @Injectable()
 export class AdminService {
   constructor(
-    @InjectRepository(Admin)
-    private adminRepository: Repository<Admin>,
-    @InjectRepository(AuditLog)
-    private auditLogRepository: Repository<AuditLog>,
-    @InjectRepository(SystemSetting)
-    private systemSettingRepository: Repository<SystemSetting>,
     private adminRepo: AdminRepository,
     private auditLogRepo: AuditLogRepository,
     private systemSettingRepo: SystemSettingRepository,
+    private jobRepo: JobRepository,
   ) {}
 
   async getDashboardStats() {
-    // Mock data for now - in real implementation, you would inject other repositories
+    // Get real job statistics
+    const jobStats = await this.jobRepo.getJobStats();
+    
+    // Mock data for other stats - in real implementation, you would inject other repositories
     const totalUsers = 1250;
-    const totalJobs = 89;
     const totalTalents = 890;
     const totalPayments = 156;
-    const activeJobs = 45;
     const pendingPayments = 23;
     const recentApplications = 12;
 
     const jobStatusDistribution = [
-      { status: 'active', count: 45 },
-      { status: 'closed', count: 23 },
-      { status: 'expired', count: 21 }
+      { status: 'active', count: jobStats.active },
+      { status: 'closed', count: jobStats.closed },
+      { status: 'expired', count: jobStats.expired }
     ];
 
     const paymentStatusDistribution = [
-      { status: 'pending', count: 23 },
-      { status: 'completed', count: 133 }
+      { status: 'pending', count: pendingPayments },
+      { status: 'completed', count: totalPayments - pendingPayments }
     ];
 
     const monthlyJobTrends = [
@@ -68,10 +65,10 @@ export class AdminService {
       data: {
         stats: {
           totalUsers,
-          totalJobs,
+          totalJobs: jobStats.total,
           totalTalents,
           totalPayments,
-          activeJobs,
+          activeJobs: jobStats.active,
           pendingPayments,
           recentApplications
         },
@@ -89,30 +86,16 @@ export class AdminService {
     const { page = 1, limit = 20, search, status, role, sortBy = 'createdAt', sortOrder = 'DESC' } = query;
     const skip = (page - 1) * limit;
 
-    const queryBuilder = this.adminRepository.createQueryBuilder('user')
-      .leftJoinAndSelect('user.talent', 'talent');
-
-    if (search) {
-      queryBuilder.where(
-        'user.email ILIKE :search OR user.firstName ILIKE :search OR user.lastName ILIKE :search',
-        { search: `%${search}%` }
-      );
-    }
-
-    if (status) {
-      queryBuilder.andWhere('user.status = :status', { status });
-    }
-
-    if (role) {
-      queryBuilder.andWhere('user.role = :role', { role });
-    }
-
-    queryBuilder.orderBy(`user.${sortBy}`, sortOrder as 'ASC' | 'DESC');
-
-    const [users, total] = await queryBuilder
-      .skip(skip)
-      .take(limit)
-      .getManyAndCount();
+    // Use custom repository method with filters
+    const { data: users, total } = await this.adminRepo.findWithFilters({
+      search,
+      status,
+      role,
+      sortBy,
+      sortOrder: sortOrder as 'ASC' | 'DESC',
+      skip,
+      take: limit
+    });
 
     return {
       success: true,
@@ -129,15 +112,15 @@ export class AdminService {
   }
 
   async updateUserStatus(id: string, body: UpdateUserStatusDto) {
-    const user = await this.adminRepository.findOne({ where: { id } });
+    const user = await this.adminRepo.findById(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    user.status = body.status;
-    user.updatedAt = new Date();
-
-    await this.adminRepository.save(user);
+    const updatedUser = await this.adminRepo.update(id, {
+      status: body.status,
+      updatedAt: new Date()
+    });
 
     // Log admin action
     await this.auditLogRepo.log({
@@ -150,9 +133,9 @@ export class AdminService {
     return {
       success: true,
       data: {
-        id: user.id,
-        status: user.status,
-        updatedAt: user.updatedAt
+        id: updatedUser.id,
+        status: updatedUser.status,
+        updatedAt: updatedUser.updatedAt
       }
     };
   }
@@ -161,48 +144,22 @@ export class AdminService {
     const { page = 1, limit = 20, search, status, organization, speciality, dateFrom, dateTo } = query;
     const skip = (page - 1) * limit;
 
-    const queryBuilder = this.adminRepository.createQueryBuilder('job')
-      .leftJoinAndSelect('job.organization', 'organization')
-      .leftJoinAndSelect('job.speciality', 'speciality')
-      .leftJoinAndSelect('job.city', 'city')
-      .leftJoinAndSelect('job.country', 'country');
+    // Use real repository method with admin filters
+    const { data: jobs, total } = await this.jobRepo.findWithAdminFilters({
+      search,
+      status: status as JobStatus,
+      organization,
+      speciality,
+      dateFrom,
+      dateTo,
+      sortBy: 'createdAt',
+      sortOrder: 'DESC',
+      skip,
+      take: limit
+    });
 
-    if (search) {
-      queryBuilder.where('job.title ILIKE :search', { search: `%${search}%` });
-    }
-
-    if (status) {
-      queryBuilder.andWhere('job.status = :status', { status });
-    }
-
-    if (organization) {
-      queryBuilder.andWhere('organization.id = :organization', { organization });
-    }
-
-    if (speciality) {
-      queryBuilder.andWhere('speciality.id = :speciality', { speciality });
-    }
-
-    if (dateFrom) {
-      queryBuilder.andWhere('job.postedDate >= :dateFrom', { dateFrom });
-    }
-
-    if (dateTo) {
-      queryBuilder.andWhere('job.postedDate <= :dateTo', { dateTo });
-    }
-
-    const [jobs, total] = await queryBuilder
-      .skip(skip)
-      .take(limit)
-      .orderBy('job.createdAt', 'DESC')
-      .getManyAndCount();
-
-    // Mock additional stats
-    const jobsWithStats = jobs.map((job) => ({
-      ...job,
-      applicationsCount: Math.floor(Math.random() * 50),
-      referralsCount: Math.floor(Math.random() * 20)
-    }));
+    // Get jobs with application and referral counts
+    const jobsWithStats = await this.jobRepo.getJobsWithApplicationCount();
 
     return {
       success: true,
@@ -219,15 +176,15 @@ export class AdminService {
   }
 
   async updateJobStatus(id: string, body: UpdateJobStatusDto) {
-    const job = await this.adminRepository.findOne({ where: { id } });
+    const job = await this.jobRepo.findById(id);
     if (!job) {
       throw new NotFoundException('Job not found');
     }
 
-    job.status = body.status;
-    job.updatedAt = new Date();
-
-    await this.adminRepository.save(job);
+    const updatedJob = await this.jobRepo.update(id, {
+      status: body.status as JobStatus,
+      updatedAt: new Date()
+    });
 
     // Log admin action
     await this.auditLogRepo.log({
@@ -240,9 +197,9 @@ export class AdminService {
     return {
       success: true,
       data: {
-        id: job.id,
-        status: job.status,
-        updatedAt: job.updatedAt
+        id: updatedJob.id,
+        status: updatedJob.status,
+        updatedAt: updatedJob.updatedAt
       }
     };
   }
@@ -250,30 +207,20 @@ export class AdminService {
   async executeBulkJobAction(body: BulkJobActionDto) {
     const { action, jobIds, reason, adminId } = body;
 
-    const jobs = await this.adminRepository.find({
-      where: { id: In(jobIds) }
-    });
-
-    switch (action) {
-      case 'approve':
-        await Promise.all(
-          jobs.map(job => {
-            job.status = 'active';
-            return this.adminRepository.save(job);
-          })
-        );
-        break;
-      case 'reject':
-        await Promise.all(
-          jobs.map(job => {
-            job.status = 'rejected';
-            return this.adminRepository.save(job);
-          })
-        );
-        break;
-      default:
-        throw new BadRequestException('Invalid action');
+    // Validate action
+    if (!['approve', 'reject'].includes(action)) {
+      throw new BadRequestException('Invalid action');
     }
+
+    // Get jobs to ensure they exist
+    const jobs = await this.jobRepo.findByIds(jobIds);
+    if (jobs.length !== jobIds.length) {
+      throw new NotFoundException('Some jobs not found');
+    }
+
+    // Update job statuses
+    const newStatus = action === 'approve' ? JobStatus.PUBLISHED : JobStatus.CLOSED;
+    await this.jobRepo.bulkUpdateStatus(jobIds, newStatus);
 
     // Log bulk action
     await this.auditLogRepo.log({
@@ -325,30 +272,15 @@ export class AdminService {
     const { page = 1, limit = 20, action, adminId, dateFrom, dateTo } = query;
     const skip = (page - 1) * limit;
 
-    const queryBuilder = this.auditLogRepository.createQueryBuilder('auditLog')
-      .leftJoinAndSelect('auditLog.admin', 'admin');
-
-    if (action) {
-      queryBuilder.andWhere('auditLog.action = :action', { action });
-    }
-
-    if (adminId) {
-      queryBuilder.andWhere('auditLog.adminId = :adminId', { adminId });
-    }
-
-    if (dateFrom) {
-      queryBuilder.andWhere('auditLog.createdAt >= :dateFrom', { dateFrom });
-    }
-
-    if (dateTo) {
-      queryBuilder.andWhere('auditLog.createdAt <= :dateTo', { dateTo });
-    }
-
-    const [auditLogs, total] = await queryBuilder
-      .skip(skip)
-      .take(limit)
-      .orderBy('auditLog.createdAt', 'DESC')
-      .getManyAndCount();
+    // Use custom repository method with filters
+    const { data: auditLogs, total } = await this.auditLogRepo.findWithFilters({
+      action,
+      adminId,
+      dateFrom,
+      dateTo,
+      skip,
+      take: limit
+    });
 
     return {
       success: true,

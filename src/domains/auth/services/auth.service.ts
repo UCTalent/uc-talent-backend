@@ -1,6 +1,8 @@
 import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@user/services/user.service';
+import { FirebaseAuthService } from './firebase-auth.service';
+import { Web3AuthService } from './web3-auth.service';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
 import { FirebaseAuthDto } from '../dtos/firebase-auth.dto';
@@ -14,6 +16,8 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly firebaseAuthService: FirebaseAuthService,
+    private readonly web3AuthService: Web3AuthService,
   ) {}
 
   async login(loginDto: LoginDto) {
@@ -109,15 +113,11 @@ export class AuthService {
   }
 
   async firebaseAuth(firebaseAuthDto: FirebaseAuthDto) {
-    // TODO: Implement Firebase token verification
-    // For now, return mock response
-    throw new UnauthorizedException('Firebase authentication not implemented yet');
+    return this.firebaseAuthService.authenticate(firebaseAuthDto);
   }
 
   async web3Auth(web3AuthDto: Web3AuthDto) {
-    // TODO: Implement Web3 token verification
-    // For now, return mock response
-    throw new UnauthorizedException('Web3 authentication not implemented yet');
+    return this.web3AuthService.authenticate(web3AuthDto);
   }
 
   async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {

@@ -1,33 +1,21 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
-export class AdminGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
-
-  canActivate(context: ExecutionContext): boolean {
+export class AdminGuard extends AuthGuard('admin-jwt') {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const result = await super.canActivate(context);
+    if (!result) {
+      throw new UnauthorizedException();
+    }
+    
     const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
+    const user = request.user;
     
-    if (!token) {
-      throw new UnauthorizedException();
+    if (user.type !== 'admin') {
+      throw new ForbiddenException('Admin access required');
     }
     
-    try {
-      const payload = this.jwtService.verify(token);
-      if (payload.type !== 'admin') {
-        throw new ForbiddenException('Admin access required');
-      }
-      request['admin'] = payload;
-      return true;
-    } catch {
-      throw new UnauthorizedException();
-    }
-  }
-
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+    return true;
   }
 } 

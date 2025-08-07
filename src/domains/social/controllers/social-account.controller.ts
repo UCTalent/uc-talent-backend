@@ -31,8 +31,8 @@ import {
   SocialProfileResponseDto,
   SyncResultResponseDto,
 } from '@domains/social/dtos/social-response.dto';
-import { JwtAuthGuard } from '@shared/cross-cutting/authorization/guards/jwt-auth.guard';
-import { CurrentUser } from '@shared/cross-cutting/authorization/decorators/current-user.decorator';
+import { JwtAuthGuard } from '@shared/cross-cutting/authorization';
+import { CurrentUser } from '@shared/cross-cutting/authorization';
 
 @ApiTags('Social Accounts')
 @Controller('api/v1/social-accounts')

@@ -1,266 +1,125 @@
 # Admin Domain
 
 ## Overview
+The Admin domain handles all administrative operations including user management, job moderation, system settings, and audit logging.
 
-The Admin domain provides comprehensive administrative functionality for the UC Talent platform, including dashboard management, user management, job management, talent management, payment management, and system management.
+## Architecture Changes
 
-## Features
+### Repository Pattern Implementation
+The admin domain has been refactored to follow proper DDD (Domain-Driven Design) principles by using custom repository classes instead of directly injecting TypeORM repositories.
 
-### 📊 Dashboard Management
-- Real-time statistics and analytics
-- Charts and data visualization
-- Recent activities tracking
-
-### 👥 User Management
-- User listing with filtering and pagination
-- User status management (active, inactive, suspended)
-- User role management
-- Search and sort functionality
-
-### 💼 Job Management
-- Job listing with advanced filtering
-- Job status management (approve, reject, bulk actions)
-- Job analytics and statistics
-- Organization and speciality filtering
-
-### 👨‍💼 Talent Management
-- Talent profile review and verification
-- Experience level and English proficiency filtering
-- Talent status management
-
-### 💰 Payment Management
-- Payment distribution tracking
-- Payment approval workflow
-- Payment analytics
-
-### ⚙️ System Management
-- System settings configuration
-- Audit logging
-- System maintenance
-
-## Entities
-
-### Admin
-- Core admin user entity
-- Authentication and authorization
-- Session management
-- Permission system
-
-### AuditLog
-- Comprehensive activity logging
-- Admin action tracking
-- IP address and user agent logging
-
-### SystemSetting
-- Configurable system parameters
-- Support for different data types (string, number, boolean, json)
-- Encrypted settings support
-
-### AdminSession
-- Session management for admins
-- Token-based authentication
-- Session expiration handling
-
-### AdminPermission
-- Role-based access control
-- Resource and action permissions
-- Permission mapping system
-
-## Endpoints
-
-### Dashboard
-- `GET /api/admin/dashboard` - Get dashboard statistics
-
-### User Management
-- `GET /api/admin/users` - Get users list
-- `PATCH /api/admin/users/:id/status` - Update user status
-
-### Job Management
-- `GET /api/admin/jobs` - Get jobs list
-- `PATCH /api/admin/jobs/:id/status` - Update job status
-- `POST /api/admin/jobs/bulk-actions` - Execute bulk job actions
-
-### Talent Management
-- `GET /api/admin/talents` - Get talents list
-- `POST /api/admin/talents/:id/review` - Review talent profile
-
-### Payment Management
-- `GET /api/admin/payment-distributions` - Get payment distributions
-- `POST /api/admin/payment-distributions/:id/approve` - Approve payment
-
-### System Management
-- `GET /api/admin/settings` - Get system settings
-- `PATCH /api/admin/settings` - Update system settings
-- `GET /api/admin/audit-logs` - Get audit logs
-
-## DTOs
-
-### AdminUserQueryDto
+#### Before (Anti-pattern):
 ```typescript
-{
-  page?: number;
-  limit?: number;
-  search?: string;
-  status?: string;
-  role?: string;
-  sortBy?: string;
-  sortOrder?: string;
+@Injectable()
+export class AdminService {
+  constructor(
+    @InjectRepository(Admin)
+    private adminRepository: Repository<Admin>,
+    @InjectRepository(AuditLog)
+    private auditLogRepository: Repository<AuditLog>,
+    // ... other direct TypeORM repositories
+  ) {}
 }
 ```
 
-### UpdateUserStatusDto
+#### After (Proper DDD):
 ```typescript
-{
-  status: string;
-  reason?: string;
-  adminId: string;
+@Injectable()
+export class AdminService {
+  constructor(
+    private adminRepo: AdminRepository,
+    private auditLogRepo: AuditLogRepository,
+    private systemSettingRepo: SystemSettingRepository,
+  ) {}
 }
 ```
 
-### AdminJobQueryDto
+### Benefits of This Approach
+
+1. **Domain Encapsulation**: Custom repositories encapsulate domain-specific query logic
+2. **Testability**: Easier to mock and test with custom repository interfaces
+3. **Maintainability**: Business logic is separated from infrastructure concerns
+4. **Consistency**: Follows the same pattern across all domains
+5. **Type Safety**: Better type safety with domain-specific methods
+
+### Custom Repository Methods
+
+#### AdminRepository
+- `findById(id: string)`: Find admin by ID with permissions
+- `findAll()`: Get all admins with permissions
+- `findByEmail(email: string)`: Find admin by email
+- `findActiveAdmins()`: Get only active admins
+- `findWithFilters(options)`: Advanced filtering with pagination
+- `findByIds(ids: string[])`: Find multiple admins by IDs
+- `findByStatus(status: string)`: Find admins by status
+- `countByStatus(status: string)`: Count admins by status
+- `findRecentAdmins(limit: number)`: Get recent admins
+
+#### AuditLogRepository
+- `findById(id: string)`: Find audit log by ID
+- `findAll()`: Get all audit logs
+- `findByAdmin(adminId: string, options)`: Find logs by admin
+- `findByAction(action: string, options)`: Find logs by action
+- `findWithFilters(options)`: Advanced filtering with pagination
+- `log(data)`: Create new audit log entry
+
+#### SystemSettingRepository
+- `findAll()`: Get all system settings
+- `setValue(key: string, value: any)`: Set system setting value
+- Standard CRUD operations
+
+### Service Layer Changes
+
+The `AdminService` now uses only custom repository methods:
+
 ```typescript
-{
-  page?: number;
-  limit?: number;
-  search?: string;
-  status?: string;
-  organization?: string;
-  speciality?: string;
-  dateFrom?: string;
-  dateTo?: string;
-}
-```
+// Before: Direct query builder usage
+const queryBuilder = this.adminRepository.createQueryBuilder('user')
+  .leftJoinAndSelect('user.talent', 'talent');
 
-### UpdateJobStatusDto
-```typescript
-{
-  status: string;
-  reason?: string;
-  adminId: string;
-}
-```
-
-### BulkJobActionDto
-```typescript
-{
-  action: string;
-  jobIds: string[];
-  reason?: string;
-  adminId: string;
-}
-```
-
-## Services
-
-### AdminService
-- Dashboard statistics calculation
-- User management operations
-- Job management operations
-- System settings management
-- Audit logging
-
-## Repositories
-
-### AdminRepository
-- Admin CRUD operations
-- Email-based queries
-- Login attempt management
-
-### AuditLogRepository
-- Audit log CRUD operations
-- Admin-specific log queries
-- Action-based filtering
-
-### SystemSettingRepository
-- System settings CRUD operations
-- Type-safe value retrieval
-- Dynamic setting management
-
-## Security
-
-### AdminGuard
-- JWT token validation
-- Admin type verification
-- Request authentication
-
-### AdminJwtStrategy
-- JWT strategy for admin authentication
-- Payload validation
-- Type-specific authentication
-
-## Usage Examples
-
-### Get Dashboard Statistics
-```typescript
-const stats = await adminService.getDashboardStats();
-```
-
-### Update User Status
-```typescript
-const result = await adminService.updateUserStatus(userId, {
-  status: 'suspended',
-  reason: 'Violation of terms',
-  adminId: 'admin-uuid'
+// After: Using custom repository method
+const { data: users, total } = await this.adminRepo.findWithFilters({
+  search,
+  status,
+  role,
+  sortBy,
+  sortOrder,
+  skip,
+  take: limit
 });
 ```
 
-### Execute Bulk Job Actions
-```typescript
-const result = await adminService.executeBulkJobAction({
-  action: 'approve',
-  jobIds: ['job-1', 'job-2', 'job-3'],
-  reason: 'Bulk approval',
-  adminId: 'admin-uuid'
-});
-```
+### Migration Notes
 
-### Update System Settings
-```typescript
-const result = await adminService.updateSystemSettings({
-  platformFee: 0.05,
-  maxJobDuration: 90,
-  autoApproveJobs: false,
-  maintenanceMode: false
-});
-```
+1. **Job-related methods**: Now use real `JobRepository` instead of mock data. The admin service injects `JobRepository` from the job domain.
 
-## Testing
+2. **Performance**: Custom repository methods can be optimized for specific use cases and can include caching strategies.
 
-Run the tests with:
-```bash
-npm test src/domains/admin/controllers/admin.controller.spec.ts
-```
+3. **Query Optimization**: The `findWithFilters` methods use TypeORM query builders internally but encapsulate the complexity within the repository layer.
 
-## Database Migrations
+### Repository Integration
 
-The admin domain requires the following database tables:
-- `admins`
-- `audit_logs`
-- `system_settings`
-- `admin_sessions`
-- `admin_permissions`
-- `admin_permission_mappings`
+The admin service now integrates with multiple repositories:
 
-Migration files should be created according to the entity specifications in the documentation.
+- **AdminRepository**: For admin user management
+- **AuditLogRepository**: For audit logging
+- **SystemSettingRepository**: For system settings
+- **JobRepository**: For job management (newly added)
 
-## Authentication
+### New JobRepository Methods Added
 
-All admin endpoints require authentication using the AdminGuard. The guard validates JWT tokens and ensures the user has admin privileges.
+The `JobRepository` has been extended with admin-specific methods:
 
-## Audit Logging
+- `findWithAdminFilters()`: Advanced filtering for admin job queries
+- `findByIds()`: Find multiple jobs by IDs
+- `bulkUpdateStatus()`: Bulk update job statuses
+- `getJobStats()`: Get job statistics for dashboard
+- `getJobsWithApplicationCount()`: Get jobs with application and referral counts
 
-All administrative actions are automatically logged to the audit_logs table, including:
-- User status changes
-- Job status updates
-- Bulk actions
-- System setting changes
-- Login attempts
+### Future Improvements
 
-## Configuration
-
-The admin domain can be configured through system settings:
-- Platform fees
-- Job duration limits
-- Auto-approval settings
-- Maintenance mode
-- Security settings 
+1. Add more domain-specific query methods as needed
+2. Implement caching strategies in custom repositories
+3. Consider implementing repository interfaces for better testability
+4. Add real-time dashboard updates
+5. Implement job analytics and reporting features 

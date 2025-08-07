@@ -1,6 +1,4 @@
 import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { User } from '@user/entities/user.entity';
 import { CreateUserDto } from '@user/dtos/create-user.dto';
 import { UpdateUserDto } from '@user/dtos/update-user.dto';
@@ -11,8 +9,6 @@ import { Password } from '@user/value-objects/password.value-object';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
     private readonly userRepo: UserRepository,
   ) {}
 
@@ -35,13 +31,11 @@ export class UserService {
       encryptedPassword = await passwordValueObject.encrypt();
     }
 
-    const user = this.userRepository.create({
+    return this.userRepo.create({
       ...rest,
       email: emailValueObject.value,
       encryptedPassword,
     });
-
-    return this.userRepository.save(user);
   }
 
   async findAll(): Promise<User[]> {
@@ -90,13 +84,11 @@ export class UserService {
       delete updateUserDto.password;
     }
 
-    Object.assign(user, updateUserDto);
-    return this.userRepository.save(user);
+    return this.userRepo.update(id, updateUserDto);
   }
 
   async delete(id: string): Promise<void> {
-    const user = await this.findById(id);
-    await this.userRepository.remove(user);
+    await this.userRepo.delete(id);
   }
 
   async softDelete(id: string): Promise<void> {

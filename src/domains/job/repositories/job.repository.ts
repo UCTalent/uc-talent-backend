@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Job, JobStatus } from '@job/entities/job.entity';
 import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
@@ -60,6 +60,118 @@ export class JobRepository implements IBaseRepository<Job> {
       where: { partnerHostId },
       relations: ['organization', 'speciality']
     });
+  }
+
+  // New methods for admin service
+  async findWithAdminFilters(options: {
+    search?: string;
+    status?: JobStatus;
+    organization?: string;
+    speciality?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    sortBy?: string;
+    sortOrder?: 'ASC' | 'DESC';
+    skip?: number;
+    take?: number;
+  }): Promise<{ data: Job[]; total: number }> {
+    const queryBuilder = this.repository.createQueryBuilder('job')
+      .leftJoinAndSelect('job.organization', 'organization')
+      .leftJoinAndSelect('job.speciality', 'speciality')
+      .leftJoinAndSelect('job.city', 'city')
+      .leftJoinAndSelect('job.country', 'country');
+
+    if (options.search) {
+      queryBuilder.where('job.title ILIKE :search', { search: `%${options.search}%` });
+    }
+
+    if (options.status) {
+      queryBuilder.andWhere('job.status = :status', { status: options.status });
+    }
+
+    if (options.organization) {
+      queryBuilder.andWhere('organization.id = :organization', { organization: options.organization });
+    }
+
+    if (options.speciality) {
+      queryBuilder.andWhere('speciality.id = :speciality', { speciality: options.speciality });
+    }
+
+    if (options.dateFrom) {
+      queryBuilder.andWhere('job.postedDate >= :dateFrom', { dateFrom: options.dateFrom });
+    }
+
+    if (options.dateTo) {
+      queryBuilder.andWhere('job.postedDate <= :dateTo', { dateTo: options.dateTo });
+    }
+
+    if (options.sortBy) {
+      queryBuilder.orderBy(`job.${options.sortBy}`, options.sortOrder || 'DESC');
+    } else {
+      queryBuilder.orderBy('job.createdAt', 'DESC');
+    }
+
+    if (options.skip !== undefined) {
+      queryBuilder.skip(options.skip);
+    }
+
+    if (options.take !== undefined) {
+      queryBuilder.take(options.take);
+    }
+
+    const [data, total] = await queryBuilder.getManyAndCount();
+    return { data, total };
+  }
+
+  async findByIds(ids: string[]): Promise<Job[]> {
+    return this.repository.find({
+      where: { id: In(ids) },
+      relations: ['organization', 'speciality']
+    });
+  }
+
+  async bulkUpdateStatus(ids: string[], status: JobStatus): Promise<void> {
+    await this.repository.update(
+      { id: In(ids) },
+      { status, updatedAt: new Date() }
+    );
+  }
+
+  async getJobStats(): Promise<{
+    total: number;
+    active: number;
+    pending: number;
+    closed: number;
+    expired: number;
+  }> {
+    const [total, active, pending, closed, expired] = await Promise.all([
+      this.repository.count(),
+      this.repository.count({ where: { status: JobStatus.PUBLISHED } }),
+      this.repository.count({ where: { status: JobStatus.PENDING_TO_REVIEW } }),
+      this.repository.count({ where: { status: JobStatus.CLOSED } }),
+      this.repository.count({ where: { status: JobStatus.EXPIRED } })
+    ]);
+
+    return { total, active, pending, closed, expired };
+  }
+
+  async getJobsWithApplicationCount(): Promise<Job[]> {
+    return this.repository
+      .createQueryBuilder('job')
+      .leftJoinAndSelect('job.organization', 'organization')
+      .leftJoinAndSelect('job.speciality', 'speciality')
+      .leftJoinAndSelect('job.city', 'city')
+      .leftJoinAndSelect('job.country', 'country')
+      .addSelect('COUNT(jobApply.id)', 'applicationsCount')
+      .addSelect('COUNT(jobReferral.id)', 'referralsCount')
+      .leftJoin('job.jobApplies', 'jobApply')
+      .leftJoin('job.jobReferrals', 'jobReferral')
+      .groupBy('job.id')
+      .addGroupBy('organization.id')
+      .addGroupBy('speciality.id')
+      .addGroupBy('city.id')
+      .addGroupBy('country.id')
+      .getMany();
   }
 
   async findWithFilters(filters: any): Promise<[Job[], number]> {
