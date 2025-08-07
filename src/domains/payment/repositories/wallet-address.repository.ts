@@ -52,4 +52,11 @@ export class WalletAddressRepository implements IBaseRepository<WalletAddress> {
       relations: ['owner'],
     });
   }
+
+  async findByAddress(address: string): Promise<WalletAddress | null> {
+    return this.repository.findOne({
+      where: { address },
+      relations: ['owner'],
+    });
+  }
 } 

@@ -5,8 +5,7 @@ import { OAuthService } from './oauth.service';
 import { SocialAuthDto } from '@domains/social/dtos/social-auth.dto';
 import { SocialProvider } from '@domains/social/entities/social-account.entity';
 import { User } from '@domains/user/entities/user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { UserRepository } from '@domains/user/repositories/user.repository';
 
 @Injectable()
 export class SocialAuthService {
@@ -14,8 +13,7 @@ export class SocialAuthService {
     private readonly socialAccountService: SocialAccountService,
     private readonly oauthService: OAuthService,
     private readonly jwtService: JwtService,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepo: UserRepository,
   ) {}
 
   async authenticateWithSocial(provider: string, authDto: SocialAuthDto) {
@@ -80,7 +78,7 @@ export class SocialAuthService {
     );
 
     if (socialAccount) {
-      return this.userRepository.findOne({ where: { id: socialAccount.userId } });
+      return this.userRepo.findById(socialAccount.userId);
     }
 
     return null;
@@ -93,8 +91,7 @@ export class SocialAuthService {
       // Add other user fields as needed based on your User entity
     };
 
-    const user = this.userRepository.create(userData);
-    return this.userRepository.save(user);
+    return this.userRepo.create(userData);
   }
 
   private async generateTokens(user: User) {

@@ -1,6 +1,4 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { SocialAccount, SocialProvider, SocialAccountStatus } from '@domains/social/entities/social-account.entity';
 import { SocialSetting } from '@domains/social/entities/social-setting.entity';
 import { SyncStatus } from '@domains/social/entities/social-sync-log.entity';
@@ -8,6 +6,7 @@ import { User } from '@domains/user/entities/user.entity';
 import { SocialAccountRepository } from '@domains/social/repositories/social-account.repository';
 import { SocialSettingRepository } from '@domains/social/repositories/social-setting.repository';
 import { SocialSyncLogRepository } from '@domains/social/repositories/social-sync-log.repository';
+import { UserRepository } from '@domains/user/repositories/user.repository';
 import { LinkSocialAccountDto } from '@domains/social/dtos/link-social-account.dto';
 import { SocialSettingsDto } from '@domains/social/dtos/social-settings.dto';
 import { SocialSearchDto } from '@domains/social/dtos/social-search.dto';
@@ -18,8 +17,7 @@ export class SocialAccountService {
     private readonly socialAccountRepository: SocialAccountRepository,
     private readonly socialSettingRepository: SocialSettingRepository,
     private readonly socialSyncLogRepository: SocialSyncLogRepository,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepo: UserRepository,
   ) {}
 
   async getUserSocialAccounts(userId: string) {

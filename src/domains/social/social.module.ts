@@ -10,6 +10,7 @@ import { SocialSetting } from './entities/social-setting.entity';
 import { SocialSyncLog } from './entities/social-sync-log.entity';
 import { ExternalLink } from './entities/external-link.entity';
 import { User } from '@domains/user/entities/user.entity';
+import { UserModule } from '@domains/user/user.module';
 
 // Services
 import { SocialAccountService } from './services/social-account.service';
@@ -21,6 +22,7 @@ import { ExternalLinkService } from './services/external-link.service';
 import { SocialAccountRepository } from './repositories/social-account.repository';
 import { SocialSettingRepository } from './repositories/social-setting.repository';
 import { SocialSyncLogRepository } from './repositories/social-sync-log.repository';
+import { ExternalLinkRepository } from './repositories/external-link.repository';
 
 // Controllers
 import { SocialAccountController, SocialAuthController } from './controllers/social-account.controller';
@@ -34,6 +36,7 @@ import { SocialAccountController, SocialAuthController } from './controllers/soc
       ExternalLink,
       User,
     ]),
+    UserModule,
     // HttpModule, // Will be added when @nestjs/axios is installed
     JwtModule,
     ConfigModule,
@@ -49,6 +52,7 @@ import { SocialAccountController, SocialAuthController } from './controllers/soc
     SocialAccountRepository,
     SocialSettingRepository,
     SocialSyncLogRepository,
+    ExternalLinkRepository,
   ],
   controllers: [
     SocialAccountController,
@@ -62,6 +66,7 @@ import { SocialAccountController, SocialAuthController } from './controllers/soc
     SocialAccountRepository,
     SocialSettingRepository,
     SocialSyncLogRepository,
+    ExternalLinkRepository,
   ],
 })
 export class SocialModule {} 

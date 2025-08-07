@@ -281,4 +281,8 @@ export class JobRepository implements IBaseRepository<Job> {
     
     return lastJob ? lastJob.jobNumber + 1 : 1;
   }
+
+  async count(options?: any): Promise<number> {
+    return this.repository.count(options);
+  }
 } 

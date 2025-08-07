@@ -1,25 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { WalletAddress } from '../entities/wallet-address.entity';
+import { WalletAddressRepository } from '../repositories/wallet-address.repository';
 
 @Injectable()
 export class WalletService {
   constructor(
-    @InjectRepository(WalletAddress)
-    private readonly walletAddressRepository: Repository<WalletAddress>,
+    private readonly walletAddressRepo: WalletAddressRepository,
   ) {}
 
   async createWalletAddress(data: Partial<WalletAddress>): Promise<WalletAddress> {
-    const wallet = this.walletAddressRepository.create(data);
-    return this.walletAddressRepository.save(wallet);
+    return this.walletAddressRepo.create(data);
   }
 
   async findWalletAddressById(id: string): Promise<WalletAddress> {
-    const wallet = await this.walletAddressRepository.findOne({
-      where: { id },
-      relations: ['owner'],
-    });
+    const wallet = await this.walletAddressRepo.findById(id);
     
     if (!wallet) {
       throw new NotFoundException('Wallet address not found');
@@ -29,21 +23,15 @@ export class WalletService {
   }
 
   async findWalletAddressesByOwner(ownerId: string): Promise<WalletAddress[]> {
-    return this.walletAddressRepository.find({
-      where: { ownerId },
-      relations: ['owner'],
-    });
+    return this.walletAddressRepo.findByOwner(ownerId);
   }
 
   async findWalletAddressByAddress(address: string): Promise<WalletAddress | null> {
-    return this.walletAddressRepository.findOne({
-      where: { address },
-      relations: ['owner'],
-    });
+    return this.walletAddressRepo.findByAddress(address);
   }
 
   async deleteWalletAddress(id: string): Promise<void> {
     const wallet = await this.findWalletAddressById(id);
-    await this.walletAddressRepository.remove(wallet);
+    await this.walletAddressRepo.delete(id);
   }
 } 

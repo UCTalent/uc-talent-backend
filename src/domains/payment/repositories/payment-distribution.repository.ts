@@ -56,4 +56,30 @@ export class PaymentDistributionRepository implements IBaseRepository<PaymentDis
   async findOne(options: any): Promise<PaymentDistribution | null> {
     return this.repository.findOne(options);
   }
+
+  async findClaimablePayment(options: {
+    id: string;
+    jobId: string;
+    recipientId: string;
+    status: string;
+    role: any;
+  }): Promise<PaymentDistribution | null> {
+    return this.repository.findOne({
+      where: options,
+      relations: ['recipient', 'job'],
+    });
+  }
+
+  async updatePaymentStatus(id: string, status: string, claimedAt?: Date, transactionHash?: string): Promise<PaymentDistribution> {
+    const updateData: any = { status };
+    if (claimedAt) {
+      updateData.claimedAt = claimedAt;
+    }
+    if (transactionHash) {
+      updateData.transactionHash = transactionHash;
+    }
+    
+    await this.repository.update(id, updateData);
+    return this.findById(id);
+  }
 } 

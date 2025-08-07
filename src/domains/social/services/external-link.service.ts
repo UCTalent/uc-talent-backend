@@ -1,25 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { ExternalLink } from '../entities/external-link.entity';
+import { ExternalLinkRepository } from '../repositories/external-link.repository';
 
 @Injectable()
 export class ExternalLinkService {
   constructor(
-    @InjectRepository(ExternalLink)
-    private readonly externalLinkRepository: Repository<ExternalLink>,
+    private readonly externalLinkRepo: ExternalLinkRepository,
   ) {}
 
   async createExternalLink(data: Partial<ExternalLink>): Promise<ExternalLink> {
-    const externalLink = this.externalLinkRepository.create(data);
-    return this.externalLinkRepository.save(externalLink);
+    return this.externalLinkRepo.create(data);
   }
 
   async findExternalLinkById(id: string): Promise<ExternalLink> {
-    const externalLink = await this.externalLinkRepository.findOne({
-      where: { id },
-      relations: ['talent'],
-    });
+    const externalLink = await this.externalLinkRepo.findById(id);
     
     if (!externalLink) {
       throw new NotFoundException('External link not found');
@@ -29,19 +23,15 @@ export class ExternalLinkService {
   }
 
   async findExternalLinksByTalentId(talentId: string): Promise<ExternalLink[]> {
-    return this.externalLinkRepository.find({
-      where: { talentId },
-      relations: ['talent'],
-    });
+    return this.externalLinkRepo.findByTalentId(talentId);
   }
 
   async updateExternalLink(id: string, data: Partial<ExternalLink>): Promise<ExternalLink> {
-    await this.externalLinkRepository.update(id, data);
-    return this.findExternalLinkById(id);
+    return this.externalLinkRepo.update(id, data);
   }
 
   async deleteExternalLink(id: string): Promise<void> {
     const externalLink = await this.findExternalLinkById(id);
-    await this.externalLinkRepository.remove(externalLink);
+    await this.externalLinkRepo.delete(id);
   }
 } 

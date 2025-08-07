@@ -1,74 +1,41 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Organization } from '@organization/entities/organization.entity';
 import { Job, JobStatus } from '@job/entities/job.entity';
 import { CreateOrganizationDto } from '@organization/dtos/create-organization.dto';
 import { UpdateOrganizationDto } from '@organization/dtos/update-organization.dto';
 import { OrganizationQueryDto } from '@organization/dtos/organization-query.dto';
 import { OrganizationRepository } from '@organization/repositories/organization.repository';
+import { JobRepository } from '@job/repositories/job.repository';
 
 @Injectable()
 export class OrganizationService {
   constructor(
-    @InjectRepository(Organization)
-    private organizationRepository: Repository<Organization>,
-    @InjectRepository(Job)
-    private jobRepository: Repository<Job>,
     private organizationRepo: OrganizationRepository,
+    private jobRepo: JobRepository,
   ) {}
 
   async getOrganizations(query: OrganizationQueryDto) {
     const { page = 1, limit = 20, search, status, industry, country, city, size, orgType, sortBy = 'createdAt', sortOrder = 'DESC' } = query;
     const skip = (page - 1) * limit;
 
-    const queryBuilder = this.organizationRepository.createQueryBuilder('org')
-      .leftJoinAndSelect('org.industry', 'industry')
-      .leftJoinAndSelect('org.city', 'city')
-      .leftJoinAndSelect('org.country', 'country');
-
-    if (search) {
-      queryBuilder.where(
-        'org.name ILIKE :search OR org.about ILIKE :search',
-        { search: `%${search}%` }
-      );
-    }
-
-    if (status) {
-      queryBuilder.andWhere('org.status = :status', { status });
-    }
-
-    if (industry) {
-      queryBuilder.andWhere('industry.id = :industry', { industry });
-    }
-
-    if (country) {
-      queryBuilder.andWhere('country.id = :country', { country });
-    }
-
-    if (city) {
-      queryBuilder.andWhere('city.id = :city', { city });
-    }
-
-    if (size) {
-      queryBuilder.andWhere('org.size = :size', { size });
-    }
-
-    if (orgType) {
-      queryBuilder.andWhere('org.orgType = :orgType', { orgType });
-    }
-
-    queryBuilder.orderBy(`org.${sortBy}`, sortOrder as 'ASC' | 'DESC');
-
-    const [organizations, total] = await queryBuilder
-      .skip(skip)
-      .take(limit)
-      .getManyAndCount();
+    const { data: organizations, total } = await this.organizationRepo.findWithFilters({
+      search,
+      status,
+      industry,
+      country,
+      city,
+      size,
+      orgType,
+      sortBy,
+      sortOrder: sortOrder as 'ASC' | 'DESC',
+      skip,
+      take: limit
+    });
 
     // Get jobs count for each organization
     const organizationsWithStats = await Promise.all(
       organizations.map(async (org) => {
-        const jobsCount = await this.jobRepository.count({ where: { organizationId: org.id } });
+        const jobsCount = await this.jobRepo.count({ where: { organizationId: org.id } });
         return {
           ...org,
           jobsCount
@@ -91,51 +58,50 @@ export class OrganizationService {
   }
 
   async getOrganizationById(id: string) {
-    const organization = await this.organizationRepository.findOne({
-      where: { id },
-      relations: ['industry', 'city', 'country', 'jobs']
-    });
+    const organization = await this.organizationRepo.findByIdWithRelations(id);
 
     if (!organization) {
       throw new NotFoundException('Organization not found');
     }
 
     // Get additional stats
-    const [totalJobs, activeJobs] = await Promise.all([
-      this.jobRepository.count({ where: { organizationId: id } }),
-      this.jobRepository.count({ where: { organizationId: id, status: JobStatus.PUBLISHED } })
-    ]);
+    const stats = await this.organizationRepo.getOrganizationStats(id);
 
     return {
       success: true,
       data: {
         ...organization,
-        stats: {
-          totalJobs,
-          activeJobs
-        }
+        stats
       }
     };
   }
 
   async createOrganization(createDto: CreateOrganizationDto) {
-    const organization = this.organizationRepository.create(createDto);
-    const savedOrganization = await this.organizationRepository.save(organization);
+    const dto: any = { ...createDto };
+    if (dto.foundDate && typeof dto.foundDate === 'string') {
+      dto.foundDate = new Date(dto.foundDate);
+    }
+    
+    const organization = await this.organizationRepo.create(dto);
 
     return {
       success: true,
-      data: savedOrganization
+      data: organization
     };
   }
 
   async updateOrganization(id: string, updateDto: UpdateOrganizationDto) {
-    const organization = await this.organizationRepository.findOne({ where: { id } });
+    const organization = await this.organizationRepo.findById(id);
     if (!organization) {
       throw new NotFoundException('Organization not found');
     }
 
-    Object.assign(organization, updateDto);
-    const updatedOrganization = await this.organizationRepository.save(organization);
+    const dto: any = { ...updateDto };
+    if (dto.foundDate && typeof dto.foundDate === 'string') {
+      dto.foundDate = new Date(dto.foundDate);
+    }
+
+    const updatedOrganization = await this.organizationRepo.update(id, dto);
 
     return {
       success: true,
@@ -144,12 +110,12 @@ export class OrganizationService {
   }
 
   async deleteOrganization(id: string) {
-    const organization = await this.organizationRepository.findOne({ where: { id } });
+    const organization = await this.organizationRepo.findById(id);
     if (!organization) {
       throw new NotFoundException('Organization not found');
     }
 
-    await this.organizationRepository.remove(organization);
+    await this.organizationRepo.delete(id);
 
     return {
       success: true,
@@ -158,37 +124,7 @@ export class OrganizationService {
   }
 
   async searchOrganizations(query: string, filters?: any) {
-    const queryBuilder = this.organizationRepository.createQueryBuilder('org')
-      .leftJoinAndSelect('org.industry', 'industry')
-      .leftJoinAndSelect('org.city', 'city')
-      .leftJoinAndSelect('org.country', 'country');
-
-    if (query) {
-      queryBuilder.where(
-        'org.name ILIKE :query OR org.about ILIKE :query',
-        { query: `%${query}%` }
-      );
-    }
-
-    if (filters) {
-      if (filters.industry) {
-        queryBuilder.andWhere('industry.id = :industry', { industry: filters.industry });
-      }
-      if (filters.country) {
-        queryBuilder.andWhere('country.id = :country', { country: filters.country });
-      }
-      if (filters.city) {
-        queryBuilder.andWhere('city.id = :city', { city: filters.city });
-      }
-      if (filters.size) {
-        queryBuilder.andWhere('org.size = :size', { size: filters.size });
-      }
-      if (filters.orgType) {
-        queryBuilder.andWhere('org.orgType = :orgType', { orgType: filters.orgType });
-      }
-    }
-
-    const organizations = await queryBuilder.getMany();
+    const organizations = await this.organizationRepo.searchWithFilters(query, filters);
 
     return {
       success: true,

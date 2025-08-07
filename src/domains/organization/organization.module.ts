@@ -6,9 +6,13 @@ import { Job } from '@job/entities/job.entity';
 import { OrganizationRepository } from './repositories/organization.repository';
 import { OrganizationService } from './services/organization.service';
 import { OrganizationController } from './controllers/organization.controller';
+import { JobModule } from '@job/job.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Organization, Industry, Job])],
+  imports: [
+    TypeOrmModule.forFeature([Organization, Industry, Job]),
+    JobModule
+  ],
   providers: [OrganizationService, OrganizationRepository],
   controllers: [OrganizationController],
   exports: [OrganizationService, OrganizationRepository],

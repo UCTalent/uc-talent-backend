@@ -40,14 +40,12 @@ export class PaymentService {
     // if (!job) throw new NotFoundException('Job not found');
 
     // 3. Find claimable payment distribution
-    const paymentDist = await this.paymentDistributionRepository.findOne({
-      where: {
-        id: claimDto.payment_distributions.payment_distribution_id,
-        jobId: claimDto.payment_distributions.job_id,
-        recipientId: userId,
-        status: 'pending',
-        role: Not('platform_fee')
-      }
+    const paymentDist = await this.paymentDistributionRepository.findClaimablePayment({
+      id: claimDto.payment_distributions.payment_distribution_id,
+      jobId: claimDto.payment_distributions.job_id,
+      recipientId: userId,
+      status: 'pending',
+      role: Not('platform_fee')
     });
     
     if (!paymentDist) {
@@ -60,24 +58,26 @@ export class PaymentService {
     }
 
     // 5. Update status
-    paymentDist.status = 'completed';
-    paymentDist.claimedAt = new Date();
-    await this.paymentDistributionRepository.update(paymentDist.id, paymentDist);
+    await this.paymentDistributionRepository.updatePaymentStatus(
+      paymentDist.id, 
+      'completed', 
+      new Date()
+    );
+
+    const updatedPayment = await this.paymentDistributionRepository.findById(paymentDist.id);
 
     return {
       success: true,
       data: {
-        id: paymentDist.id,
-        status: paymentDist.status,
-        claimed_at: paymentDist.claimedAt
+        id: updatedPayment.id,
+        status: updatedPayment.status,
+        claimed_at: updatedPayment.claimedAt
       }
     };
   }
 
   async updateBlockchainStatus(updateDto: UpdateBlockchainStatusDto) {
-    const paymentDist = await this.paymentDistributionRepository.findOne({
-      where: { id: updateDto.payment_distribution_id }
-    });
+    const paymentDist = await this.paymentDistributionRepository.findById(updateDto.payment_distribution_id);
     
     if (!paymentDist) {
       throw new NotFoundException('Payment distribution not found');
@@ -87,16 +87,21 @@ export class PaymentService {
       throw new BadRequestException('Invalid status');
     }
 
-    paymentDist.status = 'completed';
-    paymentDist.transactionHash = updateDto.transaction_hash;
-    await this.paymentDistributionRepository.update(paymentDist.id, paymentDist);
+    await this.paymentDistributionRepository.updatePaymentStatus(
+      paymentDist.id, 
+      'completed', 
+      undefined, 
+      updateDto.transaction_hash
+    );
+
+    const updatedPayment = await this.paymentDistributionRepository.findById(paymentDist.id);
 
     return {
       success: true,
       data: {
-        id: paymentDist.id,
-        status: paymentDist.status,
-        transaction_hash: paymentDist.transactionHash
+        id: updatedPayment.id,
+        status: updatedPayment.status,
+        transaction_hash: updatedPayment.transactionHash
       }
     };
   }
