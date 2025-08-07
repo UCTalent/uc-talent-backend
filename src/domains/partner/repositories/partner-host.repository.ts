@@ -19,6 +19,13 @@ export class PartnerHostRepository implements IBaseRepository<PartnerHost> {
     });
   }
 
+  async findByIdWithJobs(id: string): Promise<PartnerHost | null> {
+    return this.repository.findOne({
+      where: { id },
+      relations: ['partner', 'networks', 'jobs'],
+    });
+  }
+
   async findAll(): Promise<PartnerHost[]> {
     return this.repository.find({
       relations: ['partner', 'networks'],
@@ -70,6 +77,53 @@ export class PartnerHostRepository implements IBaseRepository<PartnerHost> {
       where: { partnerId },
       relations: ['networks', 'jobs']
     });
+  }
+
+  // New method for complex queries
+  async findWithFilters(options: {
+    search?: string;
+    partnerId?: string;
+    isUcTalent?: boolean;
+    sortBy?: string;
+    sortOrder?: 'ASC' | 'DESC';
+    skip?: number;
+    take?: number;
+  }): Promise<{ data: PartnerHost[]; total: number }> {
+    const queryBuilder = this.repository.createQueryBuilder('host')
+      .leftJoinAndSelect('host.partner', 'partner')
+      .leftJoinAndSelect('host.networks', 'networks');
+
+    if (options.search) {
+      queryBuilder.where(
+        'host.host ILIKE :search OR host.slug ILIKE :search OR partner.name ILIKE :search',
+        { search: `%${options.search}%` }
+      );
+    }
+
+    if (options.partnerId) {
+      queryBuilder.andWhere('host.partnerId = :partnerId', { partnerId: options.partnerId });
+    }
+
+    if (options.isUcTalent !== undefined) {
+      queryBuilder.andWhere('host.isUcTalent = :isUcTalent', { isUcTalent: options.isUcTalent });
+    }
+
+    if (options.sortBy) {
+      queryBuilder.orderBy(`host.${options.sortBy}`, options.sortOrder || 'DESC');
+    } else {
+      queryBuilder.orderBy('host.createdAt', 'DESC');
+    }
+
+    if (options.skip !== undefined) {
+      queryBuilder.skip(options.skip);
+    }
+
+    if (options.take !== undefined) {
+      queryBuilder.take(options.take);
+    }
+
+    const [data, total] = await queryBuilder.getManyAndCount();
+    return { data, total };
   }
 
   async findWithStats(): Promise<PartnerHost[]> {

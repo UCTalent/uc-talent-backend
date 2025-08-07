@@ -21,8 +21,6 @@ export class PartnerService {
     private readonly partnerRepository: PartnerRepository,
     private readonly partnerHostRepository: PartnerHostRepository,
     private readonly partnerHostNetworkRepository: PartnerHostNetworkRepository,
-    @InjectRepository(Job)
-    private readonly jobRepository: Repository<Job>,
   ) {}
 
   // Partner Management
@@ -30,23 +28,14 @@ export class PartnerService {
     const { page = 1, limit = 20, search, isUcTalent, sortBy = 'createdAt', sortOrder = 'DESC' } = query;
     const skip = (page - 1) * limit;
 
-    const queryBuilder = this.partnerRepository['repository'].createQueryBuilder('partner')
-      .leftJoinAndSelect('partner.partnerHosts', 'hosts');
-
-    if (search) {
-      queryBuilder.where('partner.name ILIKE :search', { search: `%${search}%` });
-    }
-
-    if (isUcTalent !== undefined) {
-      queryBuilder.andWhere('partner.isUcTalent = :isUcTalent', { isUcTalent });
-    }
-
-    queryBuilder.orderBy(`partner.${sortBy}`, sortOrder as 'ASC' | 'DESC');
-
-    const [partners, total] = await queryBuilder
-      .skip(skip)
-      .take(limit)
-      .getManyAndCount();
+    const { data: partners, total } = await this.partnerRepository.findWithFilters({
+      search,
+      isUcTalent,
+      sortBy,
+      sortOrder: sortOrder as 'ASC' | 'DESC',
+      skip,
+      take: limit
+    });
 
     return {
       success: true,
@@ -63,10 +52,7 @@ export class PartnerService {
   }
 
   async getPartnerById(id: string) {
-    const partner = await this.partnerRepository['repository'].findOne({
-      where: { id },
-      relations: ['partnerHosts', 'partnerHosts.networks', 'partnerHosts.jobs']
-    });
+    const partner = await this.partnerRepository.findByIdWithHosts(id);
 
     if (!partner) {
       throw new NotFoundException('Partner not found');
@@ -129,28 +115,15 @@ export class PartnerService {
     const { page = 1, limit = 20, partnerId, host, isUcTalent, sortBy = 'createdAt', sortOrder = 'DESC' } = query;
     const skip = (page - 1) * limit;
 
-    const queryBuilder = this.partnerHostRepository['repository'].createQueryBuilder('host')
-      .leftJoinAndSelect('host.partner', 'partner')
-      .leftJoinAndSelect('host.networks', 'networks');
-
-    if (partnerId) {
-      queryBuilder.andWhere('host.partnerId = :partnerId', { partnerId });
-    }
-
-    if (host) {
-      queryBuilder.andWhere('host.host ILIKE :host', { host: `%${host}%` });
-    }
-
-    if (isUcTalent !== undefined) {
-      queryBuilder.andWhere('host.isUcTalent = :isUcTalent', { isUcTalent });
-    }
-
-    queryBuilder.orderBy(`host.${sortBy}`, sortOrder as 'ASC' | 'DESC');
-
-    const [partnerHosts, total] = await queryBuilder
-      .skip(skip)
-      .take(limit)
-      .getManyAndCount();
+    const { data: partnerHosts, total } = await this.partnerHostRepository.findWithFilters({
+      search: host, // Use host as search parameter
+      partnerId,
+      isUcTalent,
+      sortBy,
+      sortOrder: sortOrder as 'ASC' | 'DESC',
+      skip,
+      take: limit
+    });
 
     return {
       success: true,
@@ -167,10 +140,7 @@ export class PartnerService {
   }
 
   async getPartnerHostById(id: string) {
-    const partnerHost = await this.partnerHostRepository['repository'].findOne({
-      where: { id },
-      relations: ['partner', 'networks', 'jobs']
-    });
+    const partnerHost = await this.partnerHostRepository.findByIdWithJobs(id);
 
     if (!partnerHost) {
       throw new NotFoundException('Partner host not found');
