@@ -3,15 +3,17 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { AllExceptionsFilter } from './shared/interceptors/exception/http-exception.interceptor';
+import { TransformerInterceptor } from './shared/interceptors/transformer/transformer.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   const configService = app.get(ConfigService);
-  
+
   // Global prefix
   app.setGlobalPrefix('api/v1');
-  
+
   // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
@@ -20,7 +22,10 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  
+  // Global exception and transformer interceptors
+  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalInterceptors(new TransformerInterceptor());
+
   // CORS
   app.enableCors({
     origin: configService.get('FRONTEND_URL', 'http://localhost:3000'),
@@ -52,10 +57,10 @@ async function bootstrap() {
       persistAuthorization: true,
     },
   });
-  
+
   const port = configService.get('PORT', 3001);
   await app.listen(port);
-  
+
   console.log(`🚀 Application is running on: http://localhost:${port}`);
   console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
   console.log(`🎮 GraphQL Playground: http://localhost:${port}/graphql`);

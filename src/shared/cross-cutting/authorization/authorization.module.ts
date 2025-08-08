@@ -35,4 +35,4 @@ import { AdminJwtStrategy } from './strategies/admin-jwt.strategy';
   ],
   exports: [AdminGuard],
 })
-export class AuthorizationModule {} 
+export class AuthorizationModule {}
