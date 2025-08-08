@@ -9,11 +9,11 @@ export class Skill extends BaseEntity {
   @Column()
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'role_id', nullable: true })
   roleId: string;
 
   // Relationships
   @ManyToOne(() => Role, { nullable: true })
-  @JoinColumn({ name: 'roleId' })
+  @JoinColumn({ name: 'role_id' })
   role: Role;
 } 

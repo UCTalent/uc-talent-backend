@@ -13,7 +13,7 @@ import { CurrentUser } from '@shared/cross-cutting/authorization';
 import { User } from '@user/entities/user.entity';
 
 @ApiTags('payment-distributions')
-@Controller('api/v1/payment-distributions')
+@Controller('payment-distributions')
 export class PaymentDistributionController {
   constructor(private readonly paymentService: PaymentService) {}
 

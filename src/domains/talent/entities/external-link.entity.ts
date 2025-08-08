@@ -4,17 +4,17 @@ import { Talent } from './talent.entity';
 
 @Entity('external_links')
 export class ExternalLink extends BaseEntity {
-  @Column()
+  @Column({ name: 'talent_id' })
   talentId: string;
 
-  @Column()
+  @Column({ name: 'title' })
   title: string;
 
-  @Column()
+  @Column({ name: 'url' })
   url: string;
 
   // Relationships
   @ManyToOne(() => Talent, (talent) => talent.externalLinks)
-  @JoinColumn({ name: 'talentId' })
+  @JoinColumn({ name: 'talent_id' })
   talent: Talent;
 } 

@@ -9,13 +9,14 @@ export enum ResumeStatus {
 
 @Entity('uploaded_resumes')
 export class UploadedResume extends BaseEntity {
-  @Column()
+  @Column({ name: 'talent_id' })
   talentId: string;
 
-  @Column()
+  @Column({ name: 'resume_file' })
   resumeFile: string;
 
   @Column({
+    name: 'status',
     type: 'enum',
     enum: ResumeStatus,
     default: ResumeStatus.ACTIVE,
@@ -24,6 +25,6 @@ export class UploadedResume extends BaseEntity {
 
   // Relationships
   @ManyToOne(() => Talent, (talent) => talent.uploadedResumes)
-  @JoinColumn({ name: 'talentId' })
+  @JoinColumn({ name: 'talent_id' })
   talent: Talent;
 } 

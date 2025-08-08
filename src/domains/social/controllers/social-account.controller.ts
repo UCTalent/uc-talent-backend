@@ -35,7 +35,7 @@ import { JwtAuthGuard } from '@shared/cross-cutting/authorization';
 import { CurrentUser } from '@shared/cross-cutting/authorization';
 
 @ApiTags('Social Accounts')
-@Controller('api/v1/social-accounts')
+@Controller('social-accounts')
 export class SocialAccountController {
   constructor(
     private readonly socialAccountService: SocialAccountService,
@@ -217,7 +217,7 @@ export class SocialAccountController {
 }
 
 @ApiTags('Social Authentication')
-@Controller('api/v1/social-auth')
+@Controller('social-auth')
 export class SocialAuthController {
   constructor(private readonly socialAuthService: SocialAuthService) {}
 

@@ -5,7 +5,7 @@ import { Role } from '@skill/entities/role.entity';
 import { RoleResponseDto, RoleListResponseDto } from '@skill/dtos/skill-response.dto';
 
 @ApiTags('roles')
-@Controller('api/v1/roles')
+@Controller('roles')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 

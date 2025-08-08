@@ -5,30 +5,30 @@ import { Job } from '@job/entities/job.entity';
 
 @Entity('recommendation_jobs')
 export class RecommendationJob extends BaseEntity {
-  @Column()
+  @Column({ name: 'talent_id' })
   talentId: string;
 
-  @Column()
+  @Column({ name: 'job_id' })
   jobId: string;
 
-  @Column({ type: 'float', default: 0 })
+  @Column({ name: 'match_score', type: 'float', default: 0 })
   score: number;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ name: 'match_reasons', type: 'jsonb', nullable: true })
   matchReasons: Record<string, any>;
 
-  @Column({ default: false })
+  @Column({ name: 'is_viewed', default: false })
   isViewed: boolean;
 
-  @Column({ default: false })
+  @Column({ name: 'is_applied', default: false })
   isApplied: boolean;
 
   // Relationships
   @ManyToOne(() => Talent, (talent) => talent.recommendationJobs)
-  @JoinColumn({ name: 'talentId' })
+  @JoinColumn({ name: 'talent_id' })
   talent: Talent;
 
   @ManyToOne(() => Job)
-  @JoinColumn({ name: 'jobId' })
+  @JoinColumn({ name: 'job_id' })
   job: Job;
 } 

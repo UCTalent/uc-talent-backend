@@ -5,7 +5,7 @@ import { Skill } from '@skill/entities/skill.entity';
 import { SkillResponseDto, SkillListResponseDto } from '@skill/dtos/skill-response.dto';
 
 @ApiTags('skills')
-@Controller('api/v1/skills')
+@Controller('skills')
 export class SkillController {
   constructor(private readonly skillService: SkillService) {}
 

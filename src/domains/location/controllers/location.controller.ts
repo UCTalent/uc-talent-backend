@@ -14,7 +14,7 @@ import {
 } from '@location/dtos/location-response.dto';
 
 @ApiTags('locations')
-@Controller('api/v1/locations')
+@Controller('locations')
 export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 

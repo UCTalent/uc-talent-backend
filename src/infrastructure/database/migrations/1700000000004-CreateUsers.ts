@@ -1,13 +1,13 @@
 import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
 
-export class CreateUsers1700000000002 implements MigrationInterface {
+export class CreateUsers1700000000004 implements MigrationInterface {
+  name = 'CreateUsers1700000000004';
+
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Create user_status enum
     await queryRunner.query(`
       CREATE TYPE "public"."user_status_enum" AS ENUM('active', 'inactive', 'locked')
     `);
 
-    // Create users table
     await queryRunner.createTable(
       new Table({
         name: 'users',
@@ -30,33 +30,33 @@ export class CreateUsers1700000000002 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'phoneNumber',
+            name: 'phone_number',
             type: 'varchar',
             isNullable: true,
           },
           {
-            name: 'phoneNumberCountry',
+            name: 'phone_number_country',
             type: 'varchar',
             isNullable: true,
           },
           {
-            name: 'encryptedPassword',
+            name: 'encrypted_password',
             type: 'varchar',
             isNullable: true,
           },
           {
-            name: 'firebaseUid',
+            name: 'firebase_uid',
             type: 'varchar',
             isNullable: true,
             isUnique: true,
           },
           {
-            name: 'firebaseProvider',
+            name: 'firebase_provider',
             type: 'varchar',
             isNullable: true,
           },
           {
-            name: 'thirdwebMetadata',
+            name: 'thirdweb_metadata',
             type: 'jsonb',
             isNullable: true,
           },
@@ -73,87 +73,87 @@ export class CreateUsers1700000000002 implements MigrationInterface {
             default: "'{}'",
           },
           {
-            name: 'refCode',
+            name: 'ref_code',
             type: 'varchar',
             isNullable: true,
           },
           {
-            name: 'locationCityId',
+            name: 'location_city_id',
             type: 'uuid',
             isNullable: true,
           },
           {
-            name: 'isClickConfirmedForm',
+            name: 'is_click_confirmed_form',
             type: 'boolean',
             default: false,
           },
           {
-            name: 'confirmationToken',
+            name: 'confirmation_token',
             type: 'varchar',
             isNullable: true,
           },
           {
-            name: 'confirmedAt',
+            name: 'confirmed_at',
             type: 'timestamp',
             isNullable: true,
           },
           {
-            name: 'resetPasswordToken',
+            name: 'reset_password_token',
             type: 'varchar',
             isNullable: true,
           },
           {
-            name: 'resetPasswordSentAt',
+            name: 'reset_password_sent_at',
             type: 'timestamp',
             isNullable: true,
           },
           {
-            name: 'signInCount',
+            name: 'sign_in_count',
             type: 'integer',
             default: 0,
           },
           {
-            name: 'currentSignInAt',
+            name: 'current_sign_in_at',
             type: 'timestamp',
             isNullable: true,
           },
           {
-            name: 'lastSignInAt',
+            name: 'last_sign_in_at',
             type: 'timestamp',
             isNullable: true,
           },
           {
-            name: 'currentSignInIp',
+            name: 'current_sign_in_ip',
             type: 'varchar',
             isNullable: true,
           },
           {
-            name: 'lastSignInIp',
+            name: 'last_sign_in_ip',
             type: 'varchar',
             isNullable: true,
           },
           {
-            name: 'lockedAt',
+            name: 'locked_at',
             type: 'timestamp',
             isNullable: true,
           },
           {
-            name: 'unlockToken',
+            name: 'unlock_token',
             type: 'varchar',
             isNullable: true,
           },
           {
-            name: 'failedAttempts',
+            name: 'failed_attempts',
             type: 'integer',
             default: 0,
           },
           {
-            name: 'rememberCreatedAt',
+            name: 'remember_created_at',
             type: 'timestamp',
             isNullable: true,
           },
           {
-            name: 'unconfirmedEmail',
+            name: 'unconfirmed_email',
             type: 'varchar',
             isNullable: true,
           },
@@ -164,12 +164,12 @@ export class CreateUsers1700000000002 implements MigrationInterface {
             default: "'active'",
           },
           {
-            name: 'createdAt',
+            name: 'created_at',
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
           },
           {
-            name: 'updatedAt',
+            name: 'updated_at',
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
           },
@@ -178,18 +178,16 @@ export class CreateUsers1700000000002 implements MigrationInterface {
       true,
     );
 
-    // Create foreign key for location city
     await queryRunner.createForeignKey(
       'users',
       new TableForeignKey({
-        columnNames: ['locationCityId'],
+        columnNames: ['location_city_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'cities',
         onDelete: 'SET NULL',
       }),
     );
 
-    // Create indexes
     await queryRunner.createIndex(
       'users',
       new TableIndex({
@@ -202,45 +200,22 @@ export class CreateUsers1700000000002 implements MigrationInterface {
       'users',
       new TableIndex({
         name: 'IDX_USERS_FIREBASE_UID',
-        columnNames: ['firebaseUid'],
-      }),
-    );
-
-    await queryRunner.createIndex(
-      'users',
-      new TableIndex({
-        name: 'IDX_USERS_STATUS',
-        columnNames: ['status'],
-      }),
-    );
-
-    await queryRunner.createIndex(
-      'users',
-      new TableIndex({
-        name: 'IDX_USERS_LOCATION_CITY_ID',
-        columnNames: ['locationCityId'],
+        columnNames: ['firebase_uid'],
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Drop indexes
-    await queryRunner.dropIndex('users', 'IDX_USERS_LOCATION_CITY_ID');
-    await queryRunner.dropIndex('users', 'IDX_USERS_STATUS');
     await queryRunner.dropIndex('users', 'IDX_USERS_FIREBASE_UID');
     await queryRunner.dropIndex('users', 'IDX_USERS_EMAIL');
 
-    // Drop foreign key
     const table = await queryRunner.getTable('users');
-    const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf('locationCityId') !== -1);
+    const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf('location_city_id') !== -1);
     if (foreignKey) {
       await queryRunner.dropForeignKey('users', foreignKey);
     }
 
-    // Drop table
     await queryRunner.dropTable('users');
-
-    // Drop enum type
     await queryRunner.query(`DROP TYPE "public"."user_status_enum"`);
   }
 }

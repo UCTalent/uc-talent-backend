@@ -1,8 +1,9 @@
 import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
 
-export class CreateTalents1700000000003 implements MigrationInterface {
+export class CreateTalents1700000000005 implements MigrationInterface {
+  name = 'CreateTalents1700000000005';
+
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Create enum types first
     await queryRunner.query(`
       CREATE TYPE "public"."employment_status_enum" AS ENUM('available_now', 'open_to_opportunities', 'just_browsing')
     `);
@@ -15,7 +16,6 @@ export class CreateTalents1700000000003 implements MigrationInterface {
       CREATE TYPE "public"."talent_status_enum" AS ENUM('new_profile', 'under_review', 'active', 'disabled')
     `);
 
-    // Create talents table
     await queryRunner.createTable(
       new Table({
         name: 'talents',
@@ -28,7 +28,7 @@ export class CreateTalents1700000000003 implements MigrationInterface {
             default: 'uuid_generate_v4()',
           },
           {
-            name: 'userId',
+            name: 'user_id',
             type: 'uuid',
           },
           {
@@ -37,24 +37,24 @@ export class CreateTalents1700000000003 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'employmentStatus',
+            name: 'employment_status',
             type: 'enum',
             enum: ['available_now', 'open_to_opportunities', 'just_browsing'],
             default: "'just_browsing'",
           },
           {
-            name: 'englishProficiency',
+            name: 'english_proficiency',
             type: 'enum',
             enum: ['basic', 'conversational', 'fluent', 'native'],
             default: "'conversational'",
           },
           {
-            name: 'experienceLevel',
+            name: 'experience_level',
             type: 'integer',
             default: 0,
           },
           {
-            name: 'managementLevel',
+            name: 'management_level',
             type: 'integer',
             default: 0,
           },
@@ -75,12 +75,12 @@ export class CreateTalents1700000000003 implements MigrationInterface {
             isNullable: true,
           },
           {
-            name: 'createdAt',
+            name: 'created_at',
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
           },
           {
-            name: 'updatedAt',
+            name: 'updated_at',
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
           },
@@ -89,58 +89,35 @@ export class CreateTalents1700000000003 implements MigrationInterface {
       true,
     );
 
-    // Create foreign key for users table
     await queryRunner.createForeignKey(
       'talents',
       new TableForeignKey({
-        columnNames: ['userId'],
+        columnNames: ['user_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'CASCADE',
       }),
     );
 
-    // Create indexes
     await queryRunner.createIndex(
       'talents',
       new TableIndex({
         name: 'IDX_TALENTS_USER_ID',
-        columnNames: ['userId'],
-      }),
-    );
-
-    await queryRunner.createIndex(
-      'talents',
-      new TableIndex({
-        name: 'IDX_TALENTS_STATUS',
-        columnNames: ['status'],
-      }),
-    );
-
-    await queryRunner.createIndex(
-      'talents',
-      new TableIndex({
-        name: 'IDX_TALENTS_EMPLOYMENT_STATUS',
-        columnNames: ['employmentStatus'],
+        columnNames: ['user_id'],
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Drop indexes
-    await queryRunner.dropIndex('talents', 'IDX_TALENTS_EMPLOYMENT_STATUS');
-    await queryRunner.dropIndex('talents', 'IDX_TALENTS_STATUS');
     await queryRunner.dropIndex('talents', 'IDX_TALENTS_USER_ID');
 
-    // Drop foreign keys
     const table = await queryRunner.getTable('talents');
-    const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf('userId') !== -1);
-    await queryRunner.dropForeignKey('talents', foreignKey);
+    const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf('user_id') !== -1);
+    if (foreignKey) {
+      await queryRunner.dropForeignKey('talents', foreignKey);
+    }
 
-    // Drop table
     await queryRunner.dropTable('talents');
-
-    // Drop enum types
     await queryRunner.query(`DROP TYPE "public"."talent_status_enum"`);
     await queryRunner.query(`DROP TYPE "public"."english_proficiency_enum"`);
     await queryRunner.query(`DROP TYPE "public"."employment_status_enum"`);

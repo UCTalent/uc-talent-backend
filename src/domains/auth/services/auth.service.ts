@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@user/services/user.service';
 import { FirebaseAuthService } from './firebase-auth.service';
 import { Web3AuthService } from './web3-auth.service';
+import { EmailService } from '@infrastructure/email/services/email.service';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
 import { FirebaseAuthDto } from '../dtos/firebase-auth.dto';
@@ -18,9 +19,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly firebaseAuthService: FirebaseAuthService,
     private readonly web3AuthService: Web3AuthService,
+    private readonly emailService: EmailService,
   ) {}
 
-  async login(loginDto: LoginDto) {
+  async login(loginDto: LoginDto, clientIP: string) {
     // 1. Find user by email
     const user = await this.userService.findByEmail(loginDto.email);
     if (!user) {
@@ -52,7 +54,7 @@ export class AuthService {
     const token = this.jwtService.sign(payload);
 
     // 6. Update sign in info
-    await this.userService.updateSignInInfo(user.id, '127.0.0.1'); // TODO: Get real IP
+    await this.userService.updateSignInInfo(user.id, clientIP);
 
     // 7. Check if user has talent profile
     const hasProfile = await this.userService.hasTalentProfile(user.id);
@@ -77,17 +79,14 @@ export class AuthService {
       throw new ConflictException('User with this email already exists');
     }
 
-    // 2. Hash password
-    const hashedPassword = await this.hashPassword(registerDto.password);
-
-    // 3. Generate confirmation token
+    // 2. Generate confirmation token
     const confirmationToken = this.generateConfirmationToken();
 
-    // 4. Create user
+    // 3. Create user (password will be hashed by UserService)
     const user = await this.userService.create({
       name: registerDto.name,
       email: registerDto.email,
-      password: hashedPassword,
+      password: registerDto.password,
       locationCityId: registerDto.location_city_id,
       refCode: registerDto.ref_code
     });
@@ -98,8 +97,8 @@ export class AuthService {
       confirmedAt: null
     });
 
-    // 6. Send confirmation email (TODO: Implement email service)
-    // await this.emailService.sendConfirmationEmail(user.email, confirmationToken);
+    // 6. Send confirmation email (temporarily disabled for testing)
+    // await this.emailService.sendConfirmationEmail(user.email, user.name, confirmationToken);
 
     return {
       user: {
@@ -127,8 +126,8 @@ export class AuthService {
       const resetToken = this.generateResetToken();
       await this.userService.updateResetToken(user.id, resetToken);
       
-      // Send reset email (TODO: Implement email service)
-      // await this.emailService.sendPasswordResetEmail(user.email, resetToken);
+      // Send reset email (temporarily disabled for testing)
+      // await this.emailService.sendPasswordResetEmail(user.email, user.name, resetToken);
     }
     
     return { message: 'Reset password email sent' };

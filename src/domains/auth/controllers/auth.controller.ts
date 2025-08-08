@@ -7,13 +7,16 @@ import { FirebaseAuthDto } from '../dtos/firebase-auth.dto';
 import { Web3AuthDto } from '../dtos/web3-auth.dto';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
+import { ClientIP } from '../../../shared/cross-cutting/authorization/decorators/current-user.decorator';
+import { Public } from '../../../shared/cross-cutting/authorization/decorators/public.decorator';
 
 @ApiTags('auth')
-@Controller('api/v1/auth')
+@Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login with email and password' })
   @ApiBody({ type: LoginDto })
@@ -42,11 +45,12 @@ export class AuthController {
     status: 401,
     description: 'Invalid credentials'
   })
-  async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  async login(@Body() loginDto: LoginDto, @ClientIP() clientIP: string) {
+    return this.authService.login(loginDto, clientIP);
   }
 
   @Post('register')
+  @Public()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Register new user' })
   @ApiBody({ type: RegisterDto })
@@ -78,6 +82,7 @@ export class AuthController {
   }
 
   @Post('firebase')
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login with Firebase token' })
   @ApiBody({ type: FirebaseAuthDto })
@@ -113,6 +118,7 @@ export class AuthController {
   }
 
   @Post('web3')
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login with Web3/Thirdweb' })
   @ApiBody({ type: Web3AuthDto })
@@ -140,6 +146,7 @@ export class AuthController {
   }
 
   @Post('forgot-password')
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Request password reset' })
   @ApiBody({ type: ForgotPasswordDto })
@@ -158,6 +165,7 @@ export class AuthController {
   }
 
   @Put('reset-password')
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset password' })
   @ApiBody({ type: ResetPasswordDto })
@@ -180,6 +188,7 @@ export class AuthController {
   }
 
   @Get('confirm-email')
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Confirm email' })
   @ApiResponse({
@@ -205,6 +214,7 @@ export class AuthController {
   }
 
   @Post('social/callback')
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Social login callback' })
   @ApiResponse({

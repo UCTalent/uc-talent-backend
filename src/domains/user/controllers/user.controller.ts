@@ -26,7 +26,7 @@ import { UserResponseDto, UserListResponseDto } from '@user/dtos/user-response.d
 import { User } from '@user/entities/user.entity';
 
 @ApiTags('users')
-@Controller('api/v1/users')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

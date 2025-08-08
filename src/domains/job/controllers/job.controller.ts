@@ -25,7 +25,7 @@ import { JobResponseDto, JobListResponseDto } from '@job/dtos/job-response.dto';
 import { Job } from '@job/entities/job.entity';
 
 @ApiTags('jobs')
-@Controller('api/v1/jobs')
+@Controller('jobs')
 export class JobController {
   constructor(private readonly jobService: JobService) {}
 

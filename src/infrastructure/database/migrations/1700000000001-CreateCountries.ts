@@ -1,8 +1,9 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class CreateCountries1700000000011 implements MigrationInterface {
+export class CreateCountries1700000000001 implements MigrationInterface {
+  name = 'CreateCountries1700000000001';
+
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Create countries table
     await queryRunner.createTable(
       new Table({
         name: 'countries',
@@ -24,12 +25,12 @@ export class CreateCountries1700000000011 implements MigrationInterface {
             isUnique: true,
           },
           {
-            name: 'createdAt',
+            name: 'created_at',
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
           },
           {
-            name: 'updatedAt',
+            name: 'updated_at',
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
           },
@@ -37,31 +38,9 @@ export class CreateCountries1700000000011 implements MigrationInterface {
       }),
       true,
     );
-
-    // Create indexes
-    await queryRunner.createIndex(
-      'countries',
-      new TableIndex({
-        name: 'IDX_COUNTRIES_CODE',
-        columnNames: ['code'],
-      }),
-    );
-
-    await queryRunner.createIndex(
-      'countries',
-      new TableIndex({
-        name: 'IDX_COUNTRIES_NAME',
-        columnNames: ['name'],
-      }),
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Drop indexes
-    await queryRunner.dropIndex('countries', 'IDX_COUNTRIES_NAME');
-    await queryRunner.dropIndex('countries', 'IDX_COUNTRIES_CODE');
-
-    // Drop table
     await queryRunner.dropTable('countries');
   }
 }

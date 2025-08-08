@@ -24,7 +24,7 @@ import { TalentResponseDto, TalentListResponseDto } from '@talent/dtos/talent-re
 import { Talent } from '@talent/entities/talent.entity';
 
 @ApiTags('talents')
-@Controller('api/v1/talents')
+@Controller('talents')
 export class TalentController {
   constructor(private readonly talentService: TalentService) {}
 

@@ -23,7 +23,7 @@ import { OrganizationResponseDto, OrganizationListResponseDto } from '@organizat
 import { Organization } from '@organization/entities/organization.entity';
 
 @ApiTags('organizations')
-@Controller('api/v1/organizations')
+@Controller('organizations')
 export class OrganizationController {
   constructor(private readonly organizationService: OrganizationService) {}
 

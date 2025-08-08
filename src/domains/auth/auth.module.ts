@@ -7,10 +7,12 @@ import { AuthService } from './services/auth.service';
 import { FirebaseAuthService } from './services/firebase-auth.service';
 import { Web3AuthService } from './services/web3-auth.service';
 import { UserModule } from '@user/user.module';
+import { EmailModule } from '@infrastructure/email/email.module';
 
 @Module({
   imports: [
     UserModule,
+    EmailModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

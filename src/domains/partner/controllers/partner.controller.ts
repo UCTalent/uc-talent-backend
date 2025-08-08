@@ -24,7 +24,7 @@ import { CreatePartnerNetworkDto, UpdatePartnerNetworkDto } from '@domains/partn
 import { PartnerResponseDto, PartnerHostResponseDto, PartnerNetworkResponseDto } from '@domains/partner/dtos/partner-response.dto';
 
 @ApiTags('Partners')
-@Controller('api/v1/partners')
+@Controller('partners')
 export class PartnerController {
   constructor(private readonly partnerService: PartnerService) {}
 
@@ -90,7 +90,7 @@ export class PartnerController {
 }
 
 @ApiTags('Partner Hosts')
-@Controller('api/v1/partner-hosts')
+@Controller('partner-hosts')
 export class PartnerHostController {
   constructor(private readonly partnerService: PartnerService) {}
 
@@ -182,7 +182,7 @@ export class PartnerHostController {
 }
 
 @ApiTags('Partner Authentication')
-@Controller('api/v1/partner-auth')
+@Controller('partner-auth')
 export class PartnerAuthController {
   constructor(private readonly partnerService: PartnerService) {}
 

@@ -4,35 +4,35 @@ import { Talent } from './talent.entity';
 
 @Entity('experiences')
 export class Experience extends BaseEntity {
-  @Column()
+  @Column({ name: 'talent_id' })
   talentId: string;
 
-  @Column()
+  @Column({ name: 'job_title' })
   title: string;
 
-  @Column()
+  @Column({ name: 'company_name' })
   company: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'location', nullable: true })
   location: string;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ name: 'start_date', type: 'date', nullable: true })
   startDate: Date;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ name: 'end_date', type: 'date', nullable: true })
   endDate: Date;
 
-  @Column({ default: false })
+  @Column({ name: 'is_current', default: false })
   current: boolean;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'description', type: 'text', nullable: true })
   description: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'job_type', nullable: true })
   jobType: string;
 
   // Relationships
   @ManyToOne(() => Talent, (talent) => talent.experiences)
-  @JoinColumn({ name: 'talentId' })
+  @JoinColumn({ name: 'talent_id' })
   talent: Talent;
 } 

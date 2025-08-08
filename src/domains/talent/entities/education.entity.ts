@@ -4,32 +4,32 @@ import { Talent } from './talent.entity';
 
 @Entity('educations')
 export class Education extends BaseEntity {
-  @Column()
+  @Column({ name: 'talent_id' })
   talentId: string;
 
-  @Column()
+  @Column({ name: 'institution_name' })
   institution: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'degree_name', nullable: true })
   degree: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'field_of_study', nullable: true })
   fieldOfStudy: string;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ name: 'start_date', type: 'date', nullable: true })
   startDate: Date;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ name: 'end_date', type: 'date', nullable: true })
   endDate: Date;
 
-  @Column({ default: false })
+  @Column({ name: 'is_current', default: false })
   current: boolean;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'description', type: 'text', nullable: true })
   description: string;
 
   // Relationships
   @ManyToOne(() => Talent, (talent) => talent.educations)
-  @JoinColumn({ name: 'talentId' })
+  @JoinColumn({ name: 'talent_id' })
   talent: Talent;
 } 

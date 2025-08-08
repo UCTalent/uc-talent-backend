@@ -37,7 +37,7 @@ export class Talent extends BaseEntity {
     description: 'User ID',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  @Column()
+  @Column({ name: 'user_id' })
   userId: string;
 
   @ApiProperty({
@@ -54,6 +54,7 @@ export class Talent extends BaseEntity {
     example: EmploymentStatus.AVAILABLE_NOW,
   })
   @Column({
+    name: 'employment_status',
     type: 'enum',
     enum: EmploymentStatus,
     default: EmploymentStatus.JUST_BROWSING,
@@ -66,6 +67,7 @@ export class Talent extends BaseEntity {
     example: EnglishProficiency.FLUENT,
   })
   @Column({
+    name: 'english_proficiency',
     type: 'enum',
     enum: EnglishProficiency,
     default: EnglishProficiency.CONVERSATIONAL,
@@ -76,14 +78,14 @@ export class Talent extends BaseEntity {
     description: 'Experience level in years',
     example: 5,
   })
-  @Column({ default: 0 })
+  @Column({ name: 'experience_level', default: 0 })
   experienceLevel: number;
 
   @ApiProperty({
     description: 'Management level',
     example: 2,
   })
-  @Column({ default: 0 })
+  @Column({ name: 'management_level', default: 0 })
   managementLevel: number;
 
   @ApiProperty({
@@ -92,6 +94,7 @@ export class Talent extends BaseEntity {
     example: TalentStatus.ACTIVE,
   })
   @Column({
+    name: 'status',
     type: 'enum',
     enum: TalentStatus,
     default: TalentStatus.NEW_PROFILE,
@@ -102,7 +105,7 @@ export class Talent extends BaseEntity {
     description: 'Profile completion step',
     example: 3,
   })
-  @Column({ default: 0 })
+  @Column({ name: 'step', default: 0 })
   step: number;
 
   @ApiProperty({
@@ -115,7 +118,7 @@ export class Talent extends BaseEntity {
 
   // Relationships
   @ManyToOne(() => User, (user) => user.talents)
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @OneToMany(() => Experience, (experience) => experience.talent)

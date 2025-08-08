@@ -10,15 +10,15 @@ export class City extends BaseEntity {
   @Column()
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'name_ascii', nullable: true })
   nameAscii: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'country_id', nullable: true })
   countryId: string;
 
   // Relationships
   @ManyToOne(() => Country, { nullable: true })
-  @JoinColumn({ name: 'countryId' })
+  @JoinColumn({ name: 'country_id' })
   country: Country;
 
   @OneToMany(() => User, (user) => user.locationCity)

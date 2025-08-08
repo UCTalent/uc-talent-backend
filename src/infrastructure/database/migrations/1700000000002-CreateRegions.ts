@@ -1,8 +1,9 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
 
-export class CreateRegions1700000000012 implements MigrationInterface {
+export class CreateRegions1700000000002 implements MigrationInterface {
+  name = 'CreateRegions1700000000002';
+
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Create regions table
     await queryRunner.createTable(
       new Table({
         name: 'regions',
@@ -19,17 +20,16 @@ export class CreateRegions1700000000012 implements MigrationInterface {
             type: 'varchar',
           },
           {
-            name: 'description',
-            type: 'text',
-            isNullable: true,
+            name: 'country_id',
+            type: 'uuid',
           },
           {
-            name: 'createdAt',
+            name: 'created_at',
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
           },
           {
-            name: 'updatedAt',
+            name: 'updated_at',
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
           },
@@ -38,21 +38,23 @@ export class CreateRegions1700000000012 implements MigrationInterface {
       true,
     );
 
-    // Create indexes
-    await queryRunner.createIndex(
+    await queryRunner.createForeignKey(
       'regions',
-      new TableIndex({
-        name: 'IDX_REGIONS_NAME',
-        columnNames: ['name'],
+      new TableForeignKey({
+        columnNames: ['country_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'countries',
+        onDelete: 'CASCADE',
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Drop indexes
-    await queryRunner.dropIndex('regions', 'IDX_REGIONS_NAME');
-
-    // Drop table
+    const table = await queryRunner.getTable('regions');
+    const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf('country_id') !== -1);
+    if (foreignKey) {
+      await queryRunner.dropForeignKey('regions', foreignKey);
+    }
     await queryRunner.dropTable('regions');
   }
 }

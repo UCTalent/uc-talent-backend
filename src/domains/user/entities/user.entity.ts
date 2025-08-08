@@ -42,7 +42,7 @@ export class User extends BaseEntity {
     example: '+1234567890',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'phone_number', nullable: true })
   phoneNumber: string;
 
   @ApiProperty({
@@ -50,7 +50,7 @@ export class User extends BaseEntity {
     example: 'US',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'phone_number_country', nullable: true })
   phoneNumberCountry: string;
 
   @ApiProperty({
@@ -58,7 +58,7 @@ export class User extends BaseEntity {
     example: 'hashed_password_string',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'encrypted_password', nullable: true })
   encryptedPassword: string;
 
   @ApiProperty({
@@ -66,7 +66,7 @@ export class User extends BaseEntity {
     example: 'firebase_uid_123',
     required: false,
   })
-  @Column({ nullable: true, unique: true })
+  @Column({ name: 'firebase_uid', nullable: true, unique: true })
   @Index()
   firebaseUid: string;
 
@@ -75,7 +75,7 @@ export class User extends BaseEntity {
     example: 'google',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'firebase_provider', nullable: true })
   firebaseProvider: string;
 
   @ApiProperty({
@@ -83,7 +83,7 @@ export class User extends BaseEntity {
     example: { wallet: '0x123...' },
     required: false,
   })
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ name: 'thirdweb_metadata', type: 'jsonb', nullable: true })
   thirdwebMetadata: Record<string, any>;
 
   @ApiProperty({
@@ -107,7 +107,7 @@ export class User extends BaseEntity {
     example: 'REF123',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'ref_code', nullable: true })
   refCode: string;
 
   @ApiProperty({
@@ -115,14 +115,14 @@ export class User extends BaseEntity {
     example: '123e4567-e89b-12d3-a456-426614174000',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'location_city_id', nullable: true })
   locationCityId: string;
 
   @ApiProperty({
     description: 'Whether user confirmed form',
     example: false,
   })
-  @Column({ default: false })
+  @Column({ name: 'is_click_confirmed_form', default: false })
   isClickConfirmedForm: boolean;
 
   @ApiProperty({
@@ -130,7 +130,7 @@ export class User extends BaseEntity {
     example: 'confirmation_token_123',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'confirmation_token', nullable: true })
   confirmationToken: string;
 
   @ApiProperty({
@@ -138,7 +138,7 @@ export class User extends BaseEntity {
     example: '2023-01-01T00:00:00.000Z',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'confirmed_at', nullable: true })
   confirmedAt: Date;
 
   @ApiProperty({
@@ -146,7 +146,7 @@ export class User extends BaseEntity {
     example: 'reset_token_123',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'reset_password_token', nullable: true })
   resetPasswordToken: string;
 
   @ApiProperty({
@@ -154,14 +154,14 @@ export class User extends BaseEntity {
     example: '2023-01-01T00:00:00.000Z',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'reset_password_sent_at', nullable: true })
   resetPasswordSentAt: Date;
 
   @ApiProperty({
     description: 'Sign in count',
     example: 5,
   })
-  @Column({ default: 0 })
+  @Column({ name: 'sign_in_count', default: 0 })
   signInCount: number;
 
   @ApiProperty({
@@ -169,7 +169,7 @@ export class User extends BaseEntity {
     example: '2023-01-01T00:00:00.000Z',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'current_sign_in_at', nullable: true })
   currentSignInAt: Date;
 
   @ApiProperty({
@@ -177,7 +177,7 @@ export class User extends BaseEntity {
     example: '2023-01-01T00:00:00.000Z',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'last_sign_in_at', nullable: true })
   lastSignInAt: Date;
 
   @ApiProperty({
@@ -185,7 +185,7 @@ export class User extends BaseEntity {
     example: '192.168.1.1',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'current_sign_in_ip', nullable: true })
   currentSignInIp: string;
 
   @ApiProperty({
@@ -193,7 +193,7 @@ export class User extends BaseEntity {
     example: '192.168.1.1',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'last_sign_in_ip', nullable: true })
   lastSignInIp: string;
 
   @ApiProperty({
@@ -201,7 +201,7 @@ export class User extends BaseEntity {
     example: '2023-01-01T00:00:00.000Z',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'locked_at', nullable: true })
   lockedAt: Date;
 
   @ApiProperty({
@@ -209,14 +209,14 @@ export class User extends BaseEntity {
     example: 'unlock_token_123',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'unlock_token', nullable: true })
   unlockToken: string;
 
   @ApiProperty({
     description: 'Failed login attempts',
     example: 0,
   })
-  @Column({ default: 0 })
+  @Column({ name: 'failed_attempts', default: 0 })
   failedAttempts: number;
 
   @ApiProperty({
@@ -224,7 +224,7 @@ export class User extends BaseEntity {
     example: '2023-01-01T00:00:00.000Z',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'remember_created_at', nullable: true })
   rememberCreatedAt: Date;
 
   @ApiProperty({
@@ -232,7 +232,7 @@ export class User extends BaseEntity {
     example: 'new.email@example.com',
     required: false,
   })
-  @Column({ nullable: true })
+  @Column({ name: 'unconfirmed_email', nullable: true })
   unconfirmedEmail: string;
 
   @ApiProperty({
@@ -260,6 +260,6 @@ export class User extends BaseEntity {
   socialAccounts: SocialAccount[];
 
   @ManyToOne(() => City, { nullable: true })
-  @JoinColumn({ name: 'locationCityId' })
+  @JoinColumn({ name: 'location_city_id' })
   locationCity: City;
 } 

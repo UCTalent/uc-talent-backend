@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailerService } from './services/mailer.service';
+import { EmailService } from './services/email.service';
 
 @Module({
   imports: [ConfigModule],
   providers: [
     MailerService,
+    EmailService,
     {
       provide: 'AWS_SES',
       useFactory: (configService: ConfigService) => {
@@ -19,6 +21,6 @@ import { MailerService } from './services/mailer.service';
       inject: [ConfigService],
     },
   ],
-  exports: [MailerService],
+  exports: [MailerService, EmailService],
 })
 export class EmailModule {} 
