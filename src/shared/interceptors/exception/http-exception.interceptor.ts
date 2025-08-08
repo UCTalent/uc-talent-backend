@@ -1,0 +1,43 @@
+import {
+  ArgumentsHost,
+  BadRequestException,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+
+import { ResponseHandler } from '@shared/utils/response-handler';
+
+@Catch()
+export class AllExceptionsFilter implements ExceptionFilter {
+  catch(exception: Error, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse();
+
+    const status =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
+    const isDev = process.env.NODE_ENV === 'development';
+
+    if (exception instanceof BadRequestException) {
+      return response.status(status).json(exception.getResponse());
+    }
+
+    const httpStatusName = Object.keys(HttpStatus).find(
+      key => typeof HttpStatus[key] === 'number' && HttpStatus[key] === status,
+    );
+
+    return response.status(status).json(
+      ResponseHandler.error({
+        statusCode: status,
+        errors: exception.name
+          ? [exception.name, httpStatusName]
+          : [httpStatusName],
+        message: exception.message,
+        stack: isDev ? exception.stack : undefined,
+      }),
+    );
+  }
+}
