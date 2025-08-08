@@ -24,6 +24,7 @@ import { CreateUserDto } from '@user/dtos/create-user.dto';
 import { UpdateUserDto } from '@user/dtos/update-user.dto';
 import { UserResponseDto, UserListResponseDto } from '@user/dtos/user-response.dto';
 import { User } from '@user/entities/user.entity';
+import { Public } from '@shared/cross-cutting/authorization/decorators/public.decorator';
 
 @ApiTags('users')
 @Controller('users')
@@ -53,6 +54,7 @@ export class UserController {
   }
 
   @Get()
+  @Public() // Test endpoint - không cần authentication
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({
     status: 200,

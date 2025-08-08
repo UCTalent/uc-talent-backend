@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export class CreateRegions1700000000002 implements MigrationInterface {
   name = 'CreateRegions1700000000002';
@@ -20,8 +20,9 @@ export class CreateRegions1700000000002 implements MigrationInterface {
             type: 'varchar',
           },
           {
-            name: 'country_id',
-            type: 'uuid',
+            name: 'description',
+            type: 'text',
+            isNullable: true,
           },
           {
             name: 'created_at',
@@ -37,24 +38,9 @@ export class CreateRegions1700000000002 implements MigrationInterface {
       }),
       true,
     );
-
-    await queryRunner.createForeignKey(
-      'regions',
-      new TableForeignKey({
-        columnNames: ['country_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'countries',
-        onDelete: 'CASCADE',
-      }),
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    const table = await queryRunner.getTable('regions');
-    const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf('country_id') !== -1);
-    if (foreignKey) {
-      await queryRunner.dropForeignKey('regions', foreignKey);
-    }
     await queryRunner.dropTable('regions');
   }
 }

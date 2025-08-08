@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
 
 export class CreateTalents1700000000005 implements MigrationInterface {
   name = 'CreateTalents1700000000005';
@@ -98,19 +98,9 @@ export class CreateTalents1700000000005 implements MigrationInterface {
         onDelete: 'CASCADE',
       }),
     );
-
-    await queryRunner.createIndex(
-      'talents',
-      new TableIndex({
-        name: 'IDX_TALENTS_USER_ID',
-        columnNames: ['user_id'],
-      }),
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropIndex('talents', 'IDX_TALENTS_USER_ID');
-
     const table = await queryRunner.getTable('talents');
     const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf('user_id') !== -1);
     if (foreignKey) {

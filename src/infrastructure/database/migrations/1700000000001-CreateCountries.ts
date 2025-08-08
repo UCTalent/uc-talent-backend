@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
 
 export class CreateCountries1700000000001 implements MigrationInterface {
   name = 'CreateCountries1700000000001';
@@ -38,9 +38,18 @@ export class CreateCountries1700000000001 implements MigrationInterface {
       }),
       true,
     );
+
+    await queryRunner.createIndex(
+      'countries',
+      new TableIndex({
+        name: 'IDX_COUNTRIES_CODE',
+        columnNames: ['code'],
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropIndex('countries', 'IDX_COUNTRIES_CODE');
     await queryRunner.dropTable('countries');
   }
 }
