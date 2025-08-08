@@ -26,7 +26,10 @@ export class SystemSettingRepository implements IBaseRepository<SystemSetting> {
     return this.repository.save(systemSetting);
   }
 
-  async update(id: string, data: Partial<SystemSetting>): Promise<SystemSetting> {
+  async update(
+    id: string,
+    data: Partial<SystemSetting>,
+  ): Promise<SystemSetting> {
     await this.repository.update(id, data);
     return this.findById(id);
   }
@@ -63,15 +66,24 @@ export class SystemSettingRepository implements IBaseRepository<SystemSetting> {
     }
   }
 
-  async setValue(key: string, value: any, description?: string): Promise<SystemSetting> {
+  async setValue(
+    key: string,
+    value: any,
+    description?: string,
+  ): Promise<SystemSetting> {
     let setting = await this.findByKey(key);
-    
+
     if (!setting) {
       setting = this.repository.create({
         key,
         value: String(value),
         description,
-        type: typeof value === 'number' ? 'number' : typeof value === 'boolean' ? 'boolean' : 'string'
+        type:
+          typeof value === 'number'
+            ? 'number'
+            : typeof value === 'boolean'
+              ? 'boolean'
+              : 'string',
       });
     } else {
       setting.value = String(value);
@@ -80,4 +92,4 @@ export class SystemSettingRepository implements IBaseRepository<SystemSetting> {
 
     return this.repository.save(setting);
   }
-} 
+}

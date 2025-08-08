@@ -19,7 +19,7 @@ export class AdminJwtStrategy extends PassportStrategy(Strategy, 'admin-jwt') {
       id: payload.sub,
       email: payload.email,
       role: payload.role,
-      type: 'admin'
+      type: 'admin',
     };
   }
-} 
+}

@@ -28,4 +28,4 @@ export class Partner extends BaseEntity {
 
   @Column({ select: false, insert: false, update: false })
   jobsCount?: number;
-} 
+}

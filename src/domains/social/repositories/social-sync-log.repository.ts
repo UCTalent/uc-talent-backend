@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SocialSyncLog, SyncStatus } from '@domains/social/entities/social-sync-log.entity';
+import {
+  SocialSyncLog,
+  SyncStatus,
+} from '@domains/social/entities/social-sync-log.entity';
 import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
@@ -29,7 +32,10 @@ export class SocialSyncLogRepository implements IBaseRepository<SocialSyncLog> {
     return this.repository.save(socialSyncLog);
   }
 
-  async update(id: string, data: Partial<SocialSyncLog>): Promise<SocialSyncLog> {
+  async update(
+    id: string,
+    data: Partial<SocialSyncLog>,
+  ): Promise<SocialSyncLog> {
     await this.repository.update(id, data);
     return this.findById(id);
   }
@@ -46,13 +52,16 @@ export class SocialSyncLogRepository implements IBaseRepository<SocialSyncLog> {
     await this.repository.restore(id);
   }
 
-  async findBySocialAccount(socialAccountId: string, options?: { limit?: number }): Promise<SocialSyncLog[]> {
+  async findBySocialAccount(
+    socialAccountId: string,
+    options?: { limit?: number },
+  ): Promise<SocialSyncLog[]> {
     const { limit = 10 } = options || {};
 
     return this.repository.find({
       where: { socialAccountId },
       order: { createdAt: 'DESC' },
-      take: limit
+      take: limit,
     });
   }
 
@@ -77,7 +86,9 @@ export class SocialSyncLogRepository implements IBaseRepository<SocialSyncLog> {
       .groupBy('sync_log.status');
 
     if (socialAccountId) {
-      queryBuilder.where('sync_log.socialAccountId = :socialAccountId', { socialAccountId });
+      queryBuilder.where('sync_log.socialAccountId = :socialAccountId', {
+        socialAccountId,
+      });
     }
 
     return queryBuilder.getRawMany();

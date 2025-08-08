@@ -46,7 +46,10 @@ export class AuditLogRepository implements IBaseRepository<AuditLog> {
     await this.repository.restore(id);
   }
 
-  async findByAdmin(adminId: string, options?: { page?: number; limit?: number }): Promise<[AuditLog[], number]> {
+  async findByAdmin(
+    adminId: string,
+    options?: { page?: number; limit?: number },
+  ): Promise<[AuditLog[], number]> {
     const { page = 1, limit = 20 } = options || {};
     const skip = (page - 1) * limit;
 
@@ -55,11 +58,14 @@ export class AuditLogRepository implements IBaseRepository<AuditLog> {
       relations: ['admin'],
       order: { createdAt: 'DESC' },
       skip,
-      take: limit
+      take: limit,
     });
   }
 
-  async findByAction(action: string, options?: { page?: number; limit?: number }): Promise<[AuditLog[], number]> {
+  async findByAction(
+    action: string,
+    options?: { page?: number; limit?: number },
+  ): Promise<[AuditLog[], number]> {
     const { page = 1, limit = 20 } = options || {};
     const skip = (page - 1) * limit;
 
@@ -68,7 +74,7 @@ export class AuditLogRepository implements IBaseRepository<AuditLog> {
       relations: ['admin'],
       order: { createdAt: 'DESC' },
       skip,
-      take: limit
+      take: limit,
     });
   }
 
@@ -94,23 +100,32 @@ export class AuditLogRepository implements IBaseRepository<AuditLog> {
     skip?: number;
     take?: number;
   }): Promise<{ data: AuditLog[]; total: number }> {
-    const queryBuilder = this.repository.createQueryBuilder('auditLog')
+    const queryBuilder = this.repository
+      .createQueryBuilder('auditLog')
       .leftJoinAndSelect('auditLog.admin', 'admin');
 
     if (options.action) {
-      queryBuilder.andWhere('auditLog.action = :action', { action: options.action });
+      queryBuilder.andWhere('auditLog.action = :action', {
+        action: options.action,
+      });
     }
 
     if (options.adminId) {
-      queryBuilder.andWhere('auditLog.adminId = :adminId', { adminId: options.adminId });
+      queryBuilder.andWhere('auditLog.adminId = :adminId', {
+        adminId: options.adminId,
+      });
     }
 
     if (options.dateFrom) {
-      queryBuilder.andWhere('auditLog.createdAt >= :dateFrom', { dateFrom: options.dateFrom });
+      queryBuilder.andWhere('auditLog.createdAt >= :dateFrom', {
+        dateFrom: options.dateFrom,
+      });
     }
 
     if (options.dateTo) {
-      queryBuilder.andWhere('auditLog.createdAt <= :dateTo', { dateTo: options.dateTo });
+      queryBuilder.andWhere('auditLog.createdAt <= :dateTo', {
+        dateTo: options.dateTo,
+      });
     }
 
     queryBuilder.orderBy('auditLog.createdAt', 'DESC');
@@ -126,4 +141,4 @@ export class AuditLogRepository implements IBaseRepository<AuditLog> {
     const [data, total] = await queryBuilder.getManyAndCount();
     return { data, total };
   }
-} 
+}

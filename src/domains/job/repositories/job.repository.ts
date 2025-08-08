@@ -44,21 +44,21 @@ export class JobRepository implements IBaseRepository<Job> {
   async findByStatus(status: JobStatus): Promise<Job[]> {
     return this.repository.find({
       where: { status },
-      relations: ['organization', 'speciality', 'skills']
+      relations: ['organization', 'speciality', 'skills'],
     });
   }
 
   async findByOrganization(organizationId: string): Promise<Job[]> {
     return this.repository.find({
       where: { organizationId },
-      relations: ['speciality', 'skills']
+      relations: ['speciality', 'skills'],
     });
   }
 
   async findByPartnerHost(partnerHostId: string): Promise<Job[]> {
     return this.repository.find({
       where: { partnerHostId },
-      relations: ['organization', 'speciality']
+      relations: ['organization', 'speciality'],
     });
   }
 
@@ -75,14 +75,17 @@ export class JobRepository implements IBaseRepository<Job> {
     skip?: number;
     take?: number;
   }): Promise<{ data: Job[]; total: number }> {
-    const queryBuilder = this.repository.createQueryBuilder('job')
+    const queryBuilder = this.repository
+      .createQueryBuilder('job')
       .leftJoinAndSelect('job.organization', 'organization')
       .leftJoinAndSelect('job.speciality', 'speciality')
       .leftJoinAndSelect('job.city', 'city')
       .leftJoinAndSelect('job.country', 'country');
 
     if (options.search) {
-      queryBuilder.where('job.title ILIKE :search', { search: `%${options.search}%` });
+      queryBuilder.where('job.title ILIKE :search', {
+        search: `%${options.search}%`,
+      });
     }
 
     if (options.status) {
@@ -90,23 +93,34 @@ export class JobRepository implements IBaseRepository<Job> {
     }
 
     if (options.organization) {
-      queryBuilder.andWhere('organization.id = :organization', { organization: options.organization });
+      queryBuilder.andWhere('organization.id = :organization', {
+        organization: options.organization,
+      });
     }
 
     if (options.speciality) {
-      queryBuilder.andWhere('speciality.id = :speciality', { speciality: options.speciality });
+      queryBuilder.andWhere('speciality.id = :speciality', {
+        speciality: options.speciality,
+      });
     }
 
     if (options.dateFrom) {
-      queryBuilder.andWhere('job.postedDate >= :dateFrom', { dateFrom: options.dateFrom });
+      queryBuilder.andWhere('job.postedDate >= :dateFrom', {
+        dateFrom: options.dateFrom,
+      });
     }
 
     if (options.dateTo) {
-      queryBuilder.andWhere('job.postedDate <= :dateTo', { dateTo: options.dateTo });
+      queryBuilder.andWhere('job.postedDate <= :dateTo', {
+        dateTo: options.dateTo,
+      });
     }
 
     if (options.sortBy) {
-      queryBuilder.orderBy(`job.${options.sortBy}`, options.sortOrder || 'DESC');
+      queryBuilder.orderBy(
+        `job.${options.sortBy}`,
+        options.sortOrder || 'DESC',
+      );
     } else {
       queryBuilder.orderBy('job.createdAt', 'DESC');
     }
@@ -126,14 +140,14 @@ export class JobRepository implements IBaseRepository<Job> {
   async findByIds(ids: string[]): Promise<Job[]> {
     return this.repository.find({
       where: { id: In(ids) },
-      relations: ['organization', 'speciality']
+      relations: ['organization', 'speciality'],
     });
   }
 
   async bulkUpdateStatus(ids: string[], status: JobStatus): Promise<void> {
     await this.repository.update(
       { id: In(ids) },
-      { status, updatedAt: new Date() }
+      { status, updatedAt: new Date() },
     );
   }
 
@@ -149,7 +163,7 @@ export class JobRepository implements IBaseRepository<Job> {
       this.repository.count({ where: { status: JobStatus.PUBLISHED } }),
       this.repository.count({ where: { status: JobStatus.PENDING_TO_REVIEW } }),
       this.repository.count({ where: { status: JobStatus.CLOSED } }),
-      this.repository.count({ where: { status: JobStatus.EXPIRED } })
+      this.repository.count({ where: { status: JobStatus.EXPIRED } }),
     ]);
 
     return { total, active, pending, closed, expired };
@@ -175,7 +189,8 @@ export class JobRepository implements IBaseRepository<Job> {
   }
 
   async findWithFilters(filters: any): Promise<[Job[], number]> {
-    const queryBuilder = this.repository.createQueryBuilder('job')
+    const queryBuilder = this.repository
+      .createQueryBuilder('job')
       .leftJoinAndSelect('job.organization', 'organization')
       .leftJoinAndSelect('job.speciality', 'speciality')
       .leftJoinAndSelect('job.skills', 'skills')
@@ -187,53 +202,59 @@ export class JobRepository implements IBaseRepository<Job> {
     if (filters.query) {
       queryBuilder.andWhere(
         '(job.title ILIKE :query OR job.about ILIKE :query OR organization.name ILIKE :query)',
-        { query: `%${filters.query}%` }
+        { query: `%${filters.query}%` },
       );
     }
 
     if (filters.location_city) {
-      queryBuilder.andWhere('city.id = :cityId', { cityId: filters.location_city });
+      queryBuilder.andWhere('city.id = :cityId', {
+        cityId: filters.location_city,
+      });
     }
 
     if (filters.location_country) {
-      queryBuilder.andWhere('country.id = :countryId', { countryId: filters.location_country });
+      queryBuilder.andWhere('country.id = :countryId', {
+        countryId: filters.location_country,
+      });
     }
 
     if (filters.location_region) {
-      queryBuilder.andWhere('region.id = :regionId', { regionId: filters.location_region });
+      queryBuilder.andWhere('region.id = :regionId', {
+        regionId: filters.location_region,
+      });
     }
 
     if (filters.experience_levels?.length) {
-      queryBuilder.andWhere('job.experienceLevel IN (:...levels)', { 
-        levels: filters.experience_levels 
+      queryBuilder.andWhere('job.experienceLevel IN (:...levels)', {
+        levels: filters.experience_levels,
       });
     }
 
     if (filters.management_levels?.length) {
-      queryBuilder.andWhere('job.managementLevel IN (:...levels)', { 
-        levels: filters.management_levels 
+      queryBuilder.andWhere('job.managementLevel IN (:...levels)', {
+        levels: filters.management_levels,
       });
     }
 
     if (filters.job_types?.length) {
-      queryBuilder.andWhere('job.jobType IN (:...types)', { 
-        types: filters.job_types 
+      queryBuilder.andWhere('job.jobType IN (:...types)', {
+        types: filters.job_types,
       });
     }
 
     if (filters.location_types?.length) {
-      queryBuilder.andWhere('job.locationType IN (:...locationTypes)', { 
-        locationTypes: filters.location_types 
+      queryBuilder.andWhere('job.locationType IN (:...locationTypes)', {
+        locationTypes: filters.location_types,
       });
     }
 
     if (filters.salary_range) {
       queryBuilder.andWhere(
         'job.salaryFromCents >= :minSalary AND job.salaryToCents <= :maxSalary',
-        { 
+        {
           minSalary: filters.salary_range.min * 100,
-          maxSalary: filters.salary_range.max * 100
-        }
+          maxSalary: filters.salary_range.max * 100,
+        },
       );
     }
 
@@ -242,12 +263,14 @@ export class JobRepository implements IBaseRepository<Job> {
     }
 
     // Only published jobs
-    queryBuilder.andWhere('job.status = :status', { status: JobStatus.PUBLISHED });
+    queryBuilder.andWhere('job.status = :status', {
+      status: JobStatus.PUBLISHED,
+    });
 
     // Partner host filter
     if (filters.partner_host) {
-      queryBuilder.andWhere('job.partnerHostId = :partnerHostId', { 
-        partnerHostId: filters.partner_host 
+      queryBuilder.andWhere('job.partnerHostId = :partnerHostId', {
+        partnerHostId: filters.partner_host,
       });
     }
 
@@ -257,7 +280,7 @@ export class JobRepository implements IBaseRepository<Job> {
   async findSimilarJobs(jobId: string, limit: number = 10): Promise<Job[]> {
     const job = await this.repository.findOne({
       where: { id: jobId },
-      relations: ['speciality', 'skills']
+      relations: ['speciality', 'skills'],
     });
 
     if (!job) return [];
@@ -268,7 +291,9 @@ export class JobRepository implements IBaseRepository<Job> {
       .leftJoinAndSelect('job.speciality', 'speciality')
       .where('job.id != :jobId', { jobId })
       .andWhere('job.status = :status', { status: JobStatus.PUBLISHED })
-      .andWhere('job.specialityId = :specialityId', { specialityId: job.specialityId })
+      .andWhere('job.specialityId = :specialityId', {
+        specialityId: job.specialityId,
+      })
       .orderBy('job.postedDate', 'DESC')
       .limit(limit)
       .getMany();
@@ -276,13 +301,13 @@ export class JobRepository implements IBaseRepository<Job> {
 
   async generateJobNumber(): Promise<number> {
     const lastJob = await this.repository.findOne({
-      order: { jobNumber: 'DESC' }
+      order: { jobNumber: 'DESC' },
     });
-    
+
     return lastJob ? lastJob.jobNumber + 1 : 1;
   }
 
   async count(options?: any): Promise<number> {
     return this.repository.count(options);
   }
-} 
+}

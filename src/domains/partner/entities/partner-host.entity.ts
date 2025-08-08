@@ -1,4 +1,11 @@
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 import { Partner } from './partner.entity';
 import { PartnerHostNetwork } from './partner-host-network.entity';
@@ -42,4 +49,4 @@ export class PartnerHost extends BaseEntity {
 
   @Column({ select: false, insert: false, update: false })
   networksCount?: number;
-} 
+}

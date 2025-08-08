@@ -7,13 +7,19 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
   Request,
   HttpCode,
   HttpStatus,
   Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBody,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { JobService } from '@job/services/job.service';
 import { CreateJobDto } from '@job/dtos/create-job.dto';
 import { UpdateJobDto } from '@job/dtos/update-job.dto';
@@ -23,6 +29,7 @@ import { CloseJobDto } from '@job/dtos/close-job.dto';
 import { JobIndexQueryDto } from '@job/dtos/job-index-query.dto';
 import { JobResponseDto, JobListResponseDto } from '@job/dtos/job-response.dto';
 import { Job } from '@job/entities/job.entity';
+import { ResponseHandler } from '@shared/utils/response-handler';
 
 @ApiTags('jobs')
 @Controller('jobs')
@@ -42,9 +49,13 @@ export class JobController {
     status: 400,
     description: 'Bad request - validation error',
   })
-  async create(@Body() createJobDto: CreateJobDto, @Request() req: any): Promise<JobResponseDto> {
+  async create(@Body() createJobDto: CreateJobDto, @Request() req: any) {
     const job = await this.jobService.create(createJobDto, req.user?.id);
-    return this.mapToResponseDto(job);
+    return ResponseHandler.success({
+      data: this.mapToResponseDto(job),
+      statusCode: HttpStatus.CREATED,
+      message: 'Job created successfully',
+    });
   }
 
   @Get()
@@ -55,12 +66,15 @@ export class JobController {
     description: 'Jobs retrieved successfully',
     type: JobListResponseDto,
   })
-  async findAll(@Query() query: JobIndexQueryDto): Promise<JobListResponseDto> {
+  async findAll(@Query() query: JobIndexQueryDto) {
     const result = await this.jobService.getJobs(query);
-    return {
-      jobs: result.jobs.map(job => this.mapToResponseDto(job)),
-      pagination: result.pagination,
-    };
+    return ResponseHandler.success({
+      data: {
+        jobs: result.jobs.map(job => this.mapToResponseDto(job)),
+        pagination: result.pagination,
+      },
+      message: 'Jobs retrieved successfully',
+    });
   }
 
   @Get(':id')
@@ -79,9 +93,12 @@ export class JobController {
     status: 404,
     description: 'Job not found',
   })
-  async findById(@Param('id') id: string, @Request() req: any): Promise<JobResponseDto> {
+  async findById(@Param('id') id: string, @Request() req: any) {
     const result = await this.jobService.getJob(id, req.user?.id);
-    return this.mapToResponseDto(result.job);
+    return ResponseHandler.success({
+      data: this.mapToResponseDto(result.job),
+      message: 'Job found successfully',
+    });
   }
 
   @Put(':id')
@@ -105,13 +122,15 @@ export class JobController {
     @Param('id') id: string,
     @Body() updateJobDto: UpdateJobDto,
     @Request() req: any,
-  ): Promise<JobResponseDto> {
+  ) {
     const job = await this.jobService.update(id, updateJobDto, req.user?.id);
-    return this.mapToResponseDto(job);
+    return ResponseHandler.success({
+      data: this.mapToResponseDto(job),
+      message: 'Job updated successfully',
+    });
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete job by ID' })
   @ApiParam({
     name: 'id',
@@ -119,19 +138,22 @@ export class JobController {
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiResponse({
-    status: 204,
+    status: 200,
     description: 'Job deleted successfully',
   })
   @ApiResponse({
     status: 404,
     description: 'Job not found',
   })
-  async delete(@Param('id') id: string, @Request() req: any): Promise<void> {
-    return this.jobService.delete(id, req.user?.id);
+  async delete(@Param('id') id: string, @Request() req: any) {
+    await this.jobService.delete(id, req.user?.id);
+    return ResponseHandler.success({
+      data: null,
+      message: 'Job deleted successfully',
+    });
   }
 
-  @Put(':id/soft-delete')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @Patch(':id/soft-delete')
   @ApiOperation({ summary: 'Soft delete job by ID' })
   @ApiParam({
     name: 'id',
@@ -139,14 +161,22 @@ export class JobController {
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiResponse({
-    status: 204,
+    status: 200,
     description: 'Job soft deleted successfully',
   })
-  async softDelete(@Param('id') id: string, @Request() req: any): Promise<void> {
-    return this.jobService.softDelete(id, req.user?.id);
+  @ApiResponse({
+    status: 404,
+    description: 'Job not found',
+  })
+  async softDelete(@Param('id') id: string, @Request() req: any) {
+    await this.jobService.softDelete(id, req.user?.id);
+    return ResponseHandler.success({
+      data: null,
+      message: 'Job soft deleted successfully',
+    });
   }
 
-  @Put(':id/restore')
+  @Patch(':id/restore')
   @ApiOperation({ summary: 'Restore soft deleted job by ID' })
   @ApiParam({
     name: 'id',
@@ -157,8 +187,16 @@ export class JobController {
     status: 200,
     description: 'Job restored successfully',
   })
-  async restore(@Param('id') id: string): Promise<void> {
-    return this.jobService.restore(id);
+  @ApiResponse({
+    status: 404,
+    description: 'Job not found',
+  })
+  async restore(@Param('id') id: string) {
+    await this.jobService.restore(id);
+    return ResponseHandler.success({
+      data: null,
+      message: 'Job restored successfully',
+    });
   }
 
   @Post(':id/apply')
@@ -170,18 +208,27 @@ export class JobController {
   })
   @ApiBody({ type: ApplyJobDto })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'Job application submitted successfully',
   })
   async applyForJob(
     @Param('id') id: string,
     @Body() applyJobDto: ApplyJobDto,
     @Request() req: any,
-  ): Promise<any> {
-    return this.jobService.applyForJob(id, applyJobDto, req.user?.id);
+  ) {
+    const result = await this.jobService.applyForJob(
+      id,
+      applyJobDto,
+      req.user?.id,
+    );
+    return ResponseHandler.success({
+      data: result,
+      statusCode: HttpStatus.CREATED,
+      message: 'Job application submitted successfully',
+    });
   }
 
-  @Patch(':id/closed_job')
+  @Post(':id/close')
   @ApiOperation({ summary: 'Close a job' })
   @ApiParam({
     name: 'id',
@@ -197,11 +244,19 @@ export class JobController {
     @Param('id') id: string,
     @Body() closeJobDto: CloseJobDto,
     @Request() req: any,
-  ): Promise<any> {
-    return this.jobService.closeJob(id, closeJobDto, req.user?.id);
+  ) {
+    const result = await this.jobService.closeJob(
+      id,
+      closeJobDto,
+      req.user?.id,
+    );
+    return ResponseHandler.success({
+      data: result,
+      message: 'Job closed successfully',
+    });
   }
 
-  @Get(':id/referral_link')
+  @Post(':id/generate-referral-link')
   @ApiOperation({ summary: 'Generate referral link for a job' })
   @ApiParam({
     name: 'id',
@@ -212,11 +267,12 @@ export class JobController {
     status: 200,
     description: 'Referral link generated successfully',
   })
-  async generateReferralLink(
-    @Param('id') id: string,
-    @Request() req: any,
-  ): Promise<any> {
-    return this.jobService.generateReferralLink(id, req.user?.id);
+  async generateReferralLink(@Param('id') id: string, @Request() req: any) {
+    const result = await this.jobService.generateReferralLink(id, req.user?.id);
+    return ResponseHandler.success({
+      data: result,
+      message: 'Referral link generated successfully',
+    });
   }
 
   @Post(':id/referral_candidate')
@@ -235,8 +291,16 @@ export class JobController {
     @Param('id') id: string,
     @Body() referCandidateDto: ReferCandidateDto,
     @Request() req: any,
-  ): Promise<any> {
-    return this.jobService.referCandidate(id, referCandidateDto, req.user?.id);
+  ) {
+    const result = await this.jobService.referCandidate(
+      id,
+      referCandidateDto,
+      req.user?.id,
+    );
+    return ResponseHandler.success({
+      data: result,
+      message: 'Candidate referred successfully',
+    });
   }
 
   @Get(':id/similar_jobs')
@@ -250,17 +314,20 @@ export class JobController {
     status: 200,
     description: 'Similar jobs retrieved successfully',
   })
-  async getSimilarJobs(@Param('id') id: string): Promise<any> {
+  async getSimilarJobs(@Param('id') id: string) {
     const jobs = await this.jobService.getSimilarJobs(id);
-    return {
-      jobs: jobs.map(job => this.mapToResponseDto(job)),
-      pagination: {
-        current_page: 1,
-        total_pages: 1,
-        total_count: jobs.length,
-        per_page: jobs.length
-      }
-    };
+    return ResponseHandler.success({
+      data: {
+        jobs: jobs.map(job => this.mapToResponseDto(job)),
+        pagination: {
+          current_page: 1,
+          total_pages: 1,
+          total_count: jobs.length,
+          per_page: jobs.length,
+        },
+      },
+      message: 'Similar jobs retrieved successfully',
+    });
   }
 
   private mapToResponseDto(job: Job): JobResponseDto {
@@ -314,4 +381,4 @@ export class JobController {
       updatedAt: job.updatedAt,
     };
   }
-} 
+}

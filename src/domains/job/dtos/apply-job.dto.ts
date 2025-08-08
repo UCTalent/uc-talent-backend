@@ -31,4 +31,4 @@ export class ApplyJobDto {
   @IsOptional()
   @IsString()
   web3_chain_name?: string;
-} 
+}

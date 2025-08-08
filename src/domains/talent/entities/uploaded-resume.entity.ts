@@ -24,7 +24,7 @@ export class UploadedResume extends BaseEntity {
   status: ResumeStatus;
 
   // Relationships
-  @ManyToOne(() => Talent, (talent) => talent.uploadedResumes)
+  @ManyToOne(() => Talent, talent => talent.uploadedResumes)
   @JoinColumn({ name: 'talent_id' })
   talent: Talent;
-} 
+}

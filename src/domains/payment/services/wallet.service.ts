@@ -4,21 +4,21 @@ import { WalletAddressRepository } from '../repositories/wallet-address.reposito
 
 @Injectable()
 export class WalletService {
-  constructor(
-    private readonly walletAddressRepo: WalletAddressRepository,
-  ) {}
+  constructor(private readonly walletAddressRepo: WalletAddressRepository) {}
 
-  async createWalletAddress(data: Partial<WalletAddress>): Promise<WalletAddress> {
+  async createWalletAddress(
+    data: Partial<WalletAddress>,
+  ): Promise<WalletAddress> {
     return this.walletAddressRepo.create(data);
   }
 
   async findWalletAddressById(id: string): Promise<WalletAddress> {
     const wallet = await this.walletAddressRepo.findById(id);
-    
+
     if (!wallet) {
       throw new NotFoundException('Wallet address not found');
     }
-    
+
     return wallet;
   }
 
@@ -26,7 +26,9 @@ export class WalletService {
     return this.walletAddressRepo.findByOwner(ownerId);
   }
 
-  async findWalletAddressByAddress(address: string): Promise<WalletAddress | null> {
+  async findWalletAddressByAddress(
+    address: string,
+  ): Promise<WalletAddress | null> {
     return this.walletAddressRepo.findByAddress(address);
   }
 
@@ -34,4 +36,4 @@ export class WalletService {
     const wallet = await this.findWalletAddressById(id);
     await this.walletAddressRepo.delete(id);
   }
-} 
+}

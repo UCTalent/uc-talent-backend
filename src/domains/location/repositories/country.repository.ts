@@ -40,4 +40,4 @@ export class CountryRepository implements IBaseRepository<Country> {
   async restore(id: string): Promise<void> {
     await this.repository.restore(id);
   }
-} 
+}

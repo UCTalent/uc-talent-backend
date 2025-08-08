@@ -1,6 +1,13 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
-export class CreateTalentRelatedEntities1700000000010 implements MigrationInterface {
+export class CreateTalentRelatedEntities1700000000010
+  implements MigrationInterface
+{
   name = 'CreateTalentRelatedEntities1700000000010';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -341,7 +348,9 @@ export class CreateTalentRelatedEntities1700000000010 implements MigrationInterf
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop foreign keys for recommendation_jobs
-    const recommendationJobsTable = await queryRunner.getTable('recommendation_jobs');
+    const recommendationJobsTable = await queryRunner.getTable(
+      'recommendation_jobs',
+    );
     const recommendationJobsForeignKeys = recommendationJobsTable.foreignKeys;
     for (const foreignKey of recommendationJobsForeignKeys) {
       await queryRunner.dropForeignKey('recommendation_jobs', foreignKey);
@@ -349,28 +358,42 @@ export class CreateTalentRelatedEntities1700000000010 implements MigrationInterf
 
     // Drop foreign keys for uploaded_resumes
     const uploadedResumesTable = await queryRunner.getTable('uploaded_resumes');
-    const uploadedResumesForeignKey = uploadedResumesTable.foreignKeys.find(fk => fk.columnNames.indexOf('talent_id') !== -1);
+    const uploadedResumesForeignKey = uploadedResumesTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('talent_id') !== -1,
+    );
     if (uploadedResumesForeignKey) {
-      await queryRunner.dropForeignKey('uploaded_resumes', uploadedResumesForeignKey);
+      await queryRunner.dropForeignKey(
+        'uploaded_resumes',
+        uploadedResumesForeignKey,
+      );
     }
 
     // Drop foreign keys for external_links
     const externalLinksTable = await queryRunner.getTable('external_links');
-    const externalLinksForeignKey = externalLinksTable.foreignKeys.find(fk => fk.columnNames.indexOf('talent_id') !== -1);
+    const externalLinksForeignKey = externalLinksTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('talent_id') !== -1,
+    );
     if (externalLinksForeignKey) {
-      await queryRunner.dropForeignKey('external_links', externalLinksForeignKey);
+      await queryRunner.dropForeignKey(
+        'external_links',
+        externalLinksForeignKey,
+      );
     }
 
     // Drop foreign keys for educations
     const educationsTable = await queryRunner.getTable('educations');
-    const educationsForeignKey = educationsTable.foreignKeys.find(fk => fk.columnNames.indexOf('talent_id') !== -1);
+    const educationsForeignKey = educationsTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('talent_id') !== -1,
+    );
     if (educationsForeignKey) {
       await queryRunner.dropForeignKey('educations', educationsForeignKey);
     }
 
     // Drop foreign keys for experiences
     const experiencesTable = await queryRunner.getTable('experiences');
-    const experiencesForeignKey = experiencesTable.foreignKeys.find(fk => fk.columnNames.indexOf('talent_id') !== -1);
+    const experiencesForeignKey = experiencesTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('talent_id') !== -1,
+    );
     if (experiencesForeignKey) {
       await queryRunner.dropForeignKey('experiences', experiencesForeignKey);
     }

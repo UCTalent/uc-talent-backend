@@ -14,7 +14,7 @@ export class Note extends BaseEntity {
   content: string;
 
   // Relationships
-  @ManyToOne(() => User, (user) => user.notes)
+  @ManyToOne(() => User, user => user.notes)
   @JoinColumn({ name: 'userId' })
   user: User;
-} 
+}

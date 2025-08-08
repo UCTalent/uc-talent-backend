@@ -9,20 +9,20 @@ import { PartnerRepository } from './repositories/partner.repository';
 import { PartnerHostRepository } from './repositories/partner-host.repository';
 import { PartnerHostNetworkRepository } from './repositories/partner-host-network.repository';
 import { PartnerTokenGuard } from './guards/partner-token.guard';
-import { 
-  PartnerController, 
-  PartnerHostController, 
-  PartnerAuthController 
+import {
+  PartnerController,
+  PartnerHostController,
+  PartnerAuthController,
 } from './controllers/partner.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Partner, 
-      PartnerHost, 
+      Partner,
+      PartnerHost,
       PartnerHostNetwork,
       Job, // Include Job entity for service dependencies
-    ])
+    ]),
   ],
   controllers: [
     PartnerController,
@@ -44,4 +44,4 @@ import {
     PartnerTokenGuard,
   ],
 })
-export class PartnerModule {} 
+export class PartnerModule {}

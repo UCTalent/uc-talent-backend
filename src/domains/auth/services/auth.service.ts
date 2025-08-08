@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@user/services/user.service';
 import { FirebaseAuthService } from './firebase-auth.service';
@@ -30,7 +35,10 @@ export class AuthService {
     }
 
     // 2. Verify password
-    const isPasswordValid = await this.verifyPassword(loginDto.password, user.encryptedPassword);
+    const isPasswordValid = await this.verifyPassword(
+      loginDto.password,
+      user.encryptedPassword,
+    );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid email or password');
     }
@@ -42,14 +50,16 @@ export class AuthService {
 
     // 4. Check if user is locked
     if (user.lockedAt) {
-      throw new UnauthorizedException('Account is locked. Please contact support.');
+      throw new UnauthorizedException(
+        'Account is locked. Please contact support.',
+      );
     }
 
     // 5. Generate JWT token
-    const payload = { 
-      sub: user.id, 
+    const payload = {
+      sub: user.id,
       email: user.email,
-      name: user.name 
+      name: user.name,
     };
     const token = this.jwtService.sign(payload);
 
@@ -63,12 +73,12 @@ export class AuthService {
       user: {
         id: user.id,
         name: user.name,
-        email: user.email
+        email: user.email,
       },
       token_type: 'Bearer',
       access_token: token,
       expires_in: 7200, // 2 hours
-      has_profile: hasProfile
+      has_profile: hasProfile,
     };
   }
 
@@ -88,13 +98,13 @@ export class AuthService {
       email: registerDto.email,
       password: registerDto.password,
       locationCityId: registerDto.location_city_id,
-      refCode: registerDto.ref_code
+      refCode: registerDto.ref_code,
     });
 
     // 5. Update user with confirmation token (after creation)
     await this.userService.update(user.id, {
       confirmationToken,
-      confirmedAt: null
+      confirmedAt: null,
     });
 
     // 6. Send confirmation email (temporarily disabled for testing)
@@ -105,9 +115,9 @@ export class AuthService {
         id: user.id,
         name: user.name,
         email: user.email,
-        confirmed_at: user.confirmedAt
+        confirmed_at: user.confirmedAt,
       },
-      message: 'Confirmation email sent'
+      message: 'Confirmation email sent',
     };
   }
 
@@ -122,27 +132,100 @@ export class AuthService {
   async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
     const user = await this.userService.findByEmail(forgotPasswordDto.email);
     if (user) {
+      // Check if user is confirmed
+      if (!user.confirmedAt) {
+        throw new BadRequestException(
+          'Please confirm your email first before requesting password reset',
+        );
+      }
+
+      // Check if user is locked
+      if (user.lockedAt) {
+        throw new BadRequestException(
+          'Account is locked. Please contact support.',
+        );
+      }
+
       // Generate reset token
       const resetToken = this.generateResetToken();
       await this.userService.updateResetToken(user.id, resetToken);
-      
-      // Send reset email (temporarily disabled for testing)
-      // await this.emailService.sendPasswordResetEmail(user.email, user.name, resetToken);
+
+      // Send reset email
+      await this.emailService.sendPasswordResetEmail(
+        user.email,
+        user.name,
+        resetToken,
+      );
     }
-    
-    return { message: 'Reset password email sent' };
+
+    // Always return success message for security (don't reveal if email exists)
+    return {
+      message:
+        'If an account with that email exists, a password reset link has been sent',
+    };
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
-    const user = await this.userService.findByResetPasswordToken(resetPasswordDto.token);
+    const user = await this.userService.findByResetPasswordToken(
+      resetPasswordDto.token,
+    );
     if (!user) {
-      throw new BadRequestException('Invalid reset password token');
+      throw new BadRequestException('Invalid or expired reset password token');
+    }
+
+    // Check if token is expired (24 hours)
+    if (user.resetPasswordSentAt) {
+      const tokenAge = Date.now() - user.resetPasswordSentAt.getTime();
+      const maxAge = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+      if (tokenAge > maxAge) {
+        // Clear expired token
+        await this.userService.clearResetToken(user.id);
+        throw new BadRequestException(
+          'Reset password token has expired. Please request a new one.',
+        );
+      }
+    }
+
+    // Check if user is locked
+    if (user.lockedAt) {
+      throw new BadRequestException(
+        'Account is locked. Please contact support.',
+      );
+    }
+
+    // Validate password strength
+    if (resetPasswordDto.password.length < 8) {
+      throw new BadRequestException(
+        'Password must be at least 8 characters long',
+      );
     }
 
     const hashedPassword = await this.hashPassword(resetPasswordDto.password);
     await this.userService.resetPassword(user.id, hashedPassword);
-    
+
     return { message: 'Password updated successfully' };
+  }
+
+  async validateResetToken(token: string) {
+    const user = await this.userService.findByResetPasswordToken(token);
+    if (!user) {
+      return { valid: false, message: 'Invalid reset password token' };
+    }
+
+    // Check if token is expired (24 hours)
+    if (user.resetPasswordSentAt) {
+      const tokenAge = Date.now() - user.resetPasswordSentAt.getTime();
+      const maxAge = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+      if (tokenAge > maxAge) {
+        // Clear expired token
+        await this.userService.clearResetToken(user.id);
+        return { valid: false, message: 'Reset password token has expired' };
+      }
+    }
+
+    return { valid: true, email: user.email };
   }
 
   async confirmEmail(token: string) {
@@ -168,17 +251,24 @@ export class AuthService {
     return bcrypt.hash(password, 12);
   }
 
-  private async verifyPassword(password: string, hash: string): Promise<boolean> {
+  private async verifyPassword(
+    password: string,
+    hash: string,
+  ): Promise<boolean> {
     return bcrypt.compare(password, hash);
   }
 
   private generateConfirmationToken(): string {
-    return Math.random().toString(36).substring(2, 15) + 
-           Math.random().toString(36).substring(2, 15);
+    return (
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15)
+    );
   }
 
   private generateResetToken(): string {
-    return Math.random().toString(36).substring(2, 15) + 
-           Math.random().toString(36).substring(2, 15);
+    return (
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15)
+    );
   }
 }

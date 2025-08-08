@@ -39,7 +39,11 @@ export class EmailService {
     await this.sendEmail(to, subject, html);
   }
 
-  async sendJobApplicationEmail(to: string, jobTitle: string, companyName: string): Promise<void> {
+  async sendJobApplicationEmail(
+    to: string,
+    jobTitle: string,
+    companyName: string,
+  ): Promise<void> {
     const subject = 'Job Application Received';
     const html = `
       <h1>Application Received</h1>
@@ -49,4 +53,4 @@ export class EmailService {
 
     await this.sendEmail(to, subject, html);
   }
-} 
+}

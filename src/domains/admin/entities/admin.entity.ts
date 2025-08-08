@@ -43,4 +43,4 @@ export class Admin extends BaseEntity {
 
   @OneToMany(() => AdminPermission, permission => permission.admins)
   permissions: AdminPermission[];
-} 
+}

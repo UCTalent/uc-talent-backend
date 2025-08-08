@@ -12,9 +12,9 @@ export class JobApplyProcessor {
   @Process('send-application-confirmation')
   async handleSendApplicationConfirmation(job: BullJob) {
     this.logger.debug('Processing job application confirmation...');
-    
+
     const { to, jobTitle, companyName, candidateName } = job.data;
-    
+
     try {
       await this.jobMailer.sendJobApplicationConfirmation(
         to,
@@ -22,7 +22,7 @@ export class JobApplyProcessor {
         companyName,
         candidateName,
       );
-      
+
       this.logger.debug('Application confirmation email sent successfully');
     } catch (error) {
       this.logger.error('Failed to send application confirmation email', error);
@@ -33,15 +33,17 @@ export class JobApplyProcessor {
   @Process('update-application-status')
   async handleUpdateApplicationStatus(job: BullJob) {
     this.logger.debug('Processing application status update...');
-    
+
     const { applicationId, newStatus } = job.data;
-    
+
     try {
       // Update application status logic here
-      this.logger.debug(`Application ${applicationId} status updated to ${newStatus}`);
+      this.logger.debug(
+        `Application ${applicationId} status updated to ${newStatus}`,
+      );
     } catch (error) {
       this.logger.error('Failed to update application status', error);
       throw error;
     }
   }
-} 
+}

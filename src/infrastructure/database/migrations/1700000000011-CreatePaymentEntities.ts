@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreatePaymentEntities1700000000011 implements MigrationInterface {
   name = 'CreatePaymentEntities1700000000011';
@@ -163,17 +168,25 @@ export class CreatePaymentEntities1700000000011 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop foreign keys for payment_distributions
-    const paymentDistributionsTable = await queryRunner.getTable('payment_distributions');
-    const paymentDistributionsForeignKeys = paymentDistributionsTable.foreignKeys;
+    const paymentDistributionsTable = await queryRunner.getTable(
+      'payment_distributions',
+    );
+    const paymentDistributionsForeignKeys =
+      paymentDistributionsTable.foreignKeys;
     for (const foreignKey of paymentDistributionsForeignKeys) {
       await queryRunner.dropForeignKey('payment_distributions', foreignKey);
     }
 
     // Drop foreign keys for wallet_addresses
     const walletAddressesTable = await queryRunner.getTable('wallet_addresses');
-    const walletAddressesForeignKey = walletAddressesTable.foreignKeys.find(fk => fk.columnNames.indexOf('owner_id') !== -1);
+    const walletAddressesForeignKey = walletAddressesTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('owner_id') !== -1,
+    );
     if (walletAddressesForeignKey) {
-      await queryRunner.dropForeignKey('wallet_addresses', walletAddressesForeignKey);
+      await queryRunner.dropForeignKey(
+        'wallet_addresses',
+        walletAddressesForeignKey,
+      );
     }
 
     // Drop tables

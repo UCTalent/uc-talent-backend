@@ -1,5 +1,14 @@
-import { IsNotEmpty, IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
-import { EmploymentStatus, EnglishProficiency } from '../entities/talent.entity';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsEnum,
+  IsNumber,
+} from 'class-validator';
+import {
+  EmploymentStatus,
+  EnglishProficiency,
+} from '../entities/talent.entity';
 
 export class CreateTalentDto {
   @IsNotEmpty()
@@ -29,4 +38,4 @@ export class CreateTalentDto {
   @IsOptional()
   @IsString()
   headline?: string;
-} 
+}

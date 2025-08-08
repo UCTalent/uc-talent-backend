@@ -1,17 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { LocationService } from '@location/services/location.service';
 import { City } from '@location/entities/city.entity';
 import { Country } from '@location/entities/country.entity';
 import { Region } from '@location/entities/region.entity';
-import { 
-  CityResponseDto, 
-  CountryResponseDto, 
+import {
+  CityResponseDto,
+  CountryResponseDto,
   RegionResponseDto,
   CityListResponseDto,
   CountryListResponseDto,
-  RegionListResponseDto
+  RegionListResponseDto,
 } from '@location/dtos/location-response.dto';
+import { ResponseHandler } from '@shared/utils/response-handler';
 
 @ApiTags('locations')
 @Controller('locations')
@@ -25,14 +26,17 @@ export class LocationController {
     description: 'Cities retrieved successfully',
     type: CityListResponseDto,
   })
-  async findAllCities(): Promise<CityListResponseDto> {
+  async findAllCities() {
     const cities = await this.locationService.findAllCities();
-    return {
-      cities: cities.map(city => this.mapCityToResponseDto(city)),
-      total: cities.length,
-      page: 1,
-      limit: cities.length,
-    };
+    return ResponseHandler.success({
+      data: {
+        cities: cities.map(city => this.mapCityToResponseDto(city)),
+        total: cities.length,
+        page: 1,
+        limit: cities.length,
+      },
+      message: 'Cities retrieved successfully',
+    });
   }
 
   @Get('cities/:countryId')
@@ -47,14 +51,17 @@ export class LocationController {
     description: 'Cities found successfully',
     type: CityListResponseDto,
   })
-  async findCitiesByCountry(@Param('countryId') countryId: string): Promise<CityListResponseDto> {
+  async findCitiesByCountry(@Param('countryId') countryId: string) {
     const cities = await this.locationService.findCitiesByCountry(countryId);
-    return {
-      cities: cities.map(city => this.mapCityToResponseDto(city)),
-      total: cities.length,
-      page: 1,
-      limit: cities.length,
-    };
+    return ResponseHandler.success({
+      data: {
+        cities: cities.map(city => this.mapCityToResponseDto(city)),
+        total: cities.length,
+        page: 1,
+        limit: cities.length,
+      },
+      message: 'Cities found successfully',
+    });
   }
 
   @Get('cities/city/:id')
@@ -73,9 +80,18 @@ export class LocationController {
     status: 404,
     description: 'City not found',
   })
-  async findCityById(@Param('id') id: string): Promise<CityResponseDto | null> {
+  async findCityById(@Param('id') id: string) {
     const city = await this.locationService.findCityById(id);
-    return city ? this.mapCityToResponseDto(city) : null;
+    if (!city) {
+      return ResponseHandler.error({
+        statusCode: 404,
+        message: 'City not found',
+      });
+    }
+    return ResponseHandler.success({
+      data: this.mapCityToResponseDto(city),
+      message: 'City found successfully',
+    });
   }
 
   @Get('countries')
@@ -85,14 +101,19 @@ export class LocationController {
     description: 'Countries retrieved successfully',
     type: CountryListResponseDto,
   })
-  async findAllCountries(): Promise<CountryListResponseDto> {
+  async findAllCountries() {
     const countries = await this.locationService.findAllCountries();
-    return {
-      countries: countries.map(country => this.mapCountryToResponseDto(country)),
-      total: countries.length,
-      page: 1,
-      limit: countries.length,
-    };
+    return ResponseHandler.success({
+      data: {
+        countries: countries.map(country =>
+          this.mapCountryToResponseDto(country),
+        ),
+        total: countries.length,
+        page: 1,
+        limit: countries.length,
+      },
+      message: 'Countries retrieved successfully',
+    });
   }
 
   @Get('countries/:id')
@@ -111,9 +132,18 @@ export class LocationController {
     status: 404,
     description: 'Country not found',
   })
-  async findCountryById(@Param('id') id: string): Promise<CountryResponseDto | null> {
+  async findCountryById(@Param('id') id: string) {
     const country = await this.locationService.findCountryById(id);
-    return country ? this.mapCountryToResponseDto(country) : null;
+    if (!country) {
+      return ResponseHandler.error({
+        statusCode: 404,
+        message: 'Country not found',
+      });
+    }
+    return ResponseHandler.success({
+      data: this.mapCountryToResponseDto(country),
+      message: 'Country found successfully',
+    });
   }
 
   @Get('regions')
@@ -123,14 +153,17 @@ export class LocationController {
     description: 'Regions retrieved successfully',
     type: RegionListResponseDto,
   })
-  async findAllRegions(): Promise<RegionListResponseDto> {
+  async findAllRegions() {
     const regions = await this.locationService.findAllRegions();
-    return {
-      regions: regions.map(region => this.mapRegionToResponseDto(region)),
-      total: regions.length,
-      page: 1,
-      limit: regions.length,
-    };
+    return ResponseHandler.success({
+      data: {
+        regions: regions.map(region => this.mapRegionToResponseDto(region)),
+        total: regions.length,
+        page: 1,
+        limit: regions.length,
+      },
+      message: 'Regions retrieved successfully',
+    });
   }
 
   @Get('regions/:id')
@@ -149,22 +182,28 @@ export class LocationController {
     status: 404,
     description: 'Region not found',
   })
-  async findRegionById(@Param('id') id: string): Promise<RegionResponseDto | null> {
+  async findRegionById(@Param('id') id: string) {
     const region = await this.locationService.findRegionById(id);
-    return region ? this.mapRegionToResponseDto(region) : null;
+    if (!region) {
+      return ResponseHandler.error({
+        statusCode: 404,
+        message: 'Region not found',
+      });
+    }
+    return ResponseHandler.success({
+      data: this.mapRegionToResponseDto(region),
+      message: 'Region found successfully',
+    });
   }
 
   private mapCityToResponseDto(city: City): CityResponseDto {
     return {
       id: city.id,
       name: city.name,
-      code: city.nameAscii, // Using nameAscii as code
       countryId: city.countryId,
-      regionId: undefined, // City doesn't have regionId
       status: 'active', // Default status since entity doesn't have status
       createdAt: city.createdAt,
       updatedAt: city.updatedAt,
-      deletedAt: city.deletedAt,
     };
   }
 
@@ -173,11 +212,9 @@ export class LocationController {
       id: country.id,
       name: country.name,
       code: country.code,
-      phoneCode: undefined, // Country doesn't have phoneCode
       status: 'active', // Default status since entity doesn't have status
       createdAt: country.createdAt,
       updatedAt: country.updatedAt,
-      deletedAt: country.deletedAt,
     };
   }
 
@@ -185,11 +222,9 @@ export class LocationController {
     return {
       id: region.id,
       name: region.name,
-      code: undefined, // Region doesn't have code
       status: 'active', // Default status since entity doesn't have status
       createdAt: region.createdAt,
       updatedAt: region.updatedAt,
-      deletedAt: region.deletedAt,
     };
   }
-} 
+}

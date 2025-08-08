@@ -40,4 +40,4 @@ export class RegionRepository implements IBaseRepository<Region> {
   async restore(id: string): Promise<void> {
     await this.repository.restore(id);
   }
-} 
+}

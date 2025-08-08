@@ -18,4 +18,4 @@ export class Web3Event extends BaseEntity {
   @ManyToOne(() => Job, job => job.web3Events)
   @JoinColumn({ name: 'job_id' })
   job: Job;
-} 
+}

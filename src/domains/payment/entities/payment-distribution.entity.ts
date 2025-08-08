@@ -56,4 +56,4 @@ export class PaymentDistribution extends BaseEntity {
   @ManyToOne(() => User, user => user.paymentDistributions, { nullable: true })
   @JoinColumn({ name: 'recipient_id' })
   recipient: User;
-} 
+}

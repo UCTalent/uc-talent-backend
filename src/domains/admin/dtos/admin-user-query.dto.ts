@@ -20,7 +20,11 @@ export class AdminUserQueryDto {
   @IsString()
   search?: string;
 
-  @ApiProperty({ description: 'User status', example: 'active', required: false })
+  @ApiProperty({
+    description: 'User status',
+    example: 'active',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   status?: string;
@@ -30,7 +34,11 @@ export class AdminUserQueryDto {
   @IsString()
   role?: string;
 
-  @ApiProperty({ description: 'Sort by field', example: 'createdAt', required: false })
+  @ApiProperty({
+    description: 'Sort by field',
+    example: 'createdAt',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   sortBy?: string;
@@ -39,4 +47,4 @@ export class AdminUserQueryDto {
   @IsOptional()
   @IsString()
   sortOrder?: string;
-} 
+}

@@ -32,7 +32,7 @@ export class Experience extends BaseEntity {
   jobType: string;
 
   // Relationships
-  @ManyToOne(() => Talent, (talent) => talent.experiences)
+  @ManyToOne(() => Talent, talent => talent.experiences)
   @JoinColumn({ name: 'talent_id' })
   talent: Talent;
-} 
+}

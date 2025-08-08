@@ -24,11 +24,11 @@ export class RecommendationJob extends BaseEntity {
   isApplied: boolean;
 
   // Relationships
-  @ManyToOne(() => Talent, (talent) => talent.recommendationJobs)
+  @ManyToOne(() => Talent, talent => talent.recommendationJobs)
   @JoinColumn({ name: 'talent_id' })
   talent: Talent;
 
   @ManyToOne(() => Job)
   @JoinColumn({ name: 'job_id' })
   job: Job;
-} 
+}

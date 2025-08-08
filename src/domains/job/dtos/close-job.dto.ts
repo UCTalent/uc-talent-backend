@@ -7,7 +7,11 @@ export class JobClosureReasonDto {
   @IsString()
   other_reason?: string;
 
-  @ApiProperty({ required: false, description: 'Choice options for closure', type: [String] })
+  @ApiProperty({
+    required: false,
+    description: 'Choice options for closure',
+    type: [String],
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -19,8 +23,12 @@ export class CloseJobDto {
   @IsString()
   close_type: string;
 
-  @ApiProperty({ required: false, description: 'Job closure reasons', type: [JobClosureReasonDto] })
+  @ApiProperty({
+    required: false,
+    description: 'Job closure reasons',
+    type: [JobClosureReasonDto],
+  })
   @IsOptional()
   @IsArray()
   job_closure_reasons_attributes?: JobClosureReasonDto[];
-} 
+}

@@ -25,7 +25,9 @@ describe('PaymentDistributionController', () => {
       ],
     }).compile();
 
-    controller = module.get<PaymentDistributionController>(PaymentDistributionController);
+    controller = module.get<PaymentDistributionController>(
+      PaymentDistributionController,
+    );
     service = module.get<PaymentService>(PaymentService);
   });
 
@@ -76,7 +78,9 @@ describe('PaymentDistributionController', () => {
         },
       };
 
-      jest.spyOn(service, 'updateBlockchainStatus').mockResolvedValue(expectedResult);
+      jest
+        .spyOn(service, 'updateBlockchainStatus')
+        .mockResolvedValue(expectedResult);
 
       const result = await controller.updateBlockchainStatus(updateDto);
 
@@ -84,4 +88,4 @@ describe('PaymentDistributionController', () => {
       expect(service.updateBlockchainStatus).toHaveBeenCalledWith(updateDto);
     });
   });
-}); 
+});

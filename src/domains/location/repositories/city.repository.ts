@@ -12,7 +12,7 @@ export class CityRepository implements IBaseRepository<City> {
   ) {}
 
   async findById(id: string): Promise<City | null> {
-    return this.repository.findOne({ 
+    return this.repository.findOne({
       where: { id },
       relations: ['country'],
     });
@@ -52,4 +52,4 @@ export class CityRepository implements IBaseRepository<City> {
       relations: ['country'],
     });
   }
-} 
+}

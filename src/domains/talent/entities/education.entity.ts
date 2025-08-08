@@ -29,7 +29,7 @@ export class Education extends BaseEntity {
   description: string;
 
   // Relationships
-  @ManyToOne(() => Talent, (talent) => talent.educations)
+  @ManyToOne(() => Talent, talent => talent.educations)
   @JoinColumn({ name: 'talent_id' })
   talent: Talent;
-} 
+}

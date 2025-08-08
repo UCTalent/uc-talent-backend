@@ -8,4 +8,4 @@ export interface IBaseRepository<T extends BaseEntity> {
   delete(id: string): Promise<void>;
   softDelete(id: string): Promise<void>;
   restore(id: string): Promise<void>;
-} 
+}

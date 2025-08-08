@@ -1,4 +1,10 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreatePartnerEntities1700000000013 implements MigrationInterface {
   name = 'CreatePartnerEntities1700000000013';
@@ -181,15 +187,25 @@ export class CreatePartnerEntities1700000000013 implements MigrationInterface {
     await queryRunner.dropIndex('partners', 'IDX_PARTNERS_NAME');
 
     // Drop foreign keys for partner_host_networks
-    const partnerHostNetworksTable = await queryRunner.getTable('partner_host_networks');
-    const partnerHostNetworksForeignKey = partnerHostNetworksTable.foreignKeys.find(fk => fk.columnNames.indexOf('partner_host_id') !== -1);
+    const partnerHostNetworksTable = await queryRunner.getTable(
+      'partner_host_networks',
+    );
+    const partnerHostNetworksForeignKey =
+      partnerHostNetworksTable.foreignKeys.find(
+        fk => fk.columnNames.indexOf('partner_host_id') !== -1,
+      );
     if (partnerHostNetworksForeignKey) {
-      await queryRunner.dropForeignKey('partner_host_networks', partnerHostNetworksForeignKey);
+      await queryRunner.dropForeignKey(
+        'partner_host_networks',
+        partnerHostNetworksForeignKey,
+      );
     }
 
     // Drop foreign keys for partner_hosts
     const partnerHostsTable = await queryRunner.getTable('partner_hosts');
-    const partnerHostsForeignKey = partnerHostsTable.foreignKeys.find(fk => fk.columnNames.indexOf('partner_id') !== -1);
+    const partnerHostsForeignKey = partnerHostsTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('partner_id') !== -1,
+    );
     if (partnerHostsForeignKey) {
       await queryRunner.dropForeignKey('partner_hosts', partnerHostsForeignKey);
     }

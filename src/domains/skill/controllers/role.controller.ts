@@ -1,8 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { RoleService } from '@skill/services/role.service';
 import { Role } from '@skill/entities/role.entity';
-import { RoleResponseDto, RoleListResponseDto } from '@skill/dtos/skill-response.dto';
+import {
+  RoleResponseDto,
+  RoleListResponseDto,
+} from '@skill/dtos/skill-response.dto';
 
 @ApiTags('roles')
 @Controller('roles')
@@ -57,4 +68,4 @@ export class RoleController {
       deletedAt: role.deletedAt,
     };
   }
-} 
+}

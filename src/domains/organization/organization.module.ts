@@ -9,12 +9,9 @@ import { OrganizationController } from './controllers/organization.controller';
 import { JobModule } from '@job/job.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Organization, Industry, Job]),
-    JobModule
-  ],
+  imports: [TypeOrmModule.forFeature([Organization, Industry, Job]), JobModule],
   providers: [OrganizationService, OrganizationRepository],
   controllers: [OrganizationController],
   exports: [OrganizationService, OrganizationRepository],
 })
-export class OrganizationModule {} 
+export class OrganizationModule {}

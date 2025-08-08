@@ -15,10 +15,9 @@ export class OrganizationService {
   ) {}
 
   async getOrganizations(query: OrganizationQueryDto) {
-    const { page = 1, limit = 20, search, status, industry, country, city, size, orgType, sortBy = 'createdAt', sortOrder = 'DESC' } = query;
-    const skip = (page - 1) * limit;
-
-    const { data: organizations, total } = await this.organizationRepo.findWithFilters({
+    const {
+      page = 1,
+      limit = 20,
       search,
       status,
       industry,
@@ -26,21 +25,37 @@ export class OrganizationService {
       city,
       size,
       orgType,
-      sortBy,
-      sortOrder: sortOrder as 'ASC' | 'DESC',
-      skip,
-      take: limit
-    });
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = query;
+    const skip = (page - 1) * limit;
+
+    const { data: organizations, total } =
+      await this.organizationRepo.findWithFilters({
+        search,
+        status,
+        industry,
+        country,
+        city,
+        size,
+        orgType,
+        sortBy,
+        sortOrder: sortOrder as 'ASC' | 'DESC',
+        skip,
+        take: limit,
+      });
 
     // Get jobs count for each organization
     const organizationsWithStats = await Promise.all(
-      organizations.map(async (org) => {
-        const jobsCount = await this.jobRepo.count({ where: { organizationId: org.id } });
+      organizations.map(async org => {
+        const jobsCount = await this.jobRepo.count({
+          where: { organizationId: org.id },
+        });
         return {
           ...org,
-          jobsCount
+          jobsCount,
         };
-      })
+      }),
     );
 
     return {
@@ -51,9 +66,9 @@ export class OrganizationService {
           page,
           limit,
           total,
-          totalPages: Math.ceil(total / limit)
-        }
-      }
+          totalPages: Math.ceil(total / limit),
+        },
+      },
     };
   }
 
@@ -71,8 +86,8 @@ export class OrganizationService {
       success: true,
       data: {
         ...organization,
-        stats
-      }
+        stats,
+      },
     };
   }
 
@@ -81,12 +96,12 @@ export class OrganizationService {
     if (dto.foundDate && typeof dto.foundDate === 'string') {
       dto.foundDate = new Date(dto.foundDate);
     }
-    
+
     const organization = await this.organizationRepo.create(dto);
 
     return {
       success: true,
-      data: organization
+      data: organization,
     };
   }
 
@@ -105,7 +120,7 @@ export class OrganizationService {
 
     return {
       success: true,
-      data: updatedOrganization
+      data: updatedOrganization,
     };
   }
 
@@ -119,12 +134,15 @@ export class OrganizationService {
 
     return {
       success: true,
-      message: 'Organization deleted successfully'
+      message: 'Organization deleted successfully',
     };
   }
 
   async searchOrganizations(query: string, filters?: any) {
-    const organizations = await this.organizationRepo.searchWithFilters(query, filters);
+    const organizations = await this.organizationRepo.searchWithFilters(
+      query,
+      filters,
+    );
 
     return {
       success: true,
@@ -133,14 +151,16 @@ export class OrganizationService {
         searchStats: {
           query,
           totalResults: organizations.length,
-          searchTime: 0.15 // Mock value
-        }
-      }
+          searchTime: 0.15, // Mock value
+        },
+      },
     };
   }
 
   // Legacy methods for backward compatibility
-  async create(createOrganizationDto: CreateOrganizationDto): Promise<Organization> {
+  async create(
+    createOrganizationDto: CreateOrganizationDto,
+  ): Promise<Organization> {
     const dto: any = { ...createOrganizationDto };
     if (dto.foundDate && typeof dto.foundDate === 'string') {
       dto.foundDate = new Date(dto.foundDate);
@@ -160,7 +180,10 @@ export class OrganizationService {
     return organization;
   }
 
-  async update(id: string, updateOrganizationDto: UpdateOrganizationDto): Promise<Organization> {
+  async update(
+    id: string,
+    updateOrganizationDto: UpdateOrganizationDto,
+  ): Promise<Organization> {
     const organization = await this.findById(id);
     const dto: any = { ...updateOrganizationDto };
     if (dto.foundDate && typeof dto.foundDate === 'string') {
@@ -182,4 +205,4 @@ export class OrganizationService {
   async restore(id: string): Promise<void> {
     await this.organizationRepo.restore(id);
   }
-} 
+}

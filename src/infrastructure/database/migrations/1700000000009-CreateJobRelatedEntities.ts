@@ -1,6 +1,13 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
-export class CreateJobRelatedEntities1700000000009 implements MigrationInterface {
+export class CreateJobRelatedEntities1700000000009
+  implements MigrationInterface
+{
   name = 'CreateJobRelatedEntities1700000000009';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -36,7 +43,15 @@ export class CreateJobRelatedEntities1700000000009 implements MigrationInterface
           {
             name: 'status',
             type: 'enum',
-            enum: ['new', 'email_sent', 'under_review', 'interviewing', 'offering', 'hired', 'rejected'],
+            enum: [
+              'new',
+              'email_sent',
+              'under_review',
+              'interviewing',
+              'offering',
+              'hired',
+              'rejected',
+            ],
             default: "'new'",
           },
           {
@@ -397,30 +412,49 @@ export class CreateJobRelatedEntities1700000000009 implements MigrationInterface
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop foreign keys for web3_events
     const web3EventsTable = await queryRunner.getTable('web3_events');
-    const web3EventsForeignKey = web3EventsTable.foreignKeys.find(fk => fk.columnNames.indexOf('job_id') !== -1);
+    const web3EventsForeignKey = web3EventsTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('job_id') !== -1,
+    );
     if (web3EventsForeignKey) {
       await queryRunner.dropForeignKey('web3_events', web3EventsForeignKey);
     }
 
     // Drop foreign keys for referral_links
     const referralLinksTable = await queryRunner.getTable('referral_links');
-    const referralLinksForeignKey = referralLinksTable.foreignKeys.find(fk => fk.columnNames.indexOf('job_id') !== -1);
+    const referralLinksForeignKey = referralLinksTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('job_id') !== -1,
+    );
     if (referralLinksForeignKey) {
-      await queryRunner.dropForeignKey('referral_links', referralLinksForeignKey);
+      await queryRunner.dropForeignKey(
+        'referral_links',
+        referralLinksForeignKey,
+      );
     }
 
     // Drop foreign keys for choice_options
     const choiceOptionsTable = await queryRunner.getTable('choice_options');
-    const choiceOptionsForeignKey = choiceOptionsTable.foreignKeys.find(fk => fk.columnNames.indexOf('job_id') !== -1);
+    const choiceOptionsForeignKey = choiceOptionsTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('job_id') !== -1,
+    );
     if (choiceOptionsForeignKey) {
-      await queryRunner.dropForeignKey('choice_options', choiceOptionsForeignKey);
+      await queryRunner.dropForeignKey(
+        'choice_options',
+        choiceOptionsForeignKey,
+      );
     }
 
     // Drop foreign keys for job_closure_reasons
-    const jobClosureReasonsTable = await queryRunner.getTable('job_closure_reasons');
-    const jobClosureReasonsForeignKey = jobClosureReasonsTable.foreignKeys.find(fk => fk.columnNames.indexOf('job_id') !== -1);
+    const jobClosureReasonsTable = await queryRunner.getTable(
+      'job_closure_reasons',
+    );
+    const jobClosureReasonsForeignKey = jobClosureReasonsTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('job_id') !== -1,
+    );
     if (jobClosureReasonsForeignKey) {
-      await queryRunner.dropForeignKey('job_closure_reasons', jobClosureReasonsForeignKey);
+      await queryRunner.dropForeignKey(
+        'job_closure_reasons',
+        jobClosureReasonsForeignKey,
+      );
     }
 
     // Drop foreign keys for job_referrals

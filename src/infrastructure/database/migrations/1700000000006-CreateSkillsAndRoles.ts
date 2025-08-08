@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateSkillsAndRoles1700000000006 implements MigrationInterface {
   name = 'CreateSkillsAndRoles1700000000006';
@@ -116,7 +121,9 @@ export class CreateSkillsAndRoles1700000000006 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     const skillsTable = await queryRunner.getTable('skills');
-    const skillsForeignKey = skillsTable.foreignKeys.find(fk => fk.columnNames.indexOf('role_id') !== -1);
+    const skillsForeignKey = skillsTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('role_id') !== -1,
+    );
     if (skillsForeignKey) {
       await queryRunner.dropForeignKey('skills', skillsForeignKey);
     }

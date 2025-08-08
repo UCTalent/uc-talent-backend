@@ -39,4 +39,4 @@ export class CreateEducationDto {
   @IsOptional()
   @IsString()
   description?: string;
-} 
+}

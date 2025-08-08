@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PartnerHostRepository } from '@domains/partner/repositories/partner-host.repository';
 
 @Injectable()
@@ -9,20 +14,21 @@ export class PartnerTokenGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     const host = this.extractHostFromHeader(request);
-    
+
     if (!token || !host) {
       throw new UnauthorizedException('Partner token and host are required');
     }
-    
-    const partnerHost = await this.partnerHostRepository.findByAccessToken(token);
-    
+
+    const partnerHost =
+      await this.partnerHostRepository.findByAccessToken(token);
+
     if (!partnerHost || partnerHost.host !== host) {
       throw new UnauthorizedException('Invalid partner token or host');
     }
-    
+
     request['partnerHost'] = partnerHost;
     request['partner'] = partnerHost.partner;
-    
+
     return true;
   }
 

@@ -1,7 +1,17 @@
-import { IsOptional, IsString, IsNumber, IsArray, IsEnum } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsNumber,
+  IsArray,
+  IsEnum,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { EmploymentStatus, EnglishProficiency, TalentStatus } from '../entities/talent.entity';
+import {
+  EmploymentStatus,
+  EnglishProficiency,
+  TalentStatus,
+} from '../entities/talent.entity';
 
 export class TalentIndexQueryDto {
   @ApiProperty({ required: false, description: 'Page number' })
@@ -15,36 +25,60 @@ export class TalentIndexQueryDto {
   @IsString()
   query?: string;
 
-  @ApiProperty({ required: false, description: 'Employment status', enum: EmploymentStatus })
+  @ApiProperty({
+    required: false,
+    description: 'Employment status',
+    enum: EmploymentStatus,
+  })
   @IsOptional()
   @IsEnum(EmploymentStatus)
   employment_status?: EmploymentStatus;
 
-  @ApiProperty({ required: false, description: 'English proficiency', enum: EnglishProficiency })
+  @ApiProperty({
+    required: false,
+    description: 'English proficiency',
+    enum: EnglishProficiency,
+  })
   @IsOptional()
   @IsEnum(EnglishProficiency)
   english_proficiency?: EnglishProficiency;
 
-  @ApiProperty({ required: false, description: 'Experience levels', type: [Number] })
+  @ApiProperty({
+    required: false,
+    description: 'Experience levels',
+    type: [Number],
+  })
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
   @Transform(({ value }) => value.map(v => parseInt(v)))
   experience_levels?: number[];
 
-  @ApiProperty({ required: false, description: 'Management levels', type: [Number] })
+  @ApiProperty({
+    required: false,
+    description: 'Management levels',
+    type: [Number],
+  })
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
   @Transform(({ value }) => value.map(v => parseInt(v)))
   management_levels?: number[];
 
-  @ApiProperty({ required: false, description: 'Talent status', enum: TalentStatus })
+  @ApiProperty({
+    required: false,
+    description: 'Talent status',
+    enum: TalentStatus,
+  })
   @IsOptional()
   @IsEnum(TalentStatus)
   status?: TalentStatus;
 
-  @ApiProperty({ required: false, description: 'Speciality IDs', type: [String] })
+  @ApiProperty({
+    required: false,
+    description: 'Speciality IDs',
+    type: [String],
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -72,9 +106,13 @@ export class TalentIndexQueryDto {
   @IsString()
   location_country_id?: string;
 
-  @ApiProperty({ required: false, description: 'Specific talent IDs', type: [String] })
+  @ApiProperty({
+    required: false,
+    description: 'Specific talent IDs',
+    type: [String],
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
   ids?: string[];
-} 
+}

@@ -23,7 +23,7 @@ export class Web3Event extends BaseEntity {
   chainId: string;
 
   // Relationships
-  @ManyToOne(() => Job, (job) => job.web3Events)
+  @ManyToOne(() => Job, job => job.web3Events)
   @JoinColumn({ name: 'jobId' })
   job: Job;
-} 
+}

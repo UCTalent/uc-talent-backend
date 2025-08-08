@@ -1,5 +1,13 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { SocialAccount, SocialProvider, SocialAccountStatus } from '@domains/social/entities/social-account.entity';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
+import {
+  SocialAccount,
+  SocialProvider,
+  SocialAccountStatus,
+} from '@domains/social/entities/social-account.entity';
 import { SocialSetting } from '@domains/social/entities/social-setting.entity';
 import { SyncStatus } from '@domains/social/entities/social-sync-log.entity';
 import { User } from '@domains/user/entities/user.entity';
@@ -21,52 +29,57 @@ export class SocialAccountService {
   ) {}
 
   async getUserSocialAccounts(userId: string) {
-    const socialAccounts = await this.socialAccountRepository.findByUser(userId);
+    const socialAccounts =
+      await this.socialAccountRepository.findByUser(userId);
 
     return {
       success: true,
-      data: { socialAccounts }
+      data: { socialAccounts },
     };
   }
 
   async linkSocialAccount(userId: string, linkDto: LinkSocialAccountDto) {
     // Check if social account already exists
-    const existingAccount = await this.socialAccountRepository.findByProviderAndUid(
-      linkDto.provider as SocialProvider, 
-      linkDto.uid
-    );
+    const existingAccount =
+      await this.socialAccountRepository.findByProviderAndUid(
+        linkDto.provider as SocialProvider,
+        linkDto.uid,
+      );
 
     if (existingAccount) {
       throw new BadRequestException('This social account is already linked');
     }
 
     // Check if user already has account for this provider
-    const userExistingAccount = await this.socialAccountRepository.findByUserAndProvider(
-      userId, 
-      linkDto.provider as SocialProvider
-    );
+    const userExistingAccount =
+      await this.socialAccountRepository.findByUserAndProvider(
+        userId,
+        linkDto.provider as SocialProvider,
+      );
 
     const socialAccount = userExistingAccount || new SocialAccount();
-    
+
     Object.assign(socialAccount, {
       ...linkDto,
       userId,
       provider: linkDto.provider as SocialProvider,
       status: SocialAccountStatus.ACTIVE,
       lastSyncedAt: new Date(),
-      expiresAt: linkDto.expiresAt ? new Date(linkDto.expiresAt) : null
+      expiresAt: linkDto.expiresAt ? new Date(linkDto.expiresAt) : null,
     });
 
-    const savedAccount = await this.socialAccountRepository.create(socialAccount);
+    const savedAccount =
+      await this.socialAccountRepository.create(socialAccount);
 
     return {
       success: true,
-      data: { socialAccount: savedAccount }
+      data: { socialAccount: savedAccount },
     };
   }
 
   async unlinkSocialAccount(userId: string, socialAccountId: string) {
-    const socialAccount = await this.socialAccountRepository.findById(socialAccountId);
+    const socialAccount =
+      await this.socialAccountRepository.findById(socialAccountId);
 
     if (!socialAccount || socialAccount.userId !== userId) {
       throw new NotFoundException('Social account not found');
@@ -76,12 +89,13 @@ export class SocialAccountService {
 
     return {
       success: true,
-      message: 'Social account unlinked successfully'
+      message: 'Social account unlinked successfully',
     };
   }
 
   async syncSocialAccount(userId: string, socialAccountId: string) {
-    const socialAccount = await this.socialAccountRepository.findById(socialAccountId);
+    const socialAccount =
+      await this.socialAccountRepository.findById(socialAccountId);
 
     if (!socialAccount || socialAccount.userId !== userId) {
       throw new NotFoundException('Social account not found');
@@ -106,7 +120,7 @@ export class SocialAccountService {
       socialAccount.lastSyncedAt = new Date();
       await this.socialAccountRepository.update(socialAccount.id, {
         metadata: latestData,
-        lastSyncedAt: socialAccount.lastSyncedAt
+        lastSyncedAt: socialAccount.lastSyncedAt,
       });
 
       // Log sync
@@ -116,7 +130,7 @@ export class SocialAccountService {
         syncType: 'manual',
         changesCount: changes.length,
         changes,
-        syncDurationMs: Date.now() - startTime
+        syncDurationMs: Date.now() - startTime,
       });
 
       return {
@@ -124,8 +138,8 @@ export class SocialAccountService {
         data: {
           syncedAt: socialAccount.lastSyncedAt,
           syncedData: latestData,
-          changes
-        }
+          changes,
+        },
       };
     } catch (error) {
       // Log failed sync
@@ -134,7 +148,7 @@ export class SocialAccountService {
         status: SyncStatus.FAILED,
         syncType: 'manual',
         errorMessage: error.message,
-        syncDurationMs: Date.now() - startTime
+        syncDurationMs: Date.now() - startTime,
       });
 
       throw error;
@@ -142,12 +156,11 @@ export class SocialAccountService {
   }
 
   async syncAllSocialAccounts(userId: string) {
-    const socialAccounts = await this.socialAccountRepository.findActiveByUser(userId);
+    const socialAccounts =
+      await this.socialAccountRepository.findActiveByUser(userId);
 
     const syncResults = await Promise.allSettled(
-      socialAccounts.map(account => 
-        this.syncSocialAccount(userId, account.id)
-      )
+      socialAccounts.map(account => this.syncSocialAccount(userId, account.id)),
     );
 
     const results = syncResults.map((result, index) => ({
@@ -155,26 +168,29 @@ export class SocialAccountService {
       provider: socialAccounts[index].provider,
       status: result.status === 'fulfilled' ? 'success' : 'failed',
       syncedAt: result.status === 'fulfilled' ? new Date() : null,
-      changesCount: result.status === 'fulfilled' ? 
-        (result.value as any).data?.changes?.length || 0 : 0,
-      error: result.status === 'rejected' ? result.reason?.message : null
+      changesCount:
+        result.status === 'fulfilled'
+          ? (result.value as any).data?.changes?.length || 0
+          : 0,
+      error: result.status === 'rejected' ? result.reason?.message : null,
     }));
 
     const summary = {
       totalAccounts: socialAccounts.length,
       successfulSyncs: results.filter(r => r.status === 'success').length,
       failedSyncs: results.filter(r => r.status === 'failed').length,
-      totalChanges: results.reduce((sum, r) => sum + (r.changesCount || 0), 0)
+      totalChanges: results.reduce((sum, r) => sum + (r.changesCount || 0), 0),
     };
 
     return {
       success: true,
-      data: { syncResults: results, summary }
+      data: { syncResults: results, summary },
     };
   }
 
   async refreshSocialToken(userId: string, socialAccountId: string) {
-    const socialAccount = await this.socialAccountRepository.findById(socialAccountId);
+    const socialAccount =
+      await this.socialAccountRepository.findById(socialAccountId);
 
     if (!socialAccount || socialAccount.userId !== userId) {
       throw new NotFoundException('Social account not found');
@@ -190,7 +206,7 @@ export class SocialAccountService {
     await this.socialAccountRepository.update(socialAccount.id, {
       accessToken: newTokens.accessToken,
       refreshToken: newTokens.refreshToken,
-      expiresAt: newTokens.expiresAt
+      expiresAt: newTokens.expiresAt,
     });
 
     return {
@@ -199,8 +215,8 @@ export class SocialAccountService {
         accessToken: newTokens.accessToken,
         refreshToken: newTokens.refreshToken,
         expiresAt: newTokens.expiresAt,
-        updatedAt: new Date()
-      }
+        updatedAt: new Date(),
+      },
     };
   }
 
@@ -212,12 +228,12 @@ export class SocialAccountService {
 
     if (query) {
       socialAccounts = await this.socialAccountRepository.searchByMetadata(
-        query, 
-        provider as SocialProvider
+        query,
+        provider as SocialProvider,
       );
     } else if (provider) {
       socialAccounts = await this.socialAccountRepository.findByProvider(
-        provider as SocialProvider
+        provider as SocialProvider,
       );
     } else {
       socialAccounts = await this.socialAccountRepository.findAll();
@@ -231,12 +247,14 @@ export class SocialAccountService {
       user: {
         firstName: account.user?.name?.split(' ')[0],
         lastName: account.user?.name?.split(' ')[1],
-        email: account.metadata?.email || account.user?.email
+        email: account.metadata?.email || account.user?.email,
       },
-      socialAccounts: [{
-        provider: account.provider,
-        metadata: account.metadata
-      }]
+      socialAccounts: [
+        {
+          provider: account.provider,
+          metadata: account.metadata,
+        },
+      ],
     }));
 
     return {
@@ -247,14 +265,15 @@ export class SocialAccountService {
           page,
           limit,
           total: socialAccounts.length,
-          totalPages: Math.ceil(socialAccounts.length / limit)
-        }
-      }
+          totalPages: Math.ceil(socialAccounts.length / limit),
+        },
+      },
     };
   }
 
   async getSocialSettings(userId: string) {
-    const settings = await this.socialSettingRepository.findOrCreateByUser(userId);
+    const settings =
+      await this.socialSettingRepository.findOrCreateByUser(userId);
 
     return {
       success: true,
@@ -264,19 +283,20 @@ export class SocialAccountService {
           showGitHubRepos: settings.showGitHubRepos,
           showSocialConnections: settings.showSocialConnections,
           allowProfileSync: settings.allowProfileSync,
-          publicSocialLinks: settings.publicSocialLinks
+          publicSocialLinks: settings.publicSocialLinks,
         },
         syncSettings: {
           autoSync: settings.autoSync,
           syncFrequency: settings.syncFrequency,
-          syncFields: settings.syncFields
-        }
-      }
+          syncFields: settings.syncFields,
+        },
+      },
     };
   }
 
   async updateSocialSettings(userId: string, settingsDto: SocialSettingsDto) {
-    const settings = await this.socialSettingRepository.findOrCreateByUser(userId);
+    const settings =
+      await this.socialSettingRepository.findOrCreateByUser(userId);
 
     if (settingsDto.privacySettings) {
       Object.assign(settings, settingsDto.privacySettings);
@@ -286,7 +306,10 @@ export class SocialAccountService {
       Object.assign(settings, settingsDto.syncSettings);
     }
 
-    const updatedSettings = await this.socialSettingRepository.update(settings.id, settings);
+    const updatedSettings = await this.socialSettingRepository.update(
+      settings.id,
+      settings,
+    );
 
     return {
       success: true,
@@ -296,15 +319,15 @@ export class SocialAccountService {
           showGitHubRepos: updatedSettings.showGitHubRepos,
           showSocialConnections: updatedSettings.showSocialConnections,
           allowProfileSync: updatedSettings.allowProfileSync,
-          publicSocialLinks: updatedSettings.publicSocialLinks
+          publicSocialLinks: updatedSettings.publicSocialLinks,
         },
         syncSettings: {
           autoSync: updatedSettings.autoSync,
           syncFrequency: updatedSettings.syncFrequency,
-          syncFields: updatedSettings.syncFields
+          syncFields: updatedSettings.syncFields,
         },
-        updatedAt: updatedSettings.updatedAt
-      }
+        updatedAt: updatedSettings.updatedAt,
+      },
     };
   }
 
@@ -328,11 +351,13 @@ export class SocialAccountService {
     await this.socialAccountRepository.update(socialAccount.id, {
       accessToken: newTokens.accessToken,
       refreshToken: newTokens.refreshToken,
-      expiresAt: newTokens.expiresAt
+      expiresAt: newTokens.expiresAt,
     });
   }
 
-  private async fetchProfileDataFromProvider(socialAccount: SocialAccount): Promise<any> {
+  private async fetchProfileDataFromProvider(
+    socialAccount: SocialAccount,
+  ): Promise<any> {
     // Mock implementation - in real scenario, use OAuth service
     const mockData = {
       displayName: `Mock User ${socialAccount.provider}`,
@@ -340,7 +365,7 @@ export class SocialAccountService {
       profileUrl: `https://${socialAccount.provider}.com/user`,
       connections: Math.floor(Math.random() * 1000),
       followers: Math.floor(Math.random() * 500),
-      ...socialAccount.metadata
+      ...socialAccount.metadata,
     };
 
     return mockData;
@@ -351,19 +376,19 @@ export class SocialAccountService {
     return {
       accessToken: `new-token-${Date.now()}`,
       refreshToken: `new-refresh-${Date.now()}`,
-      expiresAt: new Date(Date.now() + 3600000) // 1 hour from now
+      expiresAt: new Date(Date.now() + 3600000), // 1 hour from now
     };
   }
 
   private detectChanges(oldData: any, newData: any): any[] {
     const changes = [];
-    
+
     for (const key in newData) {
       if (oldData[key] !== newData[key]) {
         changes.push({
           field: key,
           oldValue: oldData[key],
-          newValue: newData[key]
+          newValue: newData[key],
         });
       }
     }
@@ -372,17 +397,19 @@ export class SocialAccountService {
   }
 
   // Legacy methods for backward compatibility
-  async createSocialAccount(data: Partial<SocialAccount>): Promise<SocialAccount> {
+  async createSocialAccount(
+    data: Partial<SocialAccount>,
+  ): Promise<SocialAccount> {
     return this.socialAccountRepository.create(data);
   }
 
   async findSocialAccountById(id: string): Promise<SocialAccount> {
     const socialAccount = await this.socialAccountRepository.findById(id);
-    
+
     if (!socialAccount) {
       throw new NotFoundException('Social account not found');
     }
-    
+
     return socialAccount;
   }
 
@@ -390,12 +417,18 @@ export class SocialAccountService {
     return this.socialAccountRepository.findByUser(userId);
   }
 
-  async findSocialAccountByProviderAndUid(provider: string, uid: string): Promise<SocialAccount | null> {
-    return this.socialAccountRepository.findByProviderAndUid(provider as SocialProvider, uid);
+  async findSocialAccountByProviderAndUid(
+    provider: string,
+    uid: string,
+  ): Promise<SocialAccount | null> {
+    return this.socialAccountRepository.findByProviderAndUid(
+      provider as SocialProvider,
+      uid,
+    );
   }
 
   async deleteSocialAccount(id: string): Promise<void> {
     const socialAccount = await this.findSocialAccountById(id);
     await this.socialAccountRepository.delete(id);
   }
-} 
+}

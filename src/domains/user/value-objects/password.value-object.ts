@@ -28,7 +28,10 @@ export class Password {
     return bcrypt.compare(this.value, hashedPassword);
   }
 
-  static async verify(plainPassword: string, hashedPassword: string): Promise<boolean> {
+  static async verify(
+    plainPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
     return bcrypt.compare(plainPassword, hashedPassword);
   }
-} 
+}

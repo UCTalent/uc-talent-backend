@@ -10,4 +10,4 @@ import { ValidationPipe } from '@nestjs/common';
     },
   ],
 })
-export class ValidationModule {} 
+export class ValidationModule {}

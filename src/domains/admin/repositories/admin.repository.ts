@@ -47,16 +47,16 @@ export class AdminRepository implements IBaseRepository<Admin> {
   }
 
   async findByEmail(email: string): Promise<Admin | null> {
-    return this.repository.findOne({ 
+    return this.repository.findOne({
       where: { email },
-      relations: ['permissions']
+      relations: ['permissions'],
     });
   }
 
   async findActiveAdmins(): Promise<Admin[]> {
-    return this.repository.find({ 
+    return this.repository.find({
       where: { status: 'active' },
-      relations: ['permissions']
+      relations: ['permissions'],
     });
   }
 
@@ -78,18 +78,21 @@ export class AdminRepository implements IBaseRepository<Admin> {
     skip?: number;
     take?: number;
   }): Promise<{ data: Admin[]; total: number }> {
-    const queryBuilder = this.repository.createQueryBuilder('admin')
+    const queryBuilder = this.repository
+      .createQueryBuilder('admin')
       .leftJoinAndSelect('admin.permissions', 'permissions');
 
     if (options.search) {
       queryBuilder.where(
         'admin.email ILIKE :search OR admin.firstName ILIKE :search OR admin.lastName ILIKE :search',
-        { search: `%${options.search}%` }
+        { search: `%${options.search}%` },
       );
     }
 
     if (options.status) {
-      queryBuilder.andWhere('admin.status = :status', { status: options.status });
+      queryBuilder.andWhere('admin.status = :status', {
+        status: options.status,
+      });
     }
 
     if (options.role) {
@@ -97,7 +100,10 @@ export class AdminRepository implements IBaseRepository<Admin> {
     }
 
     if (options.sortBy) {
-      queryBuilder.orderBy(`admin.${options.sortBy}`, options.sortOrder || 'DESC');
+      queryBuilder.orderBy(
+        `admin.${options.sortBy}`,
+        options.sortOrder || 'DESC',
+      );
     } else {
       queryBuilder.orderBy('admin.createdAt', 'DESC');
     }
@@ -139,4 +145,4 @@ export class AdminRepository implements IBaseRepository<Admin> {
       relations: ['permissions'],
     });
   }
-} 
+}

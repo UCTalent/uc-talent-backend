@@ -25,7 +25,7 @@ export class AdminPermission extends BaseEntity {
   @JoinTable({
     name: 'admin_permission_mappings',
     joinColumn: { name: 'permission_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'admin_id', referencedColumnName: 'id' }
+    inverseJoinColumn: { name: 'admin_id', referencedColumnName: 'id' },
   })
   admins: Admin[];
-} 
+}

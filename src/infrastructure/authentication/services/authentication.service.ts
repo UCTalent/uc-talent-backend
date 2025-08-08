@@ -12,7 +12,7 @@ export class AuthenticationService {
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userService.findByEmail(email);
-    if (user && await this.userService.verifyPassword(user, password)) {
+    if (user && (await this.userService.verifyPassword(user, password))) {
       const { encryptedPassword, ...result } = user;
       return result;
     }
@@ -35,7 +35,10 @@ export class AuthenticationService {
     return this.userService.findByFirebaseUid(firebaseUid);
   }
 
-  async createUserFromFirebase(firebaseUid: string, userData: any): Promise<User> {
+  async createUserFromFirebase(
+    firebaseUid: string,
+    userData: any,
+  ): Promise<User> {
     return this.userService.create({
       email: userData.email,
       name: userData.name,
@@ -43,4 +46,4 @@ export class AuthenticationService {
       firebaseProvider: userData.provider,
     });
   }
-} 
+}

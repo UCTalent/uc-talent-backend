@@ -77,7 +77,10 @@ export class SocialAccountController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Unlink social account' })
   @ApiParam({ name: 'id', description: 'Social account ID' })
-  @ApiResponse({ status: 204, description: 'Social account unlinked successfully' })
+  @ApiResponse({
+    status: 204,
+    description: 'Social account unlinked successfully',
+  })
   @ApiResponse({ status: 404, description: 'Social account not found' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async unlinkSocialAccount(@CurrentUser() user: any, @Param('id') id: string) {
@@ -181,7 +184,8 @@ export class SocialAccountController {
     description: 'Social accounts found successfully',
   })
   async findByUserId(@Param('userId') userId: string) {
-    const socialAccounts = await this.socialAccountService.findSocialAccountsByUserId(userId);
+    const socialAccounts =
+      await this.socialAccountService.findSocialAccountsByUserId(userId);
     return {
       socialAccounts,
       total: socialAccounts.length,
@@ -226,7 +230,16 @@ export class SocialAuthController {
   @ApiParam({
     name: 'provider',
     description: 'Social provider',
-    enum: ['facebook', 'x', 'twitter', 'linkedin', 'github', 'instagram', 'discord', 'telegram'],
+    enum: [
+      'facebook',
+      'x',
+      'twitter',
+      'linkedin',
+      'github',
+      'instagram',
+      'discord',
+      'telegram',
+    ],
   })
   @ApiResponse({
     status: 200,

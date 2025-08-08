@@ -11,7 +11,9 @@ import { WalletAddressRepository } from './repositories/wallet-address.repositor
 import { Web3EventRepository } from './repositories/web3-event.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PaymentDistribution, WalletAddress, Web3Event])],
+  imports: [
+    TypeOrmModule.forFeature([PaymentDistribution, WalletAddress, Web3Event]),
+  ],
   providers: [
     PaymentService,
     WalletService,
@@ -22,4 +24,4 @@ import { Web3EventRepository } from './repositories/web3-event.repository';
   controllers: [PaymentDistributionController],
   exports: [PaymentService, WalletService],
 })
-export class PaymentModule {} 
+export class PaymentModule {}

@@ -6,10 +6,9 @@ import {
   Delete,
   Body,
   Param,
-  UseGuards,
-  Request,
   HttpCode,
   HttpStatus,
+  Patch,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,14 +16,17 @@ import {
   ApiResponse,
   ApiParam,
   ApiBody,
-  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { UserService } from '@user/services/user.service';
 import { CreateUserDto } from '@user/dtos/create-user.dto';
 import { UpdateUserDto } from '@user/dtos/update-user.dto';
-import { UserResponseDto, UserListResponseDto } from '@user/dtos/user-response.dto';
+import {
+  UserResponseDto,
+  UserListResponseDto,
+} from '@user/dtos/user-response.dto';
 import { User } from '@user/entities/user.entity';
 import { Public } from '@shared/cross-cutting/authorization/decorators/public.decorator';
+import { ResponseHandler } from '@shared/utils/response-handler';
 
 @ApiTags('users')
 @Controller('users')
@@ -48,9 +50,13 @@ export class UserController {
     status: 409,
     description: 'Conflict - user already exists',
   })
-  async create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
+  async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.userService.create(createUserDto);
-    return this.mapToResponseDto(user);
+    return ResponseHandler.success({
+      data: this.mapToResponseDto(user),
+      statusCode: HttpStatus.CREATED,
+      message: 'User created successfully',
+    });
   }
 
   @Get()
@@ -61,14 +67,17 @@ export class UserController {
     description: 'Users retrieved successfully',
     type: UserListResponseDto,
   })
-  async findAll(): Promise<UserListResponseDto> {
+  async findAll() {
     const users = await this.userService.findAll();
-    return {
-      users: users.map(user => this.mapToResponseDto(user)),
-      total: users.length,
-      page: 1,
-      limit: users.length,
-    };
+    return ResponseHandler.success({
+      data: {
+        users: users.map(user => this.mapToResponseDto(user)),
+        total: users.length,
+        page: 1,
+        limit: users.length,
+      },
+      message: 'Users retrieved successfully',
+    });
   }
 
   @Get(':id')
@@ -87,9 +96,12 @@ export class UserController {
     status: 404,
     description: 'User not found',
   })
-  async findById(@Param('id') id: string): Promise<UserResponseDto> {
+  async findById(@Param('id') id: string) {
     const user = await this.userService.findById(id);
-    return this.mapToResponseDto(user);
+    return ResponseHandler.success({
+      data: this.mapToResponseDto(user),
+      message: 'User found successfully',
+    });
   }
 
   @Put(':id')
@@ -109,20 +121,15 @@ export class UserController {
     status: 404,
     description: 'User not found',
   })
-  @ApiResponse({
-    status: 409,
-    description: 'Conflict - email already exists',
-  })
-  async update(
-    @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<UserResponseDto> {
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.userService.update(id, updateUserDto);
-    return this.mapToResponseDto(user);
+    return ResponseHandler.success({
+      data: this.mapToResponseDto(user),
+      message: 'User updated successfully',
+    });
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete user by ID' })
   @ApiParam({
     name: 'id',
@@ -130,19 +137,22 @@ export class UserController {
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiResponse({
-    status: 204,
+    status: 200,
     description: 'User deleted successfully',
   })
   @ApiResponse({
     status: 404,
     description: 'User not found',
   })
-  async delete(@Param('id') id: string): Promise<void> {
-    return this.userService.delete(id);
+  async delete(@Param('id') id: string) {
+    await this.userService.delete(id);
+    return ResponseHandler.success({
+      data: null,
+      message: 'User deleted successfully',
+    });
   }
 
-  @Put(':id/soft-delete')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @Patch(':id/soft-delete')
   @ApiOperation({ summary: 'Soft delete user by ID' })
   @ApiParam({
     name: 'id',
@@ -150,14 +160,22 @@ export class UserController {
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiResponse({
-    status: 204,
+    status: 200,
     description: 'User soft deleted successfully',
   })
-  async softDelete(@Param('id') id: string): Promise<void> {
-    return this.userService.softDelete(id);
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  async softDelete(@Param('id') id: string) {
+    await this.userService.softDelete(id);
+    return ResponseHandler.success({
+      data: null,
+      message: 'User soft deleted successfully',
+    });
   }
 
-  @Put(':id/restore')
+  @Patch(':id/restore')
   @ApiOperation({ summary: 'Restore soft deleted user by ID' })
   @ApiParam({
     name: 'id',
@@ -168,8 +186,16 @@ export class UserController {
     status: 200,
     description: 'User restored successfully',
   })
-  async restore(@Param('id') id: string): Promise<void> {
-    return this.userService.restore(id);
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  async restore(@Param('id') id: string) {
+    await this.userService.restore(id);
+    return ResponseHandler.success({
+      data: null,
+      message: 'User restored successfully',
+    });
   }
 
   private mapToResponseDto(user: User): UserResponseDto {
@@ -207,4 +233,4 @@ export class UserController {
       deletedAt: user.deletedAt,
     };
   }
-} 
+}

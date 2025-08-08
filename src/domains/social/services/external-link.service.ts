@@ -4,9 +4,7 @@ import { ExternalLinkRepository } from '../repositories/external-link.repository
 
 @Injectable()
 export class ExternalLinkService {
-  constructor(
-    private readonly externalLinkRepo: ExternalLinkRepository,
-  ) {}
+  constructor(private readonly externalLinkRepo: ExternalLinkRepository) {}
 
   async createExternalLink(data: Partial<ExternalLink>): Promise<ExternalLink> {
     return this.externalLinkRepo.create(data);
@@ -14,11 +12,11 @@ export class ExternalLinkService {
 
   async findExternalLinkById(id: string): Promise<ExternalLink> {
     const externalLink = await this.externalLinkRepo.findById(id);
-    
+
     if (!externalLink) {
       throw new NotFoundException('External link not found');
     }
-    
+
     return externalLink;
   }
 
@@ -26,7 +24,10 @@ export class ExternalLinkService {
     return this.externalLinkRepo.findByTalentId(talentId);
   }
 
-  async updateExternalLink(id: string, data: Partial<ExternalLink>): Promise<ExternalLink> {
+  async updateExternalLink(
+    id: string,
+    data: Partial<ExternalLink>,
+  ): Promise<ExternalLink> {
     return this.externalLinkRepo.update(id, data);
   }
 
@@ -34,4 +35,4 @@ export class ExternalLinkService {
     const externalLink = await this.findExternalLinkById(id);
     await this.externalLinkRepo.delete(id);
   }
-} 
+}

@@ -18,8 +18,8 @@ export class UpdatePartnerDto {
   })
   @IsOptional()
   @IsString()
-  @Matches(/^[a-z0-9-]+$/, { 
-    message: 'Slug must contain only lowercase letters, numbers, and hyphens' 
+  @Matches(/^[a-z0-9-]+$/, {
+    message: 'Slug must contain only lowercase letters, numbers, and hyphens',
   })
   slug?: string;
 

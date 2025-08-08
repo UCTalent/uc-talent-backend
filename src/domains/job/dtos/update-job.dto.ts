@@ -1,4 +1,10 @@
-import { IsOptional, IsString, IsEnum, IsNumber, IsDate } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsEnum,
+  IsNumber,
+  IsDate,
+} from 'class-validator';
 import { JobStatus, LocationType } from '@job/entities/job.entity';
 
 export class UpdateJobDto {
@@ -172,4 +178,4 @@ export class UpdateJobDto {
   @IsOptional()
   @IsString()
   partnerHostId?: string;
-} 
+}

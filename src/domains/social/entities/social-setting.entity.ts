@@ -25,7 +25,11 @@ export class SocialSetting extends BaseEntity {
   @Column({ name: 'sync_frequency', default: 'daily' })
   syncFrequency: string; // daily, weekly, monthly
 
-  @Column({ name: 'sync_fields', type: 'jsonb', default: '["profile", "connections"]' })
+  @Column({
+    name: 'sync_fields',
+    type: 'jsonb',
+    default: '["profile", "connections"]',
+  })
   syncFields: string[];
 
   // Foreign Keys

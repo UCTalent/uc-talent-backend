@@ -16,4 +16,4 @@ export class Skill extends BaseEntity {
   @ManyToOne(() => Role, { nullable: true })
   @JoinColumn({ name: 'role_id' })
   role: Role;
-} 
+}

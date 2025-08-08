@@ -1,4 +1,13 @@
-import { Entity, Column, Index, ManyToOne, OneToMany, JoinColumn, ManyToMany, JoinTable } from 'typeorm';
+import {
+  Entity,
+  Column,
+  Index,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 import { Organization } from '@organization/entities/organization.entity';
 import { Speciality } from '@skill/entities/speciality.entity';
@@ -199,19 +208,19 @@ export class Job extends BaseEntity {
   @JoinColumn({ name: 'partnerHostId' })
   partnerHost: PartnerHost;
 
-  @OneToMany(() => JobApply, (apply) => apply.job)
+  @OneToMany(() => JobApply, apply => apply.job)
   jobApplies: JobApply[];
 
-  @OneToMany(() => JobReferral, (referral) => referral.job)
+  @OneToMany(() => JobReferral, referral => referral.job)
   jobReferrals: JobReferral[];
 
-  @OneToMany(() => JobClosureReason, (reason) => reason.job)
+  @OneToMany(() => JobClosureReason, reason => reason.job)
   jobClosureReasons: JobClosureReason[];
 
-  @OneToMany(() => Web3Event, (event) => event.job)
+  @OneToMany(() => Web3Event, event => event.job)
   web3Events: Web3Event[];
 
-  @OneToMany(() => ReferralLink, (referralLink) => referralLink.job)
+  @OneToMany(() => ReferralLink, referralLink => referralLink.job)
   referralLinks: ReferralLink[];
 
   @ManyToMany(() => Skill)
@@ -230,7 +239,10 @@ export class Job extends BaseEntity {
   })
   choiceOptions: ChoiceOption[];
 
-  @OneToMany(() => PaymentDistribution, (paymentDistribution) => paymentDistribution.job)
+  @OneToMany(
+    () => PaymentDistribution,
+    paymentDistribution => paymentDistribution.job,
+  )
   paymentDistributions: PaymentDistribution[];
 
   // Static properties
@@ -238,4 +250,4 @@ export class Job extends BaseEntity {
 }
 
 // Alias for easier imports
-export { Job as JobEntity }; 
+export { Job as JobEntity };

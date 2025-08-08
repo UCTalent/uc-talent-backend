@@ -18,4 +18,4 @@ export class SystemSetting extends BaseEntity {
 
   @Column({ default: false })
   encrypted: boolean;
-} 
+}

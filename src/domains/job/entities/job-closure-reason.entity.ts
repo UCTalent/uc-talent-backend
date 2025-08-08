@@ -11,7 +11,7 @@ export class JobClosureReason extends BaseEntity {
   otherReason: string;
 
   // Relationships
-  @ManyToOne(() => Job, (job) => job.jobClosureReasons)
+  @ManyToOne(() => Job, job => job.jobClosureReasons)
   @JoinColumn({ name: 'jobId' })
   job: Job;
-} 
+}

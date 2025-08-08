@@ -319,4 +319,4 @@ export class JobListResponseDto {
 
   @ApiProperty({ type: PaginationDto })
   pagination: PaginationDto;
-} 
+}

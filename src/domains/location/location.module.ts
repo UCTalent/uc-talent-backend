@@ -20,4 +20,4 @@ import { RegionRepository } from './repositories/region.repository';
   controllers: [LocationController],
   exports: [LocationService],
 })
-export class LocationModule {} 
+export class LocationModule {}

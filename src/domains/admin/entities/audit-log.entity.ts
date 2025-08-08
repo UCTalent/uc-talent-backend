@@ -29,4 +29,4 @@ export class AuditLog extends BaseEntity {
   @ManyToOne(() => Admin, admin => admin.auditLogs)
   @JoinColumn({ name: 'admin_id' })
   admin: Admin;
-} 
+}

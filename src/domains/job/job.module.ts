@@ -27,7 +27,7 @@ import { JobController } from './controllers/job.controller';
     ]),
   ],
   providers: [
-    JobService, 
+    JobService,
     JobRepository,
     JobApplyRepository,
     JobReferralRepository,
@@ -35,11 +35,11 @@ import { JobController } from './controllers/job.controller';
   ],
   controllers: [JobController],
   exports: [
-    JobService, 
+    JobService,
     JobRepository,
     JobApplyRepository,
     JobReferralRepository,
     ReferralLinkRepository,
   ],
 })
-export class JobModule {} 
+export class JobModule {}

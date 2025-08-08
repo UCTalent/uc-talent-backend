@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { Not } from 'typeorm';
 import { PaymentDistribution } from '@payment/entities/payment-distribution.entity';
 import { PaymentDistributionRepository } from '@payment/repositories/payment-distribution.repository';
@@ -11,21 +15,25 @@ export class PaymentService {
     private readonly paymentDistributionRepository: PaymentDistributionRepository,
   ) {}
 
-  async createPaymentDistribution(data: Partial<PaymentDistribution>): Promise<PaymentDistribution> {
+  async createPaymentDistribution(
+    data: Partial<PaymentDistribution>,
+  ): Promise<PaymentDistribution> {
     return this.paymentDistributionRepository.create(data);
   }
 
   async findPaymentDistributionById(id: string): Promise<PaymentDistribution> {
     const payment = await this.paymentDistributionRepository.findById(id);
-    
+
     if (!payment) {
       throw new NotFoundException('Payment distribution not found');
     }
-    
+
     return payment;
   }
 
-  async findPaymentDistributionsByRecipient(recipientId: string): Promise<PaymentDistribution[]> {
+  async findPaymentDistributionsByRecipient(
+    recipientId: string,
+  ): Promise<PaymentDistribution[]> {
     return this.paymentDistributionRepository.findByRecipientId(recipientId);
   }
 
@@ -40,16 +48,19 @@ export class PaymentService {
     // if (!job) throw new NotFoundException('Job not found');
 
     // 3. Find claimable payment distribution
-    const paymentDist = await this.paymentDistributionRepository.findClaimablePayment({
-      id: claimDto.payment_distributions.payment_distribution_id,
-      jobId: claimDto.payment_distributions.job_id,
-      recipientId: userId,
-      status: 'pending',
-      role: Not('platform_fee')
-    });
-    
+    const paymentDist =
+      await this.paymentDistributionRepository.findClaimablePayment({
+        id: claimDto.payment_distributions.payment_distribution_id,
+        jobId: claimDto.payment_distributions.job_id,
+        recipientId: userId,
+        status: 'pending',
+        role: Not('platform_fee'),
+      });
+
     if (!paymentDist) {
-      throw new NotFoundException('Payment distribution not found or not claimable');
+      throw new NotFoundException(
+        'Payment distribution not found or not claimable',
+      );
     }
 
     // 4. Validate role claim logic (candidate, referrer, hiring_manager)
@@ -59,26 +70,30 @@ export class PaymentService {
 
     // 5. Update status
     await this.paymentDistributionRepository.updatePaymentStatus(
-      paymentDist.id, 
-      'completed', 
-      new Date()
+      paymentDist.id,
+      'completed',
+      new Date(),
     );
 
-    const updatedPayment = await this.paymentDistributionRepository.findById(paymentDist.id);
+    const updatedPayment = await this.paymentDistributionRepository.findById(
+      paymentDist.id,
+    );
 
     return {
       success: true,
       data: {
         id: updatedPayment.id,
         status: updatedPayment.status,
-        claimed_at: updatedPayment.claimedAt
-      }
+        claimed_at: updatedPayment.claimedAt,
+      },
     };
   }
 
   async updateBlockchainStatus(updateDto: UpdateBlockchainStatusDto) {
-    const paymentDist = await this.paymentDistributionRepository.findById(updateDto.payment_distribution_id);
-    
+    const paymentDist = await this.paymentDistributionRepository.findById(
+      updateDto.payment_distribution_id,
+    );
+
     if (!paymentDist) {
       throw new NotFoundException('Payment distribution not found');
     }
@@ -88,25 +103,30 @@ export class PaymentService {
     }
 
     await this.paymentDistributionRepository.updatePaymentStatus(
-      paymentDist.id, 
-      'completed', 
-      undefined, 
-      updateDto.transaction_hash
+      paymentDist.id,
+      'completed',
+      undefined,
+      updateDto.transaction_hash,
     );
 
-    const updatedPayment = await this.paymentDistributionRepository.findById(paymentDist.id);
+    const updatedPayment = await this.paymentDistributionRepository.findById(
+      paymentDist.id,
+    );
 
     return {
       success: true,
       data: {
         id: updatedPayment.id,
         status: updatedPayment.status,
-        transaction_hash: updatedPayment.transactionHash
-      }
+        transaction_hash: updatedPayment.transactionHash,
+      },
     };
   }
 
-  private validateRoleClaim(paymentDist: PaymentDistribution, userId: string): boolean {
+  private validateRoleClaim(
+    paymentDist: PaymentDistribution,
+    userId: string,
+  ): boolean {
     // Implement logic to validate role claim
     // This should check job status, job_apply status, etc.
     // For now, return true as placeholder
@@ -116,26 +136,26 @@ export class PaymentService {
   // Legacy methods for backward compatibility
   async claimPaymentById(id: string): Promise<PaymentDistribution> {
     const payment = await this.findPaymentDistributionById(id);
-    
+
     if (payment.status !== 'pending') {
       throw new Error('Payment is not available for claiming');
     }
-    
+
     payment.status = 'completed';
     payment.claimedAt = new Date();
-    
+
     return this.paymentDistributionRepository.update(id, payment);
   }
 
   async markAsPaid(id: string): Promise<PaymentDistribution> {
     const payment = await this.findPaymentDistributionById(id);
-    
+
     if (payment.status !== 'completed') {
       throw new Error('Payment must be completed before being marked as paid');
     }
-    
+
     payment.status = 'paid';
-    
+
     return this.paymentDistributionRepository.update(id, payment);
   }
-} 
+}

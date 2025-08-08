@@ -5,7 +5,9 @@ import { PaymentDistribution } from '@payment/entities/payment-distribution.enti
 import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
-export class PaymentDistributionRepository implements IBaseRepository<PaymentDistribution> {
+export class PaymentDistributionRepository
+  implements IBaseRepository<PaymentDistribution>
+{
   constructor(
     @InjectRepository(PaymentDistribution)
     private readonly repository: Repository<PaymentDistribution>,
@@ -24,12 +26,17 @@ export class PaymentDistributionRepository implements IBaseRepository<PaymentDis
     });
   }
 
-  async create(data: Partial<PaymentDistribution>): Promise<PaymentDistribution> {
+  async create(
+    data: Partial<PaymentDistribution>,
+  ): Promise<PaymentDistribution> {
     const payment = this.repository.create(data);
     return this.repository.save(payment);
   }
 
-  async update(id: string, data: Partial<PaymentDistribution>): Promise<PaymentDistribution> {
+  async update(
+    id: string,
+    data: Partial<PaymentDistribution>,
+  ): Promise<PaymentDistribution> {
     await this.repository.update(id, data);
     return this.findById(id);
   }
@@ -70,7 +77,12 @@ export class PaymentDistributionRepository implements IBaseRepository<PaymentDis
     });
   }
 
-  async updatePaymentStatus(id: string, status: string, claimedAt?: Date, transactionHash?: string): Promise<PaymentDistribution> {
+  async updatePaymentStatus(
+    id: string,
+    status: string,
+    claimedAt?: Date,
+    transactionHash?: string,
+  ): Promise<PaymentDistribution> {
     const updateData: any = { status };
     if (claimedAt) {
       updateData.claimedAt = claimedAt;
@@ -78,8 +90,8 @@ export class PaymentDistributionRepository implements IBaseRepository<PaymentDis
     if (transactionHash) {
       updateData.transactionHash = transactionHash;
     }
-    
+
     await this.repository.update(id, updateData);
     return this.findById(id);
   }
-} 
+}

@@ -1,8 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { SpecialityService } from '@skill/services/speciality.service';
 import { Speciality } from '@skill/entities/speciality.entity';
-import { SpecialityResponseDto, SpecialityListResponseDto } from '@skill/dtos/skill-response.dto';
+import {
+  SpecialityResponseDto,
+  SpecialityListResponseDto,
+} from '@skill/dtos/skill-response.dto';
 
 @ApiTags('specialities')
 @Controller('specialities')
@@ -19,7 +30,9 @@ export class SpecialityController {
   async findAll(): Promise<SpecialityListResponseDto> {
     const specialities = await this.specialityService.findAll();
     return {
-      specialities: specialities.map(speciality => this.mapToResponseDto(speciality)),
+      specialities: specialities.map(speciality =>
+        this.mapToResponseDto(speciality),
+      ),
       total: specialities.length,
       page: 1,
       limit: specialities.length,
@@ -42,7 +55,9 @@ export class SpecialityController {
     status: 404,
     description: 'Speciality not found',
   })
-  async findById(@Param('id') id: string): Promise<SpecialityResponseDto | null> {
+  async findById(
+    @Param('id') id: string,
+  ): Promise<SpecialityResponseDto | null> {
     const speciality = await this.specialityService.findById(id);
     return speciality ? this.mapToResponseDto(speciality) : null;
   }
@@ -57,4 +72,4 @@ export class SpecialityController {
       deletedAt: speciality.deletedAt,
     };
   }
-} 
+}

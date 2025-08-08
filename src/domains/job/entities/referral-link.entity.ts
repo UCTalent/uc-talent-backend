@@ -12,11 +12,11 @@ export class ReferralLink extends BaseEntity {
   referrerId: string;
 
   // Relationships
-  @ManyToOne(() => Job, (job) => job.referralLinks)
+  @ManyToOne(() => Job, job => job.referralLinks)
   @JoinColumn({ name: 'jobId' })
   job: Job;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'referrerId' })
   referrer: User;
-} 
+}

@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { User } from '@user/entities/user.entity';
 import { CreateUserDto } from '@user/dtos/create-user.dto';
 import { UpdateUserDto } from '@user/dtos/update-user.dto';
@@ -8,9 +12,7 @@ import { Password } from '@user/value-objects/password.value-object';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private readonly userRepo: UserRepository,
-  ) {}
+  constructor(private readonly userRepo: UserRepository) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const { email, password, ...rest } = createUserDto;
@@ -128,6 +130,10 @@ export class UserService {
     await this.userRepo.resetPassword(userId, hashedPassword);
   }
 
+  async clearResetToken(userId: string): Promise<void> {
+    await this.userRepo.clearResetToken(userId);
+  }
+
   async confirmUser(userId: string): Promise<void> {
     await this.userRepo.confirmUser(userId);
   }
@@ -137,4 +143,4 @@ export class UserService {
     // For now, return false
     return false;
   }
-} 
+}

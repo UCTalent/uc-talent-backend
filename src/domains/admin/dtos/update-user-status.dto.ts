@@ -6,7 +6,11 @@ export class UpdateUserStatusDto {
   @IsString()
   status: string;
 
-  @ApiProperty({ description: 'Reason for status change', example: 'Violation of terms', required: false })
+  @ApiProperty({
+    description: 'Reason for status change',
+    example: 'Violation of terms',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   reason?: string;
@@ -14,4 +18,4 @@ export class UpdateUserStatusDto {
   @ApiProperty({ description: 'Admin ID', example: 'admin-uuid' })
   @IsString()
   adminId: string;
-} 
+}

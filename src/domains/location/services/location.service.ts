@@ -41,4 +41,4 @@ export class LocationService {
   async findRegionById(id: string): Promise<Region | null> {
     return this.regionRepository.findById(id);
   }
-} 
+}

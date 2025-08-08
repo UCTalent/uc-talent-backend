@@ -29,7 +29,10 @@ export class SocialSettingRepository implements IBaseRepository<SocialSetting> {
     return this.repository.save(socialSetting);
   }
 
-  async update(id: string, data: Partial<SocialSetting>): Promise<SocialSetting> {
+  async update(
+    id: string,
+    data: Partial<SocialSetting>,
+  ): Promise<SocialSetting> {
     await this.repository.update(id, data);
     return this.findById(id);
   }
@@ -48,13 +51,13 @@ export class SocialSettingRepository implements IBaseRepository<SocialSetting> {
 
   async findByUser(userId: string): Promise<SocialSetting | null> {
     return this.repository.findOne({
-      where: { userId }
+      where: { userId },
     });
   }
 
   async findOrCreateByUser(userId: string): Promise<SocialSetting> {
     let setting = await this.findByUser(userId);
-    
+
     if (!setting) {
       setting = this.repository.create({
         userId,
@@ -65,7 +68,7 @@ export class SocialSettingRepository implements IBaseRepository<SocialSetting> {
         publicSocialLinks: [],
         autoSync: true,
         syncFrequency: 'daily',
-        syncFields: ['profile', 'connections']
+        syncFields: ['profile', 'connections'],
       });
       setting = await this.repository.save(setting);
     }
@@ -76,7 +79,7 @@ export class SocialSettingRepository implements IBaseRepository<SocialSetting> {
   async findUsersWithAutoSync(): Promise<SocialSetting[]> {
     return this.repository.find({
       where: { autoSync: true },
-      relations: ['user']
+      relations: ['user'],
     });
   }
 }

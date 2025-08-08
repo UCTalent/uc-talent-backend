@@ -23,4 +23,4 @@ import { EmailService } from './services/email.service';
   ],
   exports: [MailerService, EmailService],
 })
-export class EmailModule {} 
+export class EmailModule {}

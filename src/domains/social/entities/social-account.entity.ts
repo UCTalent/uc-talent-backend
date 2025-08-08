@@ -1,4 +1,11 @@
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 import { User } from '@domains/user/entities/user.entity';
 
@@ -10,21 +17,21 @@ export enum SocialProvider {
   GITHUB = 'github',
   INSTAGRAM = 'instagram',
   DISCORD = 'discord',
-  TELEGRAM = 'telegram'
+  TELEGRAM = 'telegram',
 }
 
 export enum SocialAccountStatus {
   ACTIVE = 'active',
   EXPIRED = 'expired',
   REVOKED = 'revoked',
-  DISCONNECTED = 'disconnected'
+  DISCONNECTED = 'disconnected',
 }
 
 @Entity('social_accounts')
 export class SocialAccount extends BaseEntity {
   @Column({
     type: 'enum',
-    enum: SocialProvider
+    enum: SocialProvider,
   })
   @Index()
   provider: SocialProvider;
@@ -48,7 +55,7 @@ export class SocialAccount extends BaseEntity {
   @Column({
     type: 'enum',
     enum: SocialAccountStatus,
-    default: SocialAccountStatus.ACTIVE
+    default: SocialAccountStatus.ACTIVE,
   })
   status: SocialAccountStatus;
 
@@ -69,4 +76,4 @@ export class SocialAccount extends BaseEntity {
 }
 
 // Import at the end to avoid circular dependency
-import { SocialSyncLog } from './social-sync-log.entity'; 
+import { SocialSyncLog } from './social-sync-log.entity';

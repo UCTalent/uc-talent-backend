@@ -83,24 +83,31 @@ export class UserRepository implements IBaseRepository<User> {
 
   // New methods for authentication
   async updateResetToken(userId: string, resetToken: string): Promise<void> {
-    await this.repository.update(userId, { 
+    await this.repository.update(userId, {
       resetPasswordToken: resetToken,
-      resetPasswordSentAt: new Date()
+      resetPasswordSentAt: new Date(),
     });
   }
 
   async resetPassword(userId: string, hashedPassword: string): Promise<void> {
-    await this.repository.update(userId, { 
+    await this.repository.update(userId, {
       encryptedPassword: hashedPassword,
       resetPasswordToken: null,
-      resetPasswordSentAt: null
+      resetPasswordSentAt: null,
+    });
+  }
+
+  async clearResetToken(userId: string): Promise<void> {
+    await this.repository.update(userId, {
+      resetPasswordToken: null,
+      resetPasswordSentAt: null,
     });
   }
 
   async confirmUser(userId: string): Promise<void> {
-    await this.repository.update(userId, { 
+    await this.repository.update(userId, {
       confirmedAt: new Date(),
-      confirmationToken: null
+      confirmationToken: null,
     });
   }
-} 
+}

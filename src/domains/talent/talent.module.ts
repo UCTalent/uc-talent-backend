@@ -25,4 +25,4 @@ import { TalentController } from './controllers/talent.controller';
   controllers: [TalentController],
   exports: [TalentService, TalentRepository],
 })
-export class TalentModule {} 
+export class TalentModule {}

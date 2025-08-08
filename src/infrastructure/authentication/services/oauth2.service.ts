@@ -8,7 +8,7 @@ export class OAuth2Service {
   async handleOAuth2Callback(profile: any): Promise<any> {
     // Handle OAuth2 callback and create/update user
     const existingUser = await this.userService.findByEmail(profile.email);
-    
+
     if (existingUser) {
       return existingUser;
     }
@@ -19,4 +19,4 @@ export class OAuth2Service {
       name: profile.name,
     });
   }
-} 
+}

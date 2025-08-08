@@ -1,4 +1,10 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateUsers1700000000004 implements MigrationInterface {
   name = 'CreateUsers1700000000004';
@@ -210,7 +216,9 @@ export class CreateUsers1700000000004 implements MigrationInterface {
     await queryRunner.dropIndex('users', 'IDX_USERS_EMAIL');
 
     const table = await queryRunner.getTable('users');
-    const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf('location_city_id') !== -1);
+    const foreignKey = table.foreignKeys.find(
+      fk => fk.columnNames.indexOf('location_city_id') !== -1,
+    );
     if (foreignKey) {
       await queryRunner.dropForeignKey('users', foreignKey);
     }

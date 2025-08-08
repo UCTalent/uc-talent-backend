@@ -99,4 +99,4 @@ export class ListResponseDto<T> {
     example: 100,
   })
   total: number;
-} 
+}

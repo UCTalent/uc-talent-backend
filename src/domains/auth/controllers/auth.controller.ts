@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Put, Get, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Put,
+  Get,
+  Query,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AuthService } from '../services/auth.service';
 import { LoginDto } from '../dtos/login.dto';
@@ -9,6 +18,7 @@ import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { ClientIP } from '../../../shared/cross-cutting/authorization/decorators/current-user.decorator';
 import { Public } from '../../../shared/cross-cutting/authorization/decorators/public.decorator';
+import { ResponseHandler } from '@shared/utils/response-handler';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -23,30 +33,17 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Login successful',
-    schema: {
-      type: 'object',
-      properties: {
-        user: {
-          type: 'object',
-          properties: {
-            id: { type: 'string' },
-            name: { type: 'string' },
-            email: { type: 'string' }
-          }
-        },
-        token_type: { type: 'string', example: 'Bearer' },
-        access_token: { type: 'string' },
-        expires_in: { type: 'number', example: 7200 },
-        has_profile: { type: 'boolean' }
-      }
-    }
   })
   @ApiResponse({
     status: 401,
-    description: 'Invalid credentials'
+    description: 'Invalid credentials',
   })
   async login(@Body() loginDto: LoginDto, @ClientIP() clientIP: string) {
-    return this.authService.login(loginDto, clientIP);
+    const result = await this.authService.login(loginDto, clientIP);
+    return ResponseHandler.success({
+      data: result,
+      message: 'Login successful',
+    });
   }
 
   @Post('register')
@@ -57,28 +54,18 @@ export class AuthController {
   @ApiResponse({
     status: 201,
     description: 'User registered successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        user: {
-          type: 'object',
-          properties: {
-            id: { type: 'string' },
-            name: { type: 'string' },
-            email: { type: 'string' },
-            confirmed_at: { type: 'string', nullable: true }
-          }
-        },
-        message: { type: 'string', example: 'Confirmation email sent' }
-      }
-    }
   })
   @ApiResponse({
     status: 409,
-    description: 'User already exists'
+    description: 'User already exists',
   })
   async register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);
+    const result = await this.authService.register(registerDto);
+    return ResponseHandler.success({
+      data: result,
+      statusCode: HttpStatus.CREATED,
+      message: 'User registered successfully',
+    });
   }
 
   @Post('firebase')
@@ -89,60 +76,38 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Firebase authentication successful',
-    schema: {
-      type: 'object',
-      properties: {
-        user: {
-          type: 'object',
-          properties: {
-            name: { type: 'string' },
-            email: { type: 'string' }
-          }
-        },
-        user_id: { type: 'string' },
-        token_type: { type: 'string', example: 'Bearer' },
-        access_token: { type: 'string' },
-        has_profile: { type: 'boolean' },
-        expires_in: { type: 'number' },
-        created_at: { type: 'number' },
-        refresh_token: { type: 'string' }
-      }
-    }
   })
   @ApiResponse({
     status: 401,
-    description: 'Invalid Firebase token'
+    description: 'Invalid Firebase token',
   })
   async firebaseAuth(@Body() firebaseAuthDto: FirebaseAuthDto) {
-    return this.authService.firebaseAuth(firebaseAuthDto);
+    const result = await this.authService.firebaseAuth(firebaseAuthDto);
+    return ResponseHandler.success({
+      data: result,
+      message: 'Firebase authentication successful',
+    });
   }
 
   @Post('web3')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Login with Web3/Thirdweb' })
+  @ApiOperation({ summary: 'Login with Web3 wallet' })
   @ApiBody({ type: Web3AuthDto })
   @ApiResponse({
     status: 200,
     description: 'Web3 authentication successful',
-    schema: {
-      type: 'object',
-      properties: {
-        access_token: { type: 'string' },
-        token_type: { type: 'string', example: 'Bearer' },
-        expires_in: { type: 'number' },
-        refresh_token: { type: 'string' },
-        scope: { type: 'string' },
-        created_at: { type: 'number' }
-      }
-    }
   })
   @ApiResponse({
     status: 401,
-    description: 'Invalid JWT token'
+    description: 'Invalid Web3 signature',
   })
   async web3Auth(@Body() web3AuthDto: Web3AuthDto) {
-    return this.authService.web3Auth(web3AuthDto);
+    const result = await this.authService.web3Auth(web3AuthDto);
+    return ResponseHandler.success({
+      data: result,
+      message: 'Web3 authentication successful',
+    });
   }
 
   @Post('forgot-password')
@@ -152,92 +117,92 @@ export class AuthController {
   @ApiBody({ type: ForgotPasswordDto })
   @ApiResponse({
     status: 200,
-    description: 'Reset password email sent',
-    schema: {
-      type: 'object',
-      properties: {
-        message: { type: 'string', example: 'Reset password email sent' }
-      }
-    }
+    description: 'Password reset email sent',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
   })
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
-    return this.authService.forgotPassword(forgotPasswordDto);
+    const result = await this.authService.forgotPassword(forgotPasswordDto);
+    return ResponseHandler.success({
+      data: result,
+      message: 'Password reset email sent',
+    });
   }
 
   @Put('reset-password')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Reset password' })
+  @ApiOperation({ summary: 'Reset password with token' })
   @ApiBody({ type: ResetPasswordDto })
   @ApiResponse({
     status: 200,
-    description: 'Password updated successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        message: { type: 'string', example: 'Password updated successfully' }
-      }
-    }
+    description: 'Password reset successful',
   })
   @ApiResponse({
     status: 400,
-    description: 'Invalid reset password token'
+    description: 'Invalid or expired token',
   })
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
-    return this.authService.resetPassword(resetPasswordDto);
+    const result = await this.authService.resetPassword(resetPasswordDto);
+    return ResponseHandler.success({
+      data: result,
+      message: 'Password reset successful',
+    });
+  }
+
+  @Get('validate-reset-token')
+  @Public()
+  @ApiOperation({ summary: 'Validate password reset token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Token is valid',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid or expired token',
+  })
+  async validateResetToken(@Query('token') token: string) {
+    const result = await this.authService.validateResetToken(token);
+    return ResponseHandler.success({
+      data: result,
+      message: 'Token is valid',
+    });
   }
 
   @Get('confirm-email')
   @Public()
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Confirm email' })
+  @ApiOperation({ summary: 'Confirm email address' })
   @ApiResponse({
     status: 200,
     description: 'Email confirmed successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        message: { type: 'string', example: 'Email confirmed successfully' }
-      }
-    }
   })
   @ApiResponse({
     status: 400,
-    description: 'Invalid confirmation token'
-  })
-  @ApiResponse({
-    status: 409,
-    description: 'Email already confirmed'
+    description: 'Invalid or expired confirmation token',
   })
   async confirmEmail(@Query('confirmation_token') token: string) {
-    return this.authService.confirmEmail(token);
+    const result = await this.authService.confirmEmail(token);
+    return ResponseHandler.success({
+      data: result,
+      message: 'Email confirmed successfully',
+    });
   }
 
   @Post('social/callback')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Social login callback' })
+  @ApiOperation({ summary: 'Social authentication callback' })
   @ApiResponse({
     status: 200,
     description: 'Social authentication successful',
-    schema: {
-      type: 'object',
-      properties: {
-        user: {
-          type: 'object',
-          properties: {
-            id: { type: 'string' },
-            name: { type: 'string' },
-            email: { type: 'string' }
-          }
-        },
-        token_type: { type: 'string', example: 'Bearer' },
-        access_token: { type: 'string' },
-        expires_in: { type: 'number' }
-      }
-    }
   })
   async socialCallback(@Body() body: any) {
-    return this.authService.socialCallback(body);
+    const result = await this.authService.socialCallback(body);
+    return ResponseHandler.success({
+      data: result,
+      message: 'Social authentication successful',
+    });
   }
 }

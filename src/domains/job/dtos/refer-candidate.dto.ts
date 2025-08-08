@@ -39,4 +39,4 @@ export class ReferCandidateDto {
   @IsOptional()
   @IsString()
   web3_chain_name?: string;
-} 
+}

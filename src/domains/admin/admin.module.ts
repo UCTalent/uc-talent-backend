@@ -21,11 +21,11 @@ import { JobModule } from '@job/job.module';
       AuditLog,
       SystemSetting,
       AdminSession,
-      AdminPermission
+      AdminPermission,
     ]),
     ConfigModule,
     AuthorizationModule,
-    JobModule
+    JobModule,
   ],
   controllers: [AdminController],
   providers: [
@@ -41,4 +41,4 @@ import { JobModule } from '@job/job.module';
     SystemSettingRepository,
   ],
 })
-export class AdminModule {} 
+export class AdminModule {}

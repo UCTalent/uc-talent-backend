@@ -52,4 +52,4 @@ export class SkillRepository implements IBaseRepository<Skill> {
       relations: ['role'],
     });
   }
-} 
+}

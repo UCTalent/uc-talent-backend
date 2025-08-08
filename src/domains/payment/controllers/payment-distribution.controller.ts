@@ -1,10 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Put,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { PaymentService } from '@payment/services/payment.service';
 import { PaymentDistribution } from '@payment/entities/payment-distribution.entity';
-import { 
-  PaymentDistributionResponseDto, 
-  PaymentDistributionListResponseDto 
+import {
+  PaymentDistributionResponseDto,
+  PaymentDistributionListResponseDto,
 } from '@payment/dtos/payment-response.dto';
 import { ClaimPaymentDto } from '@payment/dtos/claim-payment.dto';
 import { UpdateBlockchainStatusDto } from '@payment/dtos/update-blockchain-status.dto';
@@ -33,8 +45,11 @@ export class PaymentDistributionController {
     status: 404,
     description: 'Payment distribution not found',
   })
-  async findById(@Param('id') id: string): Promise<PaymentDistributionResponseDto> {
-    const paymentDistribution = await this.paymentService.findPaymentDistributionById(id);
+  async findById(
+    @Param('id') id: string,
+  ): Promise<PaymentDistributionResponseDto> {
+    const paymentDistribution =
+      await this.paymentService.findPaymentDistributionById(id);
     return this.mapToResponseDto(paymentDistribution);
   }
 
@@ -50,10 +65,17 @@ export class PaymentDistributionController {
     description: 'Payment distributions found successfully',
     type: PaymentDistributionListResponseDto,
   })
-  async findByRecipient(@Param('recipientId') recipientId: string): Promise<PaymentDistributionListResponseDto> {
-    const paymentDistributions = await this.paymentService.findPaymentDistributionsByRecipient(recipientId);
+  async findByRecipient(
+    @Param('recipientId') recipientId: string,
+  ): Promise<PaymentDistributionListResponseDto> {
+    const paymentDistributions =
+      await this.paymentService.findPaymentDistributionsByRecipient(
+        recipientId,
+      );
     return {
-      paymentDistributions: paymentDistributions.map(pd => this.mapToResponseDto(pd)),
+      paymentDistributions: paymentDistributions.map(pd =>
+        this.mapToResponseDto(pd),
+      ),
       total: paymentDistributions.length,
       page: 1,
       limit: paymentDistributions.length,
@@ -77,7 +99,9 @@ export class PaymentDistributionController {
     status: 404,
     description: 'Payment distribution not found',
   })
-  async claimPaymentById(@Param('id') id: string): Promise<PaymentDistributionResponseDto> {
+  async claimPaymentById(
+    @Param('id') id: string,
+  ): Promise<PaymentDistributionResponseDto> {
     const paymentDistribution = await this.paymentService.claimPaymentById(id);
     return this.mapToResponseDto(paymentDistribution);
   }
@@ -99,7 +123,9 @@ export class PaymentDistributionController {
     status: 404,
     description: 'Payment distribution not found',
   })
-  async markAsPaid(@Param('id') id: string): Promise<PaymentDistributionResponseDto> {
+  async markAsPaid(
+    @Param('id') id: string,
+  ): Promise<PaymentDistributionResponseDto> {
     const paymentDistribution = await this.paymentService.markAsPaid(id);
     return this.mapToResponseDto(paymentDistribution);
   }
@@ -120,17 +146,20 @@ export class PaymentDistributionController {
           properties: {
             id: { type: 'string' },
             status: { type: 'string' },
-            claimed_at: { type: 'string', format: 'date-time' }
-          }
-        }
-      }
-    }
+            claimed_at: { type: 'string', format: 'date-time' },
+          },
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 422,
     description: 'Failed to claim payment',
   })
-  async claimPayment(@Body() claimDto: ClaimPaymentDto, @CurrentUser() user: User) {
+  async claimPayment(
+    @Body() claimDto: ClaimPaymentDto,
+    @CurrentUser() user: User,
+  ) {
     return this.paymentService.claimPayment(claimDto, user.id);
   }
 
@@ -149,11 +178,11 @@ export class PaymentDistributionController {
           properties: {
             id: { type: 'string' },
             status: { type: 'string' },
-            transaction_hash: { type: 'string' }
-          }
-        }
-      }
-    }
+            transaction_hash: { type: 'string' },
+          },
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 404,
@@ -167,7 +196,9 @@ export class PaymentDistributionController {
     return this.paymentService.updateBlockchainStatus(updateDto);
   }
 
-  private mapToResponseDto(paymentDistribution: PaymentDistribution): PaymentDistributionResponseDto {
+  private mapToResponseDto(
+    paymentDistribution: PaymentDistribution,
+  ): PaymentDistributionResponseDto {
     return {
       id: paymentDistribution.id,
       amountCents: paymentDistribution.amountCents,
@@ -187,4 +218,4 @@ export class PaymentDistributionController {
       deletedAt: paymentDistribution.deletedAt,
     };
   }
-} 
+}

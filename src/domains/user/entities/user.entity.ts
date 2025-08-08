@@ -1,4 +1,11 @@
-import { Entity, Column, Index, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  Index,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 import { Talent } from '@talent/entities/talent.entity';
@@ -244,22 +251,22 @@ export class User extends BaseEntity {
   status: UserStatus;
 
   // Relationships
-  @OneToMany(() => Talent, (talent) => talent.user)
+  @OneToMany(() => Talent, talent => talent.user)
   talents: Talent[];
 
-  @OneToMany(() => WalletAddress, (wallet) => wallet.owner)
+  @OneToMany(() => WalletAddress, wallet => wallet.owner)
   walletAddresses: WalletAddress[];
 
-  @OneToMany(() => PaymentDistribution, (payment) => payment.recipient)
+  @OneToMany(() => PaymentDistribution, payment => payment.recipient)
   paymentDistributions: PaymentDistribution[];
 
-  @OneToMany(() => Note, (note) => note.user)
+  @OneToMany(() => Note, note => note.user)
   notes: Note[];
 
-  @OneToMany(() => SocialAccount, (social) => social.user)
+  @OneToMany(() => SocialAccount, social => social.user)
   socialAccounts: SocialAccount[];
 
   @ManyToOne(() => City, { nullable: true })
   @JoinColumn({ name: 'location_city_id' })
   locationCity: City;
-} 
+}

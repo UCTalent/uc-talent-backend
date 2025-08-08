@@ -21,13 +21,13 @@ export class SocialAuthService {
     const tokenData = await this.oauthService.exchangeCodeForToken(
       provider,
       authDto.code,
-      authDto.redirectUri
+      authDto.redirectUri,
     );
 
     // Fetch user profile from provider
     const profileData = await this.oauthService.fetchProfileData(
       provider,
-      tokenData.accessToken
+      tokenData.accessToken,
     );
 
     // Find or create user
@@ -46,7 +46,7 @@ export class SocialAuthService {
       accessToken: tokenData.accessToken,
       refreshToken: tokenData.refreshToken,
       expiresAt: tokenData.expiresAt?.toISOString(),
-      metadata: profileData
+      metadata: profileData,
     });
 
     // Generate JWT tokens
@@ -59,23 +59,27 @@ export class SocialAuthService {
           id: user.id,
           email: user.email,
           name: user.name,
-          isNewUser
+          isNewUser,
         },
         tokens,
         socialAccount: {
           provider,
           uid: profileData.id,
-          status: 'active'
-        }
-      }
+          status: 'active',
+        },
+      },
     };
   }
 
-  private async findUserBySocialAccount(provider: string, uid: string): Promise<User | null> {
-    const socialAccount = await this.socialAccountService.findSocialAccountByProviderAndUid(
-      provider,
-      uid
-    );
+  private async findUserBySocialAccount(
+    provider: string,
+    uid: string,
+  ): Promise<User | null> {
+    const socialAccount =
+      await this.socialAccountService.findSocialAccountByProviderAndUid(
+        provider,
+        uid,
+      );
 
     if (socialAccount) {
       return this.userRepo.findById(socialAccount.userId);
@@ -87,7 +91,9 @@ export class SocialAuthService {
   private async createUserFromSocialProfile(profile: any): Promise<User> {
     const userData = {
       email: profile.email,
-      name: profile.displayName || `${profile.firstName} ${profile.lastName}`.trim(),
+      name:
+        profile.displayName ||
+        `${profile.firstName} ${profile.lastName}`.trim(),
       // Add other user fields as needed based on your User entity
     };
 
@@ -96,11 +102,11 @@ export class SocialAuthService {
 
   private async generateTokens(user: User) {
     const payload = { sub: user.id, email: user.email };
-    
+
     return {
       accessToken: this.jwtService.sign(payload),
       refreshToken: this.jwtService.sign(payload, { expiresIn: '30d' }),
-      expiresIn: 3600
+      expiresIn: 3600,
     };
   }
 }

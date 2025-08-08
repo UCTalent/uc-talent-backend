@@ -29,7 +29,10 @@ export class WalletAddressRepository implements IBaseRepository<WalletAddress> {
     return this.repository.save(walletAddress);
   }
 
-  async update(id: string, data: Partial<WalletAddress>): Promise<WalletAddress> {
+  async update(
+    id: string,
+    data: Partial<WalletAddress>,
+  ): Promise<WalletAddress> {
     await this.repository.update(id, data);
     return this.findById(id);
   }
@@ -59,4 +62,4 @@ export class WalletAddressRepository implements IBaseRepository<WalletAddress> {
       relations: ['owner'],
     });
   }
-} 
+}

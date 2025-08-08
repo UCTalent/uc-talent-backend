@@ -1,5 +1,8 @@
 import { IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
-import { EmploymentStatus, EnglishProficiency } from '../entities/talent.entity';
+import {
+  EmploymentStatus,
+  EnglishProficiency,
+} from '../entities/talent.entity';
 
 export class UpdateTalentDto {
   @IsOptional()
@@ -25,4 +28,4 @@ export class UpdateTalentDto {
   @IsOptional()
   @IsString()
   headline?: string;
-} 
+}

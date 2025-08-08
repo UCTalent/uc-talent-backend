@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsString, MinLength, IsDate } from 'class-validator';
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  MinLength,
+  IsDate,
+} from 'class-validator';
 
 export class UpdateUserDto {
   @ApiProperty({
@@ -111,4 +117,4 @@ export class UpdateUserDto {
   @IsOptional()
   @IsDate()
   resetPasswordSentAt?: Date;
-} 
+}

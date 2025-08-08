@@ -6,14 +6,14 @@ export enum NetworkType {
   COTI_V2 = 'coti_v2',
   BASE = 'base',
   BNB = 'bnb',
-  ETHEREUM = 'ethereum'
+  ETHEREUM = 'ethereum',
 }
 
 @Entity('partner_host_networks')
 export class PartnerHostNetwork extends BaseEntity {
   @Column({
     type: 'enum',
-    enum: NetworkType
+    enum: NetworkType,
   })
   @Index()
   network: NetworkType;
@@ -29,4 +29,4 @@ export class PartnerHostNetwork extends BaseEntity {
   @ManyToOne(() => PartnerHost, partnerHost => partnerHost.networks)
   @JoinColumn({ name: 'partner_host_id' })
   partnerHost: PartnerHost;
-} 
+}

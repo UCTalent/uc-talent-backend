@@ -9,9 +9,9 @@ export class ImportDataProcessor {
   @Process('import-jobs')
   async handleImportJobs(job: Job) {
     this.logger.debug('Processing jobs import...');
-    
+
     const { source, data } = job.data;
-    
+
     try {
       // Import jobs logic here
       this.logger.debug(`Imported jobs from ${source}`);
@@ -24,9 +24,9 @@ export class ImportDataProcessor {
   @Process('import-organizations')
   async handleImportOrganizations(job: Job) {
     this.logger.debug('Processing organizations import...');
-    
+
     const { source, data } = job.data;
-    
+
     try {
       // Import organizations logic here
       this.logger.debug(`Imported organizations from ${source}`);
@@ -39,9 +39,9 @@ export class ImportDataProcessor {
   @Process('import-locations')
   async handleImportLocations(job: Job) {
     this.logger.debug('Processing locations import...');
-    
+
     const { source, data } = job.data;
-    
+
     try {
       // Import locations logic here
       this.logger.debug(`Imported locations from ${source}`);
@@ -50,4 +50,4 @@ export class ImportDataProcessor {
       throw error;
     }
   }
-} 
+}

@@ -19,4 +19,4 @@ export class CreateExternalLinkDto {
   @IsOptional()
   @IsString()
   description?: string;
-} 
+}

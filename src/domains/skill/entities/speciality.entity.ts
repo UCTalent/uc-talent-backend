@@ -10,4 +10,4 @@ export class Speciality extends BaseEntity {
 
   @Column({ type: 'text', nullable: true })
   description: string;
-} 
+}

@@ -6,7 +6,11 @@ export class UpdateJobStatusDto {
   @IsString()
   status: string;
 
-  @ApiProperty({ description: 'Reason for status change', example: 'Approved by admin', required: false })
+  @ApiProperty({
+    description: 'Reason for status change',
+    example: 'Approved by admin',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   reason?: string;
@@ -14,4 +18,4 @@ export class UpdateJobStatusDto {
   @ApiProperty({ description: 'Admin ID', example: 'admin-uuid' })
   @IsString()
   adminId: string;
-} 
+}

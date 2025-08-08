@@ -25,7 +25,10 @@ import { SocialSyncLogRepository } from './repositories/social-sync-log.reposito
 import { ExternalLinkRepository } from './repositories/external-link.repository';
 
 // Controllers
-import { SocialAccountController, SocialAuthController } from './controllers/social-account.controller';
+import {
+  SocialAccountController,
+  SocialAuthController,
+} from './controllers/social-account.controller';
 
 @Module({
   imports: [
@@ -47,17 +50,14 @@ import { SocialAccountController, SocialAuthController } from './controllers/soc
     SocialAuthService,
     OAuthService,
     ExternalLinkService,
-    
+
     // Repositories
     SocialAccountRepository,
     SocialSettingRepository,
     SocialSyncLogRepository,
     ExternalLinkRepository,
   ],
-  controllers: [
-    SocialAccountController,
-    SocialAuthController,
-  ],
+  controllers: [SocialAccountController, SocialAuthController],
   exports: [
     SocialAccountService,
     SocialAuthService,
@@ -69,4 +69,4 @@ import { SocialAccountController, SocialAuthController } from './controllers/soc
     ExternalLinkRepository,
   ],
 })
-export class SocialModule {} 
+export class SocialModule {}

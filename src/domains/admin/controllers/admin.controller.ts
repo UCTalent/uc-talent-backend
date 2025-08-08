@@ -1,12 +1,31 @@
-import { Controller, Get, Post, Patch, Body, Query, Param, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Body,
+  Query,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+  ApiParam,
+} from '@nestjs/swagger';
 import { AdminService } from '@admin/services/admin.service';
 import { AdminUserQueryDto } from '@admin/dtos/admin-user-query.dto';
 import { UpdateUserStatusDto } from '@admin/dtos/update-user-status.dto';
 import { AdminJobQueryDto } from '@admin/dtos/admin-job-query.dto';
 import { UpdateJobStatusDto } from '@admin/dtos/update-job-status.dto';
 import { BulkJobActionDto } from '@admin/dtos/bulk-job-action.dto';
-import { AdminGuard, AdminUser, CurrentAdmin } from '@shared/cross-cutting/authorization';
+import {
+  AdminGuard,
+  AdminUser,
+  CurrentAdmin,
+} from '@shared/cross-cutting/authorization';
 
 @ApiTags('admin')
 @Controller('api/admin')
@@ -35,22 +54,22 @@ export class AdminController {
                 totalPayments: { type: 'number' },
                 activeJobs: { type: 'number' },
                 pendingPayments: { type: 'number' },
-                recentApplications: { type: 'number' }
-              }
+                recentApplications: { type: 'number' },
+              },
             },
             charts: {
               type: 'object',
               properties: {
                 jobStatusDistribution: { type: 'array' },
                 paymentStatusDistribution: { type: 'array' },
-                monthlyJobTrends: { type: 'array' }
-              }
+                monthlyJobTrends: { type: 'array' },
+              },
             },
-            recentActivities: { type: 'array' }
-          }
-        }
-      }
-    }
+            recentActivities: { type: 'array' },
+          },
+        },
+      },
+    },
   })
   async getDashboard(@CurrentAdmin() admin: AdminUser) {
     return this.adminService.getDashboardStats();
@@ -83,15 +102,18 @@ export class AdminController {
                 page: { type: 'number' },
                 limit: { type: 'number' },
                 total: { type: 'number' },
-                totalPages: { type: 'number' }
-              }
-            }
-          }
-        }
-      }
-    }
+                totalPages: { type: 'number' },
+              },
+            },
+          },
+        },
+      },
+    },
   })
-  async getUsers(@Query() query: AdminUserQueryDto, @CurrentAdmin() admin: AdminUser) {
+  async getUsers(
+    @Query() query: AdminUserQueryDto,
+    @CurrentAdmin() admin: AdminUser,
+  ) {
     return this.adminService.getUsers(query);
   }
 
@@ -111,16 +133,16 @@ export class AdminController {
           properties: {
             id: { type: 'string' },
             status: { type: 'string' },
-            updatedAt: { type: 'string', format: 'date-time' }
-          }
-        }
-      }
-    }
+            updatedAt: { type: 'string', format: 'date-time' },
+          },
+        },
+      },
+    },
   })
   async updateUserStatus(
     @Param('id') id: string,
     @Body() body: UpdateUserStatusDto,
-    @CurrentAdmin() admin: AdminUser
+    @CurrentAdmin() admin: AdminUser,
   ) {
     return this.adminService.updateUserStatus(id, body);
   }
@@ -153,15 +175,18 @@ export class AdminController {
                 page: { type: 'number' },
                 limit: { type: 'number' },
                 total: { type: 'number' },
-                totalPages: { type: 'number' }
-              }
-            }
-          }
-        }
-      }
-    }
+                totalPages: { type: 'number' },
+              },
+            },
+          },
+        },
+      },
+    },
   })
-  async getJobs(@Query() query: AdminJobQueryDto, @CurrentAdmin() admin: AdminUser) {
+  async getJobs(
+    @Query() query: AdminJobQueryDto,
+    @CurrentAdmin() admin: AdminUser,
+  ) {
     return this.adminService.getJobs(query);
   }
 
@@ -181,16 +206,16 @@ export class AdminController {
           properties: {
             id: { type: 'string' },
             status: { type: 'string' },
-            updatedAt: { type: 'string', format: 'date-time' }
-          }
-        }
-      }
-    }
+            updatedAt: { type: 'string', format: 'date-time' },
+          },
+        },
+      },
+    },
   })
   async updateJobStatus(
     @Param('id') id: string,
     @Body() body: UpdateJobStatusDto,
-    @CurrentAdmin() admin: AdminUser
+    @CurrentAdmin() admin: AdminUser,
   ) {
     return this.adminService.updateJobStatus(id, body);
   }
@@ -210,13 +235,16 @@ export class AdminController {
           properties: {
             action: { type: 'string' },
             processedCount: { type: 'number' },
-            message: { type: 'string' }
-          }
-        }
-      }
-    }
+            message: { type: 'string' },
+          },
+        },
+      },
+    },
   })
-  async bulkJobActions(@Body() body: BulkJobActionDto, @CurrentAdmin() admin: AdminUser) {
+  async bulkJobActions(
+    @Body() body: BulkJobActionDto,
+    @CurrentAdmin() admin: AdminUser,
+  ) {
     return this.adminService.executeBulkJobAction(body);
   }
 
@@ -232,7 +260,7 @@ export class AdminController {
   @ApiQuery({ name: 'speciality', required: false, type: String })
   @ApiResponse({
     status: 200,
-    description: 'Talents list retrieved successfully'
+    description: 'Talents list retrieved successfully',
   })
   async getTalents(@Query() query: any, @CurrentAdmin() admin: AdminUser) {
     // TODO: Implement talent management
@@ -244,9 +272,9 @@ export class AdminController {
           page: 1,
           limit: 20,
           total: 0,
-          totalPages: 0
-        }
-      }
+          totalPages: 0,
+        },
+      },
     };
   }
 
@@ -256,17 +284,21 @@ export class AdminController {
   @ApiParam({ name: 'id', description: 'Talent ID' })
   @ApiResponse({
     status: 200,
-    description: 'Talent review completed successfully'
+    description: 'Talent review completed successfully',
   })
-  async reviewTalent(@Param('id') id: string, @Body() body: any, @CurrentAdmin() admin: AdminUser) {
+  async reviewTalent(
+    @Param('id') id: string,
+    @Body() body: any,
+    @CurrentAdmin() admin: AdminUser,
+  ) {
     // TODO: Implement talent review
     return {
       success: true,
       data: {
         id,
         action: body.action,
-        status: body.status
-      }
+        status: body.status,
+      },
     };
   }
 
@@ -282,9 +314,12 @@ export class AdminController {
   @ApiQuery({ name: 'dateTo', required: false, type: String })
   @ApiResponse({
     status: 200,
-    description: 'Payment distributions retrieved successfully'
+    description: 'Payment distributions retrieved successfully',
   })
-  async getPaymentDistributions(@Query() query: any, @CurrentAdmin() admin: AdminUser) {
+  async getPaymentDistributions(
+    @Query() query: any,
+    @CurrentAdmin() admin: AdminUser,
+  ) {
     // TODO: Implement payment management
     return {
       success: true,
@@ -294,9 +329,9 @@ export class AdminController {
           page: 1,
           limit: 20,
           total: 0,
-          totalPages: 0
-        }
-      }
+          totalPages: 0,
+        },
+      },
     };
   }
 
@@ -306,17 +341,21 @@ export class AdminController {
   @ApiParam({ name: 'id', description: 'Payment distribution ID' })
   @ApiResponse({
     status: 200,
-    description: 'Payment approved successfully'
+    description: 'Payment approved successfully',
   })
-  async approvePayment(@Param('id') id: string, @Body() body: any, @CurrentAdmin() admin: AdminUser) {
+  async approvePayment(
+    @Param('id') id: string,
+    @Body() body: any,
+    @CurrentAdmin() admin: AdminUser,
+  ) {
     // TODO: Implement payment approval
     return {
       success: true,
       data: {
         id,
         approved: body.approved,
-        transactionHash: body.transactionHash
-      }
+        transactionHash: body.transactionHash,
+      },
     };
   }
 
@@ -325,7 +364,7 @@ export class AdminController {
   @ApiOperation({ summary: 'Get system settings' })
   @ApiResponse({
     status: 200,
-    description: 'System settings retrieved successfully'
+    description: 'System settings retrieved successfully',
   })
   async getSystemSettings(@CurrentAdmin() admin: AdminUser) {
     return this.adminService.getSystemSettings();
@@ -336,9 +375,12 @@ export class AdminController {
   @ApiOperation({ summary: 'Update system settings' })
   @ApiResponse({
     status: 200,
-    description: 'System settings updated successfully'
+    description: 'System settings updated successfully',
   })
-  async updateSystemSettings(@Body() settings: Record<string, any>, @CurrentAdmin() admin: AdminUser) {
+  async updateSystemSettings(
+    @Body() settings: Record<string, any>,
+    @CurrentAdmin() admin: AdminUser,
+  ) {
     return this.adminService.updateSystemSettings(settings);
   }
 
@@ -353,9 +395,9 @@ export class AdminController {
   @ApiQuery({ name: 'dateTo', required: false, type: String })
   @ApiResponse({
     status: 200,
-    description: 'Audit logs retrieved successfully'
+    description: 'Audit logs retrieved successfully',
   })
   async getAuditLogs(@Query() query: any, @CurrentAdmin() admin: AdminUser) {
     return this.adminService.getAuditLogs(query);
   }
-} 
+}

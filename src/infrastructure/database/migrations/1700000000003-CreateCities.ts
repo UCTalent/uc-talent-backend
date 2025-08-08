@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateCities1700000000003 implements MigrationInterface {
   name = 'CreateCities1700000000003';
@@ -57,7 +62,9 @@ export class CreateCities1700000000003 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     const table = await queryRunner.getTable('cities');
-    const foreignKey = table.foreignKeys.find(fk => fk.columnNames.indexOf('country_id') !== -1);
+    const foreignKey = table.foreignKeys.find(
+      fk => fk.columnNames.indexOf('country_id') !== -1,
+    );
     if (foreignKey) {
       await queryRunner.dropForeignKey('cities', foreignKey);
     }

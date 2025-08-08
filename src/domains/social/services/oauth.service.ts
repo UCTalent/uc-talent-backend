@@ -2,7 +2,11 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 export interface IOAuthService {
-  exchangeCodeForToken(provider: string, code: string, redirectUri?: string): Promise<any>;
+  exchangeCodeForToken(
+    provider: string,
+    code: string,
+    redirectUri?: string,
+  ): Promise<any>;
   refreshToken(provider: string, refreshToken: string): Promise<any>;
   fetchProfileData(provider: string, accessToken: string): Promise<any>;
   revokeToken(provider: string, token: string): Promise<boolean>;
@@ -10,16 +14,18 @@ export interface IOAuthService {
 
 @Injectable()
 export class OAuthService implements IOAuthService {
-  constructor(
-    private readonly configService: ConfigService
-  ) {}
+  constructor(private readonly configService: ConfigService) {}
 
-  async exchangeCodeForToken(provider: string, code: string, redirectUri?: string): Promise<any> {
+  async exchangeCodeForToken(
+    provider: string,
+    code: string,
+    redirectUri?: string,
+  ): Promise<any> {
     // Mock implementation - replace with actual OAuth implementation when needed
     return {
       accessToken: `mock_token_${provider}_${Date.now()}`,
       refreshToken: `mock_refresh_${provider}_${Date.now()}`,
-      expiresAt: new Date(Date.now() + 3600000) // 1 hour from now
+      expiresAt: new Date(Date.now() + 3600000), // 1 hour from now
     };
   }
 
@@ -28,7 +34,7 @@ export class OAuthService implements IOAuthService {
     return {
       accessToken: `mock_refreshed_token_${provider}_${Date.now()}`,
       refreshToken: `mock_new_refresh_${provider}_${Date.now()}`,
-      expiresAt: new Date(Date.now() + 3600000)
+      expiresAt: new Date(Date.now() + 3600000),
     };
   }
 
@@ -44,7 +50,7 @@ export class OAuthService implements IOAuthService {
         profileUrl: 'https://linkedin.com/in/user',
         pictureUrl: 'https://example.com/avatar.jpg',
         headline: 'Software Engineer',
-        industry: 'Computer Software'
+        industry: 'Computer Software',
       },
       github: {
         id: `github_${Date.now()}`,
@@ -57,38 +63,40 @@ export class OAuthService implements IOAuthService {
         bio: 'Full-stack developer',
         publicRepos: 25,
         followers: 150,
-        following: 75
+        following: 75,
       },
       facebook: {
         id: `facebook_${Date.now()}`,
         email: 'user@facebook.com',
         displayName: 'Facebook User',
         firstName: 'Facebook',
-        lastName: 'User'
+        lastName: 'User',
       },
       x: {
         id: `x_${Date.now()}`,
         email: 'user@x.com',
         displayName: 'X User',
         firstName: 'X',
-        lastName: 'User'
+        lastName: 'User',
       },
       twitter: {
         id: `twitter_${Date.now()}`,
         email: 'user@twitter.com',
         displayName: 'Twitter User',
         firstName: 'Twitter',
-        lastName: 'User'
-      }
+        lastName: 'User',
+      },
     };
 
-    return mockProfiles[provider] || {
-      id: `${provider}_${Date.now()}`,
-      email: `user@${provider}.com`,
-      displayName: `${provider} User`,
-      firstName: provider,
-      lastName: 'User'
-    };
+    return (
+      mockProfiles[provider] || {
+        id: `${provider}_${Date.now()}`,
+        email: `user@${provider}.com`,
+        displayName: `${provider} User`,
+        firstName: provider,
+        lastName: 'User',
+      }
+    );
   }
 
   async revokeToken(provider: string, token: string): Promise<boolean> {

@@ -52,4 +52,4 @@ export class Web3EventRepository implements IBaseRepository<Web3Event> {
       relations: ['job'],
     });
   }
-} 
+}

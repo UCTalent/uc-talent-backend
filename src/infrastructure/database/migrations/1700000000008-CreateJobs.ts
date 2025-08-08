@@ -1,4 +1,10 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateJobs1700000000008 implements MigrationInterface {
   name = 'CreateJobs1700000000008';
@@ -359,7 +365,7 @@ export class CreateJobs1700000000008 implements MigrationInterface {
 
     const table = await queryRunner.getTable('jobs');
     const foreignKeys = table.foreignKeys;
-    
+
     for (const foreignKey of foreignKeys) {
       await queryRunner.dropForeignKey('jobs', foreignKey);
     }

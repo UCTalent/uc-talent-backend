@@ -9,9 +9,9 @@ export class Web3EventProcessor {
   @Process('process-payment-event')
   async handlePaymentEvent(job: Job) {
     this.logger.debug('Processing payment event...');
-    
+
     const { eventData, transactionHash } = job.data;
-    
+
     try {
       // Process payment event logic here
       this.logger.debug(`Processed payment event: ${transactionHash}`);
@@ -24,9 +24,9 @@ export class Web3EventProcessor {
   @Process('process-referral-event')
   async handleReferralEvent(job: Job) {
     this.logger.debug('Processing referral event...');
-    
+
     const { eventData, transactionHash } = job.data;
-    
+
     try {
       // Process referral event logic here
       this.logger.debug(`Processed referral event: ${transactionHash}`);
@@ -39,9 +39,9 @@ export class Web3EventProcessor {
   @Process('process-wallet-event')
   async handleWalletEvent(job: Job) {
     this.logger.debug('Processing wallet event...');
-    
+
     const { eventData, transactionHash } = job.data;
-    
+
     try {
       // Process wallet event logic here
       this.logger.debug(`Processed wallet event: ${transactionHash}`);
@@ -50,4 +50,4 @@ export class Web3EventProcessor {
       throw error;
     }
   }
-} 
+}

@@ -1,6 +1,14 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
-export class CreateManyToManyRelationships1700000000015 implements MigrationInterface {
+export class CreateManyToManyRelationships1700000000015
+  implements MigrationInterface
+{
   name = 'CreateManyToManyRelationships1700000000015';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -305,12 +313,27 @@ export class CreateManyToManyRelationships1700000000015 implements MigrationInte
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop indexes
     await queryRunner.dropIndex('cities', 'IDX_CITIES_COUNTRY_ID');
-    await queryRunner.dropIndex('organizations', 'IDX_ORGANIZATIONS_COUNTRY_ID');
+    await queryRunner.dropIndex(
+      'organizations',
+      'IDX_ORGANIZATIONS_COUNTRY_ID',
+    );
     await queryRunner.dropIndex('organizations', 'IDX_ORGANIZATIONS_CITY_ID');
-    await queryRunner.dropIndex('wallet_addresses', 'IDX_WALLET_ADDRESSES_OWNER_ID');
-    await queryRunner.dropIndex('payment_distributions', 'IDX_PAYMENT_DISTRIBUTIONS_STATUS');
-    await queryRunner.dropIndex('payment_distributions', 'IDX_PAYMENT_DISTRIBUTIONS_RECIPIENT_ID');
-    await queryRunner.dropIndex('payment_distributions', 'IDX_PAYMENT_DISTRIBUTIONS_JOB_ID');
+    await queryRunner.dropIndex(
+      'wallet_addresses',
+      'IDX_WALLET_ADDRESSES_OWNER_ID',
+    );
+    await queryRunner.dropIndex(
+      'payment_distributions',
+      'IDX_PAYMENT_DISTRIBUTIONS_STATUS',
+    );
+    await queryRunner.dropIndex(
+      'payment_distributions',
+      'IDX_PAYMENT_DISTRIBUTIONS_RECIPIENT_ID',
+    );
+    await queryRunner.dropIndex(
+      'payment_distributions',
+      'IDX_PAYMENT_DISTRIBUTIONS_JOB_ID',
+    );
     await queryRunner.dropIndex('job_applies', 'IDX_JOB_APPLIES_STATUS');
     await queryRunner.dropIndex('job_applies', 'IDX_JOB_APPLIES_TALENT_ID');
     await queryRunner.dropIndex('job_applies', 'IDX_JOB_APPLIES_JOB_ID');
@@ -334,7 +357,9 @@ export class CreateManyToManyRelationships1700000000015 implements MigrationInte
     }
 
     // Drop foreign keys for talent_specialities
-    const talentSpecialitiesTable = await queryRunner.getTable('talent_specialities');
+    const talentSpecialitiesTable = await queryRunner.getTable(
+      'talent_specialities',
+    );
     const talentSpecialitiesForeignKeys = talentSpecialitiesTable.foreignKeys;
     for (const foreignKey of talentSpecialitiesForeignKeys) {
       await queryRunner.dropForeignKey('talent_specialities', foreignKey);

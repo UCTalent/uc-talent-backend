@@ -40,4 +40,4 @@ export class SpecialityRepository implements IBaseRepository<Speciality> {
   async restore(id: string): Promise<void> {
     await this.repository.restore(id);
   }
-} 
+}

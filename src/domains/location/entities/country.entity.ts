@@ -13,12 +13,12 @@ export class Country extends BaseEntity {
   code: string;
 
   // Relationships
-  @OneToMany(() => City, (city) => city.country)
+  @OneToMany(() => City, city => city.country)
   cities: City[];
 
-  @OneToMany(() => Organization, (organization) => organization.country)
+  @OneToMany(() => Organization, organization => organization.country)
   organizations: Organization[];
 
-  @OneToMany(() => Job, (job) => job.country)
+  @OneToMany(() => Job, job => job.country)
   jobs: Job[];
-} 
+}

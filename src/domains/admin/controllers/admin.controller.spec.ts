@@ -52,18 +52,20 @@ describe('AdminController', () => {
             totalPayments: 156,
             activeJobs: 45,
             pendingPayments: 23,
-            recentApplications: 12
+            recentApplications: 12,
           },
           charts: {
             jobStatusDistribution: [],
             paymentStatusDistribution: [],
-            monthlyJobTrends: []
+            monthlyJobTrends: [],
           },
-          recentActivities: []
-        }
+          recentActivities: [],
+        },
       };
 
-      jest.spyOn(service, 'getDashboardStats').mockResolvedValue(expectedResult);
+      jest
+        .spyOn(service, 'getDashboardStats')
+        .mockResolvedValue(expectedResult);
 
       const result = await controller.getDashboard();
 
@@ -81,7 +83,7 @@ describe('AdminController', () => {
         status: 'active',
         role: 'user',
         sortBy: 'createdAt',
-        sortOrder: 'DESC'
+        sortOrder: 'DESC',
       };
 
       const expectedResult = {
@@ -92,9 +94,9 @@ describe('AdminController', () => {
             page: 1,
             limit: 20,
             total: 0,
-            totalPages: 0
-          }
-        }
+            totalPages: 0,
+          },
+        },
       };
 
       jest.spyOn(service, 'getUsers').mockResolvedValue(expectedResult);
@@ -112,7 +114,7 @@ describe('AdminController', () => {
       const body: UpdateUserStatusDto = {
         status: 'suspended',
         reason: 'Violation of terms',
-        adminId: 'admin-uuid'
+        adminId: 'admin-uuid',
       };
 
       const expectedResult = {
@@ -120,8 +122,8 @@ describe('AdminController', () => {
         data: {
           id: userId,
           status: 'suspended',
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       };
 
       jest.spyOn(service, 'updateUserStatus').mockResolvedValue(expectedResult);
@@ -143,7 +145,7 @@ describe('AdminController', () => {
         organization: 'org-uuid',
         speciality: 'spec-uuid',
         dateFrom: '2024-01-01',
-        dateTo: '2024-12-31'
+        dateTo: '2024-12-31',
       };
 
       const expectedResult = {
@@ -154,9 +156,9 @@ describe('AdminController', () => {
             page: 1,
             limit: 20,
             total: 0,
-            totalPages: 0
-          }
-        }
+            totalPages: 0,
+          },
+        },
       };
 
       jest.spyOn(service, 'getJobs').mockResolvedValue(expectedResult);
@@ -174,7 +176,7 @@ describe('AdminController', () => {
       const body: UpdateJobStatusDto = {
         status: 'active',
         reason: 'Approved by admin',
-        adminId: 'admin-uuid'
+        adminId: 'admin-uuid',
       };
 
       const expectedResult = {
@@ -182,8 +184,8 @@ describe('AdminController', () => {
         data: {
           id: jobId,
           status: 'active',
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       };
 
       jest.spyOn(service, 'updateJobStatus').mockResolvedValue(expectedResult);
@@ -201,7 +203,7 @@ describe('AdminController', () => {
         action: 'approve',
         jobIds: ['job-1', 'job-2', 'job-3'],
         reason: 'Bulk approval',
-        adminId: 'admin-uuid'
+        adminId: 'admin-uuid',
       };
 
       const expectedResult = {
@@ -209,11 +211,13 @@ describe('AdminController', () => {
         data: {
           action: 'approve',
           processedCount: 3,
-          message: 'Successfully approved 3 jobs'
-        }
+          message: 'Successfully approved 3 jobs',
+        },
       };
 
-      jest.spyOn(service, 'executeBulkJobAction').mockResolvedValue(expectedResult);
+      jest
+        .spyOn(service, 'executeBulkJobAction')
+        .mockResolvedValue(expectedResult);
 
       const result = await controller.bulkJobActions(body);
 
@@ -226,10 +230,12 @@ describe('AdminController', () => {
     it('should return system settings', async () => {
       const expectedResult = {
         success: true,
-        data: []
+        data: [],
       };
 
-      jest.spyOn(service, 'getSystemSettings').mockResolvedValue(expectedResult);
+      jest
+        .spyOn(service, 'getSystemSettings')
+        .mockResolvedValue(expectedResult);
 
       const result = await controller.getSystemSettings();
 
@@ -244,15 +250,17 @@ describe('AdminController', () => {
         platformFee: 0.05,
         maxJobDuration: 90,
         autoApproveJobs: false,
-        maintenanceMode: false
+        maintenanceMode: false,
       };
 
       const expectedResult = {
         success: true,
-        data: []
+        data: [],
       };
 
-      jest.spyOn(service, 'updateSystemSettings').mockResolvedValue(expectedResult);
+      jest
+        .spyOn(service, 'updateSystemSettings')
+        .mockResolvedValue(expectedResult);
 
       const result = await controller.updateSystemSettings(settings);
 
@@ -269,7 +277,7 @@ describe('AdminController', () => {
         action: 'UPDATE_USER_STATUS',
         adminId: 'admin-uuid',
         dateFrom: '2024-01-01',
-        dateTo: '2024-12-31'
+        dateTo: '2024-12-31',
       };
 
       const expectedResult = {
@@ -280,9 +288,9 @@ describe('AdminController', () => {
             page: 1,
             limit: 20,
             total: 0,
-            totalPages: 0
-          }
-        }
+            totalPages: 0,
+          },
+        },
       };
 
       jest.spyOn(service, 'getAuditLogs').mockResolvedValue(expectedResult);
@@ -293,4 +301,4 @@ describe('AdminController', () => {
       expect(service.getAuditLogs).toHaveBeenCalledWith(query);
     });
   });
-}); 
+});

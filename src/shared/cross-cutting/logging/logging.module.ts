@@ -10,4 +10,4 @@ import { LoggingInterceptor } from './interceptors/logging.interceptor';
     },
   ],
 })
-export class LoggingModule {} 
+export class LoggingModule {}

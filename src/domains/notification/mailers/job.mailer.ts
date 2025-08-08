@@ -57,4 +57,4 @@ export class JobMailer {
 
     await this.emailService.sendEmail(to, subject, html);
   }
-} 
+}

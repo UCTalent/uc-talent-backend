@@ -1,4 +1,12 @@
-import { IsNotEmpty, IsOptional, IsString, IsEnum, IsNumber, IsDateString, IsDate } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsEnum,
+  IsNumber,
+  IsDateString,
+  IsDate,
+} from 'class-validator';
 import { JobStatus, LocationType } from '../entities/job.entity';
 
 export class CreateJobDto {
@@ -172,4 +180,4 @@ export class CreateJobDto {
   @IsOptional()
   @IsString()
   partnerHostId?: string;
-} 
+}

@@ -1,8 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { SkillService } from '@skill/services/skill.service';
 import { Skill } from '@skill/entities/skill.entity';
-import { SkillResponseDto, SkillListResponseDto } from '@skill/dtos/skill-response.dto';
+import {
+  SkillResponseDto,
+  SkillListResponseDto,
+} from '@skill/dtos/skill-response.dto';
+import { ResponseHandler } from '@shared/utils/response-handler';
 
 @ApiTags('skills')
 @Controller('skills')
@@ -16,14 +20,17 @@ export class SkillController {
     description: 'Skills retrieved successfully',
     type: SkillListResponseDto,
   })
-  async findAll(): Promise<SkillListResponseDto> {
+  async findAll() {
     const skills = await this.skillService.findAll();
-    return {
-      skills: skills.map(skill => this.mapToResponseDto(skill)),
-      total: skills.length,
-      page: 1,
-      limit: skills.length,
-    };
+    return ResponseHandler.success({
+      data: {
+        skills: skills.map(skill => this.mapToResponseDto(skill)),
+        total: skills.length,
+        page: 1,
+        limit: skills.length,
+      },
+      message: 'Skills retrieved successfully',
+    });
   }
 
   @Get(':id')
@@ -42,9 +49,18 @@ export class SkillController {
     status: 404,
     description: 'Skill not found',
   })
-  async findById(@Param('id') id: string): Promise<SkillResponseDto | null> {
+  async findById(@Param('id') id: string) {
     const skill = await this.skillService.findById(id);
-    return skill ? this.mapToResponseDto(skill) : null;
+    if (!skill) {
+      return ResponseHandler.error({
+        statusCode: 404,
+        message: 'Skill not found',
+      });
+    }
+    return ResponseHandler.success({
+      data: this.mapToResponseDto(skill),
+      message: 'Skill found successfully',
+    });
   }
 
   @Get('role/:roleId')
@@ -59,14 +75,17 @@ export class SkillController {
     description: 'Skills found successfully',
     type: SkillListResponseDto,
   })
-  async findByRoleId(@Param('roleId') roleId: string): Promise<SkillListResponseDto> {
+  async findByRoleId(@Param('roleId') roleId: string) {
     const skills = await this.skillService.findByRoleId(roleId);
-    return {
-      skills: skills.map(skill => this.mapToResponseDto(skill)),
-      total: skills.length,
-      page: 1,
-      limit: skills.length,
-    };
+    return ResponseHandler.success({
+      data: {
+        skills: skills.map(skill => this.mapToResponseDto(skill)),
+        total: skills.length,
+        page: 1,
+        limit: skills.length,
+      },
+      message: 'Skills found successfully',
+    });
   }
 
   private mapToResponseDto(skill: Skill): SkillResponseDto {
@@ -79,4 +98,4 @@ export class SkillController {
       deletedAt: skill.deletedAt,
     };
   }
-} 
+}

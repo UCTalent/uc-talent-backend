@@ -11,6 +11,6 @@ export class Industry extends BaseEntity {
   description: string;
 
   // Relationships
-  @OneToMany(() => Organization, (organization) => organization.industry)
+  @OneToMany(() => Organization, organization => organization.industry)
   organizations: Organization[];
-} 
+}

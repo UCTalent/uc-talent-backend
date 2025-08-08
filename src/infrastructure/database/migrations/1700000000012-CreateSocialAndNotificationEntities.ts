@@ -1,6 +1,13 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
-export class CreateSocialAndNotificationEntities1700000000012 implements MigrationInterface {
+export class CreateSocialAndNotificationEntities1700000000012
+  implements MigrationInterface
+{
   name = 'CreateSocialAndNotificationEntities1700000000012';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -222,29 +229,49 @@ export class CreateSocialAndNotificationEntities1700000000012 implements Migrati
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop foreign keys for social_external_links
-    const socialExternalLinksTable = await queryRunner.getTable('social_external_links');
-    const socialExternalLinksForeignKey = socialExternalLinksTable.foreignKeys.find(fk => fk.columnNames.indexOf('user_id') !== -1);
+    const socialExternalLinksTable = await queryRunner.getTable(
+      'social_external_links',
+    );
+    const socialExternalLinksForeignKey =
+      socialExternalLinksTable.foreignKeys.find(
+        fk => fk.columnNames.indexOf('user_id') !== -1,
+      );
     if (socialExternalLinksForeignKey) {
-      await queryRunner.dropForeignKey('social_external_links', socialExternalLinksForeignKey);
+      await queryRunner.dropForeignKey(
+        'social_external_links',
+        socialExternalLinksForeignKey,
+      );
     }
 
     // Drop foreign keys for social_settings
     const socialSettingsTable = await queryRunner.getTable('social_settings');
-    const socialSettingsForeignKey = socialSettingsTable.foreignKeys.find(fk => fk.columnNames.indexOf('user_id') !== -1);
+    const socialSettingsForeignKey = socialSettingsTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('user_id') !== -1,
+    );
     if (socialSettingsForeignKey) {
-      await queryRunner.dropForeignKey('social_settings', socialSettingsForeignKey);
+      await queryRunner.dropForeignKey(
+        'social_settings',
+        socialSettingsForeignKey,
+      );
     }
 
     // Drop foreign keys for social_accounts
     const socialAccountsTable = await queryRunner.getTable('social_accounts');
-    const socialAccountsForeignKey = socialAccountsTable.foreignKeys.find(fk => fk.columnNames.indexOf('user_id') !== -1);
+    const socialAccountsForeignKey = socialAccountsTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('user_id') !== -1,
+    );
     if (socialAccountsForeignKey) {
-      await queryRunner.dropForeignKey('social_accounts', socialAccountsForeignKey);
+      await queryRunner.dropForeignKey(
+        'social_accounts',
+        socialAccountsForeignKey,
+      );
     }
 
     // Drop foreign keys for notes
     const notesTable = await queryRunner.getTable('notes');
-    const notesForeignKey = notesTable.foreignKeys.find(fk => fk.columnNames.indexOf('user_id') !== -1);
+    const notesForeignKey = notesTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('user_id') !== -1,
+    );
     if (notesForeignKey) {
       await queryRunner.dropForeignKey('notes', notesForeignKey);
     }

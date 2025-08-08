@@ -26,11 +26,7 @@ import { EmailModule } from '@infrastructure/email/email.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    FirebaseAuthService,
-    Web3AuthService,
-  ],
+  providers: [AuthService, FirebaseAuthService, Web3AuthService],
   exports: [AuthService],
 })
 export class AuthModule {}

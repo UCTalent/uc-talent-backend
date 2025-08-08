@@ -26,7 +26,11 @@ export class NotificationService {
     await this.noteRepository.delete(id);
   }
 
-  async sendNotification(userId: string, title: string, content: string): Promise<Note> {
+  async sendNotification(
+    userId: string,
+    title: string,
+    content: string,
+  ): Promise<Note> {
     return this.createNote({
       userId,
       title,
@@ -34,7 +38,11 @@ export class NotificationService {
     });
   }
 
-  async sendEmailNotification(to: string, subject: string, html: string): Promise<void> {
+  async sendEmailNotification(
+    to: string,
+    subject: string,
+    html: string,
+  ): Promise<void> {
     await this.emailService.sendEmail(to, subject, html);
   }
-} 
+}

@@ -47,4 +47,4 @@ export class NoteRepository implements IBaseRepository<Note> {
       order: { createdAt: 'DESC' },
     });
   }
-} 
+}

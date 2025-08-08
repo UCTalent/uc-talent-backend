@@ -5,14 +5,14 @@ import { SocialAccount } from './social-account.entity';
 export enum SyncStatus {
   SUCCESS = 'success',
   FAILED = 'failed',
-  PARTIAL = 'partial'
+  PARTIAL = 'partial',
 }
 
 @Entity('social_sync_logs')
 export class SocialSyncLog extends BaseEntity {
   @Column({
     type: 'enum',
-    enum: SyncStatus
+    enum: SyncStatus,
   })
   @Index()
   status: SyncStatus;

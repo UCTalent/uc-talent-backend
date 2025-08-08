@@ -41,7 +41,11 @@ export class MailerService {
     }
   }
 
-  async sendTemplatedEmail(to: string, templateName: string, templateData: any): Promise<void> {
+  async sendTemplatedEmail(
+    to: string,
+    templateName: string,
+    templateData: any,
+  ): Promise<void> {
     const params = {
       Source: this.configService.get('AWS_SES_FROM_EMAIL'),
       Destination: {
@@ -57,4 +61,4 @@ export class MailerService {
       throw new Error(`Failed to send templated email: ${error.message}`);
     }
   }
-} 
+}

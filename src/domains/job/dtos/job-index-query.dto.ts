@@ -1,4 +1,10 @@
-import { IsOptional, IsString, IsNumber, IsArray, IsObject } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsNumber,
+  IsArray,
+  IsObject,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 
@@ -41,7 +47,11 @@ export class JobIndexQueryDto {
   @IsString()
   location_city?: string;
 
-  @ApiProperty({ required: false, description: 'Location types', type: [String] })
+  @ApiProperty({
+    required: false,
+    description: 'Location types',
+    type: [String],
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -70,21 +80,33 @@ export class JobIndexQueryDto {
   @IsString({ each: true })
   domains?: string[];
 
-  @ApiProperty({ required: false, description: 'Experience levels', type: [Number] })
+  @ApiProperty({
+    required: false,
+    description: 'Experience levels',
+    type: [Number],
+  })
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
   @Transform(({ value }) => value.map(v => parseInt(v)))
   experience_levels?: number[];
 
-  @ApiProperty({ required: false, description: 'Management levels', type: [Number] })
+  @ApiProperty({
+    required: false,
+    description: 'Management levels',
+    type: [Number],
+  })
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
   @Transform(({ value }) => value.map(v => parseInt(v)))
   management_levels?: number[];
 
-  @ApiProperty({ required: false, description: 'Specific job IDs', type: [String] })
+  @ApiProperty({
+    required: false,
+    description: 'Specific job IDs',
+    type: [String],
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
@@ -94,4 +116,4 @@ export class JobIndexQueryDto {
   @IsOptional()
   @IsString()
   partner_host?: string;
-} 
+}

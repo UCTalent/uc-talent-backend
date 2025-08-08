@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { Repository, MoreThan, In } from 'typeorm';
 import { Admin } from '@admin/entities/admin.entity';
 import { AuditLog } from '@admin/entities/audit-log.entity';
@@ -26,7 +30,7 @@ export class AdminService {
   async getDashboardStats() {
     // Get real job statistics
     const jobStats = await this.jobRepo.getJobStats();
-    
+
     // Mock data for other stats - in real implementation, you would inject other repositories
     const totalUsers = 1250;
     const totalTalents = 890;
@@ -37,17 +41,17 @@ export class AdminService {
     const jobStatusDistribution = [
       { status: 'active', count: jobStats.active },
       { status: 'closed', count: jobStats.closed },
-      { status: 'expired', count: jobStats.expired }
+      { status: 'expired', count: jobStats.expired },
     ];
 
     const paymentStatusDistribution = [
       { status: 'pending', count: pendingPayments },
-      { status: 'completed', count: totalPayments - pendingPayments }
+      { status: 'completed', count: totalPayments - pendingPayments },
     ];
 
     const monthlyJobTrends = [
       { month: '2024-01', count: 15 },
-      { month: '2024-02', count: 23 }
+      { month: '2024-02', count: 23 },
     ];
 
     const recentActivities = [
@@ -56,8 +60,8 @@ export class AdminService {
         type: 'job_created',
         title: 'New job posted',
         description: 'Senior Developer at Tech Corp',
-        timestamp: new Date()
-      }
+        timestamp: new Date(),
+      },
     ];
 
     return {
@@ -70,20 +74,28 @@ export class AdminService {
           totalPayments,
           activeJobs: jobStats.active,
           pendingPayments,
-          recentApplications
+          recentApplications,
         },
         charts: {
           jobStatusDistribution,
           paymentStatusDistribution,
-          monthlyJobTrends
+          monthlyJobTrends,
         },
-        recentActivities
-      }
+        recentActivities,
+      },
     };
   }
 
   async getUsers(query: AdminUserQueryDto) {
-    const { page = 1, limit = 20, search, status, role, sortBy = 'createdAt', sortOrder = 'DESC' } = query;
+    const {
+      page = 1,
+      limit = 20,
+      search,
+      status,
+      role,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = query;
     const skip = (page - 1) * limit;
 
     // Use custom repository method with filters
@@ -94,7 +106,7 @@ export class AdminService {
       sortBy,
       sortOrder: sortOrder as 'ASC' | 'DESC',
       skip,
-      take: limit
+      take: limit,
     });
 
     return {
@@ -105,9 +117,9 @@ export class AdminService {
           page,
           limit,
           total,
-          totalPages: Math.ceil(total / limit)
-        }
-      }
+          totalPages: Math.ceil(total / limit),
+        },
+      },
     };
   }
 
@@ -119,7 +131,7 @@ export class AdminService {
 
     const updatedUser = await this.adminRepo.update(id, {
       status: body.status,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
 
     // Log admin action
@@ -127,7 +139,7 @@ export class AdminService {
       action: 'UPDATE_USER_STATUS',
       adminId: body.adminId,
       targetId: id,
-      details: { status: body.status, reason: body.reason }
+      details: { status: body.status, reason: body.reason },
     });
 
     return {
@@ -135,13 +147,22 @@ export class AdminService {
       data: {
         id: updatedUser.id,
         status: updatedUser.status,
-        updatedAt: updatedUser.updatedAt
-      }
+        updatedAt: updatedUser.updatedAt,
+      },
     };
   }
 
   async getJobs(query: AdminJobQueryDto) {
-    const { page = 1, limit = 20, search, status, organization, speciality, dateFrom, dateTo } = query;
+    const {
+      page = 1,
+      limit = 20,
+      search,
+      status,
+      organization,
+      speciality,
+      dateFrom,
+      dateTo,
+    } = query;
     const skip = (page - 1) * limit;
 
     // Use real repository method with admin filters
@@ -155,7 +176,7 @@ export class AdminService {
       sortBy: 'createdAt',
       sortOrder: 'DESC',
       skip,
-      take: limit
+      take: limit,
     });
 
     // Get jobs with application and referral counts
@@ -169,9 +190,9 @@ export class AdminService {
           page,
           limit,
           total,
-          totalPages: Math.ceil(total / limit)
-        }
-      }
+          totalPages: Math.ceil(total / limit),
+        },
+      },
     };
   }
 
@@ -183,7 +204,7 @@ export class AdminService {
 
     const updatedJob = await this.jobRepo.update(id, {
       status: body.status as JobStatus,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
 
     // Log admin action
@@ -191,7 +212,7 @@ export class AdminService {
       action: 'UPDATE_JOB_STATUS',
       adminId: body.adminId,
       targetId: id,
-      details: { status: body.status, reason: body.reason }
+      details: { status: body.status, reason: body.reason },
     });
 
     return {
@@ -199,8 +220,8 @@ export class AdminService {
       data: {
         id: updatedJob.id,
         status: updatedJob.status,
-        updatedAt: updatedJob.updatedAt
-      }
+        updatedAt: updatedJob.updatedAt,
+      },
     };
   }
 
@@ -219,14 +240,15 @@ export class AdminService {
     }
 
     // Update job statuses
-    const newStatus = action === 'approve' ? JobStatus.PUBLISHED : JobStatus.CLOSED;
+    const newStatus =
+      action === 'approve' ? JobStatus.PUBLISHED : JobStatus.CLOSED;
     await this.jobRepo.bulkUpdateStatus(jobIds, newStatus);
 
     // Log bulk action
     await this.auditLogRepo.log({
       action: 'BULK_JOB_ACTION',
       adminId,
-      details: { action, jobIds, reason }
+      details: { action, jobIds, reason },
     });
 
     return {
@@ -234,8 +256,8 @@ export class AdminService {
       data: {
         action,
         processedCount: jobs.length,
-        message: `Successfully ${action}ed ${jobs.length} jobs`
-      }
+        message: `Successfully ${action}ed ${jobs.length} jobs`,
+      },
     };
   }
 
@@ -243,13 +265,13 @@ export class AdminService {
     const settings = await this.systemSettingRepo.findAll();
     return {
       success: true,
-      data: settings
+      data: settings,
     };
   }
 
   async updateSystemSettings(settings: Record<string, any>) {
     const updatedSettings = [];
-    
+
     for (const [key, value] of Object.entries(settings)) {
       const setting = await this.systemSettingRepo.setValue(key, value);
       updatedSettings.push(setting);
@@ -257,7 +279,7 @@ export class AdminService {
 
     return {
       success: true,
-      data: updatedSettings
+      data: updatedSettings,
     };
   }
 
@@ -279,7 +301,7 @@ export class AdminService {
       dateFrom,
       dateTo,
       skip,
-      take: limit
+      take: limit,
     });
 
     return {
@@ -290,9 +312,9 @@ export class AdminService {
           page,
           limit,
           total,
-          totalPages: Math.ceil(total / limit)
-        }
-      }
+          totalPages: Math.ceil(total / limit),
+        },
+      },
     };
   }
-} 
+}

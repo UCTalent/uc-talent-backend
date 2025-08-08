@@ -23,7 +23,12 @@ import { UserModule } from '@user/user.module';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthenticationService, OAuth2Service, JwtStrategy, OAuth2Strategy],
+  providers: [
+    AuthenticationService,
+    OAuth2Service,
+    JwtStrategy,
+    OAuth2Strategy,
+  ],
   exports: [AuthenticationService, OAuth2Service],
 })
-export class AuthenticationModule {} 
+export class AuthenticationModule {}

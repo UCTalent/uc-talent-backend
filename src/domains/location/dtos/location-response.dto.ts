@@ -232,4 +232,4 @@ export class RegionListResponseDto {
     example: 10,
   })
   limit: number;
-} 
+}

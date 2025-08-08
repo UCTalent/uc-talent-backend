@@ -45,4 +45,4 @@ export class RoleRepository implements IBaseRepository<Role> {
   async restore(id: string): Promise<void> {
     await this.repository.restore(id);
   }
-} 
+}

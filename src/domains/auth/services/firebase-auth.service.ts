@@ -28,7 +28,7 @@ export class FirebaseAuthService {
                 uid: 'user123',
                 email: 'test@example.com',
                 name: 'Test User',
-                firebase: { sign_in_provider: 'google.com' }
+                firebase: { sign_in_provider: 'google.com' },
               };
             }
             throw new Error('Invalid token');
@@ -42,12 +42,12 @@ export class FirebaseAuthService {
               providerData: [
                 {
                   email: 'test@example.com',
-                  displayName: 'Test User'
-                }
-              ]
+                  displayName: 'Test User',
+                },
+              ],
             };
-          }
-        }
+          },
+        },
       };
     } catch (error) {
       console.error('Failed to initialize Firebase Admin SDK:', error);
@@ -59,11 +59,12 @@ export class FirebaseAuthService {
 
     try {
       // Verify Firebase token
-      const decodedToken = await this.firebaseAdmin.auth.verifyIdToken(firebase_token);
-      
+      const decodedToken =
+        await this.firebaseAdmin.auth.verifyIdToken(firebase_token);
+
       // Extract user data
       const userData = await this.extractUserData(decodedToken);
-      
+
       // Find or create user
       const user = await this.findOrCreateUser(userData);
 
@@ -71,7 +72,7 @@ export class FirebaseAuthService {
         user: {
           id: user.id,
           name: user.name,
-          email: user.email
+          email: user.email,
         },
         user_id: user.id,
         token_type: 'Bearer',
@@ -79,7 +80,7 @@ export class FirebaseAuthService {
         expires_in: 7200,
         created_at: Math.floor(Date.now() / 1000),
         refresh_token: 'mock_refresh_token',
-        has_profile: await this.userService.hasTalentProfile(user.id)
+        has_profile: await this.userService.hasTalentProfile(user.id),
       };
     } catch (error) {
       throw new UnauthorizedException('Invalid Firebase token');
@@ -88,7 +89,7 @@ export class FirebaseAuthService {
 
   private async extractUserData(decodedToken: any) {
     const user = await this.firebaseAdmin.auth.getUser(decodedToken.uid);
-    
+
     let identifier: string;
     let name: string;
 
@@ -110,14 +111,14 @@ export class FirebaseAuthService {
       identifier,
       uid: decodedToken.uid,
       name,
-      firebase_provider: decodedToken.firebase?.sign_in_provider || 'firebase'
+      firebase_provider: decodedToken.firebase?.sign_in_provider || 'firebase',
     };
   }
 
   private async findOrCreateUser(userData: any) {
     // Check for existing user by email or Firebase UID
     let existingUser = await this.userService.findByEmail(userData.identifier);
-    
+
     if (!existingUser) {
       // Create new user
       existingUser = await this.userService.create({
@@ -125,18 +126,18 @@ export class FirebaseAuthService {
         email: userData.identifier,
         firebaseUid: userData.uid,
         firebaseProvider: userData.firebase_provider,
-        password: this.generateRandomPassword()
+        password: this.generateRandomPassword(),
       });
 
       // Auto-confirm Firebase users
       await this.userService.update(existingUser.id, {
-        confirmedAt: new Date()
+        confirmedAt: new Date(),
       });
     } else {
       // Update existing user if needed
       if (!existingUser.confirmedAt) {
         await this.userService.update(existingUser.id, {
-          confirmedAt: new Date()
+          confirmedAt: new Date(),
         });
       }
     }
@@ -150,7 +151,9 @@ export class FirebaseAuthService {
   }
 
   private generateRandomPassword(): string {
-    return Math.random().toString(36).substring(2, 15) + 
-           Math.random().toString(36).substring(2, 15);
+    return (
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15)
+    );
   }
 }

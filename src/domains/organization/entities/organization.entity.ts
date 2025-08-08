@@ -1,4 +1,11 @@
-import { Entity, Column, Index, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  Index,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 import { City } from '@location/entities/city.entity';
 import { Country } from '@location/entities/country.entity';
@@ -75,11 +82,15 @@ export class Organization extends BaseEntity {
   @JoinColumn({ name: 'city_id' })
   city: City;
 
-  @ManyToOne(() => Country, country => country.organizations, { nullable: true })
+  @ManyToOne(() => Country, country => country.organizations, {
+    nullable: true,
+  })
   @JoinColumn({ name: 'country_id' })
   country: Country;
 
-  @ManyToOne(() => Industry, industry => industry.organizations, { nullable: true })
+  @ManyToOne(() => Industry, industry => industry.organizations, {
+    nullable: true,
+  })
   @JoinColumn({ name: 'industry_id' })
   industry: Industry;
 
@@ -92,4 +103,4 @@ export class Organization extends BaseEntity {
 
   @Column({ select: false, insert: false, update: false })
   activeJobsCount?: number;
-} 
+}

@@ -66,16 +66,16 @@ export class PartnerHostRepository implements IBaseRepository<PartnerHost> {
   }
 
   async findByAccessToken(accessToken: string): Promise<PartnerHost | null> {
-    return this.repository.findOne({ 
+    return this.repository.findOne({
       where: { accessToken },
-      relations: ['partner', 'networks']
+      relations: ['partner', 'networks'],
     });
   }
 
   async findByPartner(partnerId: string): Promise<PartnerHost[]> {
     return this.repository.find({
       where: { partnerId },
-      relations: ['networks', 'jobs']
+      relations: ['networks', 'jobs'],
     });
   }
 
@@ -89,27 +89,35 @@ export class PartnerHostRepository implements IBaseRepository<PartnerHost> {
     skip?: number;
     take?: number;
   }): Promise<{ data: PartnerHost[]; total: number }> {
-    const queryBuilder = this.repository.createQueryBuilder('host')
+    const queryBuilder = this.repository
+      .createQueryBuilder('host')
       .leftJoinAndSelect('host.partner', 'partner')
       .leftJoinAndSelect('host.networks', 'networks');
 
     if (options.search) {
       queryBuilder.where(
         'host.host ILIKE :search OR host.slug ILIKE :search OR partner.name ILIKE :search',
-        { search: `%${options.search}%` }
+        { search: `%${options.search}%` },
       );
     }
 
     if (options.partnerId) {
-      queryBuilder.andWhere('host.partnerId = :partnerId', { partnerId: options.partnerId });
+      queryBuilder.andWhere('host.partnerId = :partnerId', {
+        partnerId: options.partnerId,
+      });
     }
 
     if (options.isUcTalent !== undefined) {
-      queryBuilder.andWhere('host.isUcTalent = :isUcTalent', { isUcTalent: options.isUcTalent });
+      queryBuilder.andWhere('host.isUcTalent = :isUcTalent', {
+        isUcTalent: options.isUcTalent,
+      });
     }
 
     if (options.sortBy) {
-      queryBuilder.orderBy(`host.${options.sortBy}`, options.sortOrder || 'DESC');
+      queryBuilder.orderBy(
+        `host.${options.sortBy}`,
+        options.sortOrder || 'DESC',
+      );
     } else {
       queryBuilder.orderBy('host.createdAt', 'DESC');
     }
@@ -142,4 +150,4 @@ export class PartnerHostRepository implements IBaseRepository<PartnerHost> {
   async generateAccessToken(): Promise<string> {
     return crypto.randomBytes(20).toString('hex');
   }
-} 
+}

@@ -4,7 +4,6 @@ import {
   Post,
   Put,
   Body,
-  Patch,
   Param,
   Delete,
   Query,
@@ -14,13 +13,25 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery, ApiConsumes } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBody,
+  ApiQuery,
+  ApiConsumes,
+} from '@nestjs/swagger';
 import { OrganizationService } from '@organization/services/organization.service';
 import { CreateOrganizationDto } from '@organization/dtos/create-organization.dto';
 import { UpdateOrganizationDto } from '@organization/dtos/update-organization.dto';
 import { OrganizationQueryDto } from '@organization/dtos/organization-query.dto';
-import { OrganizationResponseDto, OrganizationListResponseDto } from '@organization/dtos/organization-response.dto';
+import {
+  OrganizationResponseDto,
+  OrganizationListResponseDto,
+} from '@organization/dtos/organization-response.dto';
 import { Organization } from '@organization/entities/organization.entity';
+import { ResponseHandler } from '@shared/utils/response-handler';
 
 @ApiTags('organizations')
 @Controller('organizations')
@@ -34,20 +45,21 @@ export class OrganizationController {
   @ApiResponse({
     status: 201,
     description: 'Organization created successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean' },
-        data: { type: 'object' }
-      }
-    }
+    type: OrganizationResponseDto,
   })
   @ApiResponse({
     status: 400,
     description: 'Bad request - validation error',
   })
   async create(@Body() createOrganizationDto: CreateOrganizationDto) {
-    return this.organizationService.createOrganization(createOrganizationDto);
+    const result = await this.organizationService.createOrganization(
+      createOrganizationDto,
+    );
+    return ResponseHandler.success({
+      data: this.mapToResponseDto(result.data),
+      statusCode: HttpStatus.CREATED,
+      message: 'Organization created successfully',
+    });
   }
 
   @Get()
@@ -66,30 +78,19 @@ export class OrganizationController {
   @ApiResponse({
     status: 200,
     description: 'Organizations retrieved successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean' },
-        data: {
-          type: 'object',
-          properties: {
-            organizations: { type: 'array' },
-            pagination: {
-              type: 'object',
-              properties: {
-                page: { type: 'number' },
-                limit: { type: 'number' },
-                total: { type: 'number' },
-                totalPages: { type: 'number' }
-              }
-            }
-          }
-        }
-      }
-    }
+    type: OrganizationListResponseDto,
   })
   async getOrganizations(@Query() query: OrganizationQueryDto) {
-    return this.organizationService.getOrganizations(query);
+    const result = await this.organizationService.getOrganizations(query);
+    return ResponseHandler.success({
+      data: {
+        organizations: result.data.organizations.map(org =>
+          this.mapToResponseDto(org),
+        ),
+        pagination: result.data.pagination,
+      },
+      message: 'Organizations retrieved successfully',
+    });
   }
 
   @Get('search')
@@ -99,30 +100,20 @@ export class OrganizationController {
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiResponse({
     status: 200,
-    description: 'Organizations search results',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean' },
-        data: {
-          type: 'object',
-          properties: {
-            organizations: { type: 'array' },
-            searchStats: {
-              type: 'object',
-              properties: {
-                query: { type: 'string' },
-                totalResults: { type: 'number' },
-                searchTime: { type: 'number' }
-              }
-            }
-          }
-        }
-      }
-    }
+    description: 'Organizations search completed successfully',
   })
-  async searchOrganizations(@Query('query') query: string, @Query() filters: any) {
-    return this.organizationService.searchOrganizations(query, filters);
+  async searchOrganizations(
+    @Query('query') query: string,
+    @Query() filters: any,
+  ) {
+    const result = await this.organizationService.searchOrganizations(
+      query,
+      filters,
+    );
+    return ResponseHandler.success({
+      data: result,
+      message: 'Organizations search completed successfully',
+    });
   }
 
   @Get(':id')
@@ -135,23 +126,21 @@ export class OrganizationController {
   @ApiResponse({
     status: 200,
     description: 'Organization found successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean' },
-        data: { type: 'object' }
-      }
-    }
+    type: OrganizationResponseDto,
   })
   @ApiResponse({
     status: 404,
     description: 'Organization not found',
   })
   async findById(@Param('id') id: string) {
-    return this.organizationService.getOrganizationById(id);
+    const result = await this.organizationService.getOrganizationById(id);
+    return ResponseHandler.success({
+      data: this.mapToResponseDto(result.data),
+      message: 'Organization found successfully',
+    });
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ApiOperation({ summary: 'Update organization by ID' })
   @ApiParam({
     name: 'id',
@@ -162,13 +151,7 @@ export class OrganizationController {
   @ApiResponse({
     status: 200,
     description: 'Organization updated successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean' },
-        data: { type: 'object' }
-      }
-    }
+    type: OrganizationResponseDto,
   })
   @ApiResponse({
     status: 404,
@@ -178,7 +161,14 @@ export class OrganizationController {
     @Param('id') id: string,
     @Body() updateOrganizationDto: UpdateOrganizationDto,
   ) {
-    return this.organizationService.updateOrganization(id, updateOrganizationDto);
+    const result = await this.organizationService.updateOrganization(
+      id,
+      updateOrganizationDto,
+    );
+    return ResponseHandler.success({
+      data: this.mapToResponseDto(result.data),
+      message: 'Organization updated successfully',
+    });
   }
 
   @Delete(':id')
@@ -191,20 +181,17 @@ export class OrganizationController {
   @ApiResponse({
     status: 200,
     description: 'Organization deleted successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean' },
-        message: { type: 'string' }
-      }
-    }
   })
   @ApiResponse({
     status: 404,
     description: 'Organization not found',
   })
   async delete(@Param('id') id: string) {
-    return this.organizationService.deleteOrganization(id);
+    await this.organizationService.deleteOrganization(id);
+    return ResponseHandler.success({
+      data: null,
+      message: 'Organization deleted successfully',
+    });
   }
 
   @Post(':id/logo')
@@ -216,54 +203,34 @@ export class OrganizationController {
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiConsumes('multipart/form-data')
-  @ApiResponse({
-    status: 200,
-    description: 'Logo uploaded successfully',
+  @ApiBody({
     schema: {
       type: 'object',
       properties: {
-        success: { type: 'boolean' },
-        data: {
-          type: 'object',
-          properties: {
-            logo: {
-              type: 'object',
-              properties: {
-                url: { type: 'string' },
-                filename: { type: 'string' },
-                size: { type: 'number' },
-                contentType: { type: 'string' },
-                dimensions: {
-                  type: 'object',
-                  properties: {
-                    width: { type: 'number' },
-                    height: { type: 'number' }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+        logo: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
   })
-  async uploadLogo(@Param('id') id: string, @UploadedFile() file: any) {
-    // TODO: Implement logo upload
-    return {
-      success: true,
+  @ApiResponse({
+    status: 200,
+    description: 'Logo uploaded successfully',
+  })
+  async uploadLogo(@Param('id') _id: string, @UploadedFile() file: any) {
+    // TODO: Implement logo upload functionality
+    return ResponseHandler.success({
       data: {
         logo: {
           url: 'https://storage.example.com/logos/org-uuid.png',
           filename: 'organization-logo.png',
           size: file?.size || 1024000,
           contentType: file?.mimetype || 'image/png',
-          dimensions: {
-            width: 500,
-            height: 500
-          }
-        }
-      }
-    };
+        },
+      },
+      message: 'Logo uploaded successfully',
+    });
   }
 
   @Delete(':id/logo')
@@ -276,20 +243,13 @@ export class OrganizationController {
   @ApiResponse({
     status: 200,
     description: 'Logo deleted successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean' },
-        message: { type: 'string' }
-      }
-    }
   })
   async deleteLogo(@Param('id') id: string) {
-    // TODO: Implement logo deletion
-    return {
-      success: true,
-      message: 'Logo deleted successfully'
-    };
+    // TODO: Implement logo deletion functionality
+    return ResponseHandler.success({
+      data: null,
+      message: 'Logo deleted successfully',
+    });
   }
 
   @Get(':id/stats')
@@ -302,108 +262,38 @@ export class OrganizationController {
   @ApiResponse({
     status: 200,
     description: 'Organization statistics retrieved successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean' },
-        data: {
-          type: 'object',
-          properties: {
-            jobs: {
-              type: 'object',
-              properties: {
-                total: { type: 'number' },
-                active: { type: 'number' },
-                closed: { type: 'number' },
-                expired: { type: 'number' }
-              }
-            },
-            applications: {
-              type: 'object',
-              properties: {
-                total: { type: 'number' },
-                pending: { type: 'number' },
-                reviewed: { type: 'number' },
-                hired: { type: 'number' }
-              }
-            },
-            referrals: {
-              type: 'object',
-              properties: {
-                total: { type: 'number' },
-                successful: { type: 'number' },
-                pending: { type: 'number' }
-              }
-            },
-            payments: {
-              type: 'object',
-              properties: {
-                total: { type: 'number' },
-                pending: { type: 'number' },
-                completed: { type: 'number' }
-              }
-            },
-            growth: {
-              type: 'object',
-              properties: {
-                jobsThisMonth: { type: 'number' },
-                jobsLastMonth: { type: 'number' },
-                growthRate: { type: 'number' }
-              }
-            }
-          }
-        }
-      }
-    }
   })
   async getStats(@Param('id') id: string) {
-    // TODO: Implement statistics calculation
-    return {
-      success: true,
-      data: {
-        jobs: {
-          total: 15,
-          active: 8,
-          closed: 5,
-          expired: 2
-        },
-        applications: {
-          total: 150,
-          pending: 45,
-          reviewed: 80,
-          hired: 25
-        },
-        referrals: {
-          total: 30,
-          successful: 12,
-          pending: 18
-        },
-        payments: {
-          total: 25000,
-          pending: 5000,
-          completed: 20000
-        },
-        growth: {
-          jobsThisMonth: 5,
-          jobsLastMonth: 3,
-          growthRate: 66.67
-        }
-      }
-    };
+    const result = await this.organizationService.getOrganizationById(id);
+    return ResponseHandler.success({
+      data: result.data.stats,
+      message: 'Organization statistics retrieved successfully',
+    });
   }
 
-  // Legacy methods for backward compatibility
-  async findAll(): Promise<OrganizationListResponseDto> {
+  @Get('all/list')
+  @ApiOperation({ summary: 'Get all organizations (simple list)' })
+  @ApiResponse({
+    status: 200,
+    description: 'All organizations retrieved successfully',
+    type: OrganizationListResponseDto,
+  })
+  async findAll() {
     const organizations = await this.organizationService.findAll();
-    return {
-      organizations: organizations.map(org => this.mapToResponseDto(org)),
-      total: organizations.length,
-      page: 1,
-      limit: organizations.length,
-    };
+    return ResponseHandler.success({
+      data: {
+        organizations: organizations.map(org => this.mapToResponseDto(org)),
+        total: organizations.length,
+        page: 1,
+        limit: organizations.length,
+      },
+      message: 'All organizations retrieved successfully',
+    });
   }
 
-  private mapToResponseDto(organization: Organization): OrganizationResponseDto {
+  private mapToResponseDto(
+    organization: Organization,
+  ): OrganizationResponseDto {
     return {
       id: organization.id,
       name: organization.name,
@@ -419,25 +309,34 @@ export class OrganizationController {
       orgType: organization.orgType,
       size: organization.size,
       status: organization.status,
-      logo: organization.logoUrl ? {
-        url: organization.logoUrl,
-        filename: organization.logoFilename,
-        size: organization.logoSize,
-        contentType: organization.logoContentType
-      } : undefined,
-      industry: organization.industry ? {
-        id: organization.industry.id,
-        name: organization.industry.name,
-        description: organization.industry.description
-      } : undefined,
-      city: organization.city ? {
-        id: organization.city.id,
-        name: organization.city.name
-      } : undefined,
-      country: organization.country ? {
-        id: organization.country.id,
-        name: organization.country.name
-      } : undefined,
+      logo: organization.logoUrl
+        ? {
+            url: organization.logoUrl,
+            filename: organization.logoFilename,
+            size: organization.logoSize,
+            contentType: organization.logoContentType,
+          }
+        : undefined,
+      industry: organization.industry
+        ? {
+            id: organization.industry.id,
+            name: organization.industry.name,
+            description: organization.industry.description,
+          }
+        : undefined,
+      city: organization.city
+        ? {
+            id: organization.city.id,
+            name: organization.city.name,
+          }
+        : undefined,
+      country: organization.country
+        ? {
+            id: organization.country.id,
+            name: organization.country.name,
+            code: organization.country.code,
+          }
+        : undefined,
       jobsCount: organization.jobsCount,
       activeJobsCount: organization.activeJobsCount,
       createdAt: organization.createdAt,
@@ -445,4 +344,4 @@ export class OrganizationController {
       deletedAt: organization.deletedAt,
     };
   }
-} 
+}

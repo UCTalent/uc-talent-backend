@@ -14,7 +14,7 @@ export class ExternalLink extends BaseEntity {
   url: string;
 
   // Relationships
-  @ManyToOne(() => Talent, (talent) => talent.externalLinks)
+  @ManyToOne(() => Talent, talent => talent.externalLinks)
   @JoinColumn({ name: 'talent_id' })
   talent: Talent;
-} 
+}

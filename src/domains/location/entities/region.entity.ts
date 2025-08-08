@@ -11,6 +11,6 @@ export class Region extends BaseEntity {
   description: string;
 
   // Relationships
-  @OneToMany(() => Job, (job) => job.region)
+  @OneToMany(() => Job, job => job.region)
   jobs: Job[];
-} 
+}

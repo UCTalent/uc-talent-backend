@@ -41,7 +41,10 @@ export class UserMailer {
     await this.emailService.sendEmail(to, subject, html);
   }
 
-  async sendEmailConfirmation(to: string, confirmationToken: string): Promise<void> {
+  async sendEmailConfirmation(
+    to: string,
+    confirmationToken: string,
+  ): Promise<void> {
     const subject = 'Confirm Your Email Address';
     const confirmUrl = `${process.env.FRONTEND_URL}/confirm-email?token=${confirmationToken}`;
     const html = `
@@ -67,4 +70,4 @@ export class UserMailer {
 
     await this.emailService.sendEmail(to, subject, html);
   }
-} 
+}

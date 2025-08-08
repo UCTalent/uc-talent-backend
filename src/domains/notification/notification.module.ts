@@ -22,4 +22,4 @@ import { NoteRepository } from './repositories/note.repository';
   ],
   exports: [EmailService, NotificationService, JobMailer, UserMailer],
 })
-export class NotificationModule {} 
+export class NotificationModule {}

@@ -1,14 +1,39 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsIn, IsNotEmpty, IsOptional, IsDateString, IsObject } from 'class-validator';
+import {
+  IsString,
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsDateString,
+  IsObject,
+} from 'class-validator';
 
 export class LinkSocialAccountDto {
   @ApiProperty({
     description: 'Social provider',
     example: 'linkedin',
-    enum: ['facebook', 'x', 'twitter', 'linkedin', 'github', 'instagram', 'discord', 'telegram'],
+    enum: [
+      'facebook',
+      'x',
+      'twitter',
+      'linkedin',
+      'github',
+      'instagram',
+      'discord',
+      'telegram',
+    ],
   })
   @IsString()
-  @IsIn(['facebook', 'x', 'twitter', 'linkedin', 'github', 'instagram', 'discord', 'telegram'])
+  @IsIn([
+    'facebook',
+    'x',
+    'twitter',
+    'linkedin',
+    'github',
+    'instagram',
+    'discord',
+    'telegram',
+  ])
   provider: string;
 
   @ApiProperty({

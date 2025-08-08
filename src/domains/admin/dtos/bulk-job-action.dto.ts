@@ -11,7 +11,11 @@ export class BulkJobActionDto {
   @IsString({ each: true })
   jobIds: string[];
 
-  @ApiProperty({ description: 'Reason for action', example: 'Bulk approval', required: false })
+  @ApiProperty({
+    description: 'Reason for action',
+    example: 'Bulk approval',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   reason?: string;
@@ -19,4 +23,4 @@ export class BulkJobActionDto {
   @ApiProperty({ description: 'Admin ID', example: 'admin-uuid' })
   @IsString()
   adminId: string;
-} 
+}

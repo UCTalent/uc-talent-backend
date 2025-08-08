@@ -65,4 +65,4 @@ import { NotificationModule } from '@notification/notification.module';
   ],
   exports: [BullModule],
 })
-export class BackgroundJobsModule {} 
+export class BackgroundJobsModule {}

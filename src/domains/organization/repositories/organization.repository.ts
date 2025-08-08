@@ -18,7 +18,7 @@ export class OrganizationRepository implements IBaseRepository<Organization> {
   async findByIdWithRelations(id: string): Promise<Organization | null> {
     return this.repository.findOne({
       where: { id },
-      relations: ['industry', 'city', 'country', 'jobs']
+      relations: ['industry', 'city', 'country', 'jobs'],
     });
   }
 
@@ -62,16 +62,16 @@ export class OrganizationRepository implements IBaseRepository<Organization> {
     skip?: number;
     take?: number;
   }): Promise<{ data: Organization[]; total: number }> {
-    const queryBuilder = this.repository.createQueryBuilder('org')
+    const queryBuilder = this.repository
+      .createQueryBuilder('org')
       .leftJoinAndSelect('org.industry', 'industry')
       .leftJoinAndSelect('org.city', 'city')
       .leftJoinAndSelect('org.country', 'country');
 
     if (options.search) {
-      queryBuilder.where(
-        'org.name ILIKE :search OR org.about ILIKE :search',
-        { search: `%${options.search}%` }
-      );
+      queryBuilder.where('org.name ILIKE :search OR org.about ILIKE :search', {
+        search: `%${options.search}%`,
+      });
     }
 
     if (options.status) {
@@ -79,11 +79,15 @@ export class OrganizationRepository implements IBaseRepository<Organization> {
     }
 
     if (options.industry) {
-      queryBuilder.andWhere('industry.id = :industry', { industry: options.industry });
+      queryBuilder.andWhere('industry.id = :industry', {
+        industry: options.industry,
+      });
     }
 
     if (options.country) {
-      queryBuilder.andWhere('country.id = :country', { country: options.country });
+      queryBuilder.andWhere('country.id = :country', {
+        country: options.country,
+      });
     }
 
     if (options.city) {
@@ -95,11 +99,16 @@ export class OrganizationRepository implements IBaseRepository<Organization> {
     }
 
     if (options.orgType) {
-      queryBuilder.andWhere('org.orgType = :orgType', { orgType: options.orgType });
+      queryBuilder.andWhere('org.orgType = :orgType', {
+        orgType: options.orgType,
+      });
     }
 
     if (options.sortBy) {
-      queryBuilder.orderBy(`org.${options.sortBy}`, options.sortOrder || 'DESC');
+      queryBuilder.orderBy(
+        `org.${options.sortBy}`,
+        options.sortOrder || 'DESC',
+      );
     } else {
       queryBuilder.orderBy('org.createdAt', 'DESC');
     }
@@ -116,31 +125,38 @@ export class OrganizationRepository implements IBaseRepository<Organization> {
     return { data, total };
   }
 
-  async searchWithFilters(query: string, filters?: {
-    industry?: string;
-    country?: string;
-    city?: string;
-    size?: string;
-    orgType?: string;
-  }): Promise<Organization[]> {
-    const queryBuilder = this.repository.createQueryBuilder('org')
+  async searchWithFilters(
+    query: string,
+    filters?: {
+      industry?: string;
+      country?: string;
+      city?: string;
+      size?: string;
+      orgType?: string;
+    },
+  ): Promise<Organization[]> {
+    const queryBuilder = this.repository
+      .createQueryBuilder('org')
       .leftJoinAndSelect('org.industry', 'industry')
       .leftJoinAndSelect('org.city', 'city')
       .leftJoinAndSelect('org.country', 'country');
 
     if (query) {
-      queryBuilder.where(
-        'org.name ILIKE :query OR org.about ILIKE :query',
-        { query: `%${query}%` }
-      );
+      queryBuilder.where('org.name ILIKE :query OR org.about ILIKE :query', {
+        query: `%${query}%`,
+      });
     }
 
     if (filters) {
       if (filters.industry) {
-        queryBuilder.andWhere('industry.id = :industry', { industry: filters.industry });
+        queryBuilder.andWhere('industry.id = :industry', {
+          industry: filters.industry,
+        });
       }
       if (filters.country) {
-        queryBuilder.andWhere('country.id = :country', { country: filters.country });
+        queryBuilder.andWhere('country.id = :country', {
+          country: filters.country,
+        });
       }
       if (filters.city) {
         queryBuilder.andWhere('city.id = :city', { city: filters.city });
@@ -149,7 +165,9 @@ export class OrganizationRepository implements IBaseRepository<Organization> {
         queryBuilder.andWhere('org.size = :size', { size: filters.size });
       }
       if (filters.orgType) {
-        queryBuilder.andWhere('org.orgType = :orgType', { orgType: filters.orgType });
+        queryBuilder.andWhere('org.orgType = :orgType', {
+          orgType: filters.orgType,
+        });
       }
     }
 
@@ -171,7 +189,7 @@ export class OrganizationRepository implements IBaseRepository<Organization> {
         .leftJoin('org.jobs', 'jobs')
         .where('org.id = :organizationId', { organizationId })
         .andWhere('jobs.status = :status', { status: 'published' })
-        .getCount()
+        .getCount(),
     ]);
 
     return { totalJobs, activeJobs };
@@ -191,4 +209,4 @@ export class OrganizationRepository implements IBaseRepository<Organization> {
       .addGroupBy('country.id')
       .getMany();
   }
-} 
+}

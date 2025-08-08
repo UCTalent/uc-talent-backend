@@ -112,4 +112,4 @@ export class PaginatedResponseDto<T> {
     example: false,
   })
   hasPrev: boolean;
-} 
+}

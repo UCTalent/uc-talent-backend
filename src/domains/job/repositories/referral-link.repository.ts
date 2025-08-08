@@ -41,24 +41,27 @@ export class ReferralLinkRepository implements IBaseRepository<ReferralLink> {
     await this.repository.restore(id);
   }
 
-  async findByJobAndReferrer(jobId: string, referrerId: string): Promise<ReferralLink | null> {
+  async findByJobAndReferrer(
+    jobId: string,
+    referrerId: string,
+  ): Promise<ReferralLink | null> {
     return this.repository.findOne({
       where: { jobId, referrerId },
-      relations: ['job', 'referrer']
+      relations: ['job', 'referrer'],
     });
   }
 
   async findByJob(jobId: string): Promise<ReferralLink[]> {
     return this.repository.find({
       where: { jobId },
-      relations: ['referrer']
+      relations: ['referrer'],
     });
   }
 
   async findByReferrer(referrerId: string): Promise<ReferralLink[]> {
     return this.repository.find({
       where: { referrerId },
-      relations: ['job']
+      relations: ['job'],
     });
   }
-} 
+}

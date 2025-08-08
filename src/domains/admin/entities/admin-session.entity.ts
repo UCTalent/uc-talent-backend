@@ -27,4 +27,4 @@ export class AdminSession extends BaseEntity {
   @ManyToOne(() => Admin, admin => admin.sessions)
   @JoinColumn({ name: 'admin_id' })
   admin: Admin;
-} 
+}

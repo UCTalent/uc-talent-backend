@@ -1,4 +1,13 @@
-import { Entity, Column, Index, OneToMany, ManyToMany, JoinTable, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  Index,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 import { User } from '@user/entities/user.entity';
@@ -117,23 +126,23 @@ export class Talent extends BaseEntity {
   headline: string;
 
   // Relationships
-  @ManyToOne(() => User, (user) => user.talents)
+  @ManyToOne(() => User, user => user.talents)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToMany(() => Experience, (experience) => experience.talent)
+  @OneToMany(() => Experience, experience => experience.talent)
   experiences: Experience[];
 
-  @OneToMany(() => Education, (education) => education.talent)
+  @OneToMany(() => Education, education => education.talent)
   educations: Education[];
 
-  @OneToMany(() => ExternalLink, (link) => link.talent)
+  @OneToMany(() => ExternalLink, link => link.talent)
   externalLinks: ExternalLink[];
 
-  @OneToMany(() => UploadedResume, (resume) => resume.talent)
+  @OneToMany(() => UploadedResume, resume => resume.talent)
   uploadedResumes: UploadedResume[];
 
-  @OneToMany(() => RecommendationJob, (recommendation) => recommendation.talent)
+  @OneToMany(() => RecommendationJob, recommendation => recommendation.talent)
   recommendationJobs: RecommendationJob[];
 
   @ManyToMany(() => Speciality)
@@ -159,4 +168,4 @@ export class Talent extends BaseEntity {
     inverseJoinColumn: { name: 'roleId', referencedColumnName: 'id' },
   })
   roles: Role[];
-} 
+}

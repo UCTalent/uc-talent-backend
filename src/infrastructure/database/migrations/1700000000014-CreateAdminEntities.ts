@@ -1,4 +1,10 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateAdminEntities1700000000014 implements MigrationInterface {
   name = 'CreateAdminEntities1700000000014';
@@ -322,23 +328,36 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
 
     // Drop foreign keys for audit_logs
     const auditLogsTable = await queryRunner.getTable('audit_logs');
-    const auditLogsForeignKey = auditLogsTable.foreignKeys.find(fk => fk.columnNames.indexOf('admin_id') !== -1);
+    const auditLogsForeignKey = auditLogsTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('admin_id') !== -1,
+    );
     if (auditLogsForeignKey) {
       await queryRunner.dropForeignKey('audit_logs', auditLogsForeignKey);
     }
 
     // Drop foreign keys for admin_permissions
-    const adminPermissionsTable = await queryRunner.getTable('admin_permissions');
-    const adminPermissionsForeignKey = adminPermissionsTable.foreignKeys.find(fk => fk.columnNames.indexOf('admin_id') !== -1);
+    const adminPermissionsTable =
+      await queryRunner.getTable('admin_permissions');
+    const adminPermissionsForeignKey = adminPermissionsTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('admin_id') !== -1,
+    );
     if (adminPermissionsForeignKey) {
-      await queryRunner.dropForeignKey('admin_permissions', adminPermissionsForeignKey);
+      await queryRunner.dropForeignKey(
+        'admin_permissions',
+        adminPermissionsForeignKey,
+      );
     }
 
     // Drop foreign keys for admin_sessions
     const adminSessionsTable = await queryRunner.getTable('admin_sessions');
-    const adminSessionsForeignKey = adminSessionsTable.foreignKeys.find(fk => fk.columnNames.indexOf('admin_id') !== -1);
+    const adminSessionsForeignKey = adminSessionsTable.foreignKeys.find(
+      fk => fk.columnNames.indexOf('admin_id') !== -1,
+    );
     if (adminSessionsForeignKey) {
-      await queryRunner.dropForeignKey('admin_sessions', adminSessionsForeignKey);
+      await queryRunner.dropForeignKey(
+        'admin_sessions',
+        adminSessionsForeignKey,
+      );
     }
 
     // Drop tables

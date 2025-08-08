@@ -18,10 +18,10 @@ export class Web3AuthService {
     try {
       // Decode and validate JWT token
       const payload = await this.decodeJwt(jwt);
-      
+
       // Extract user information
       const userInfo = this.extractUserInfo(payload);
-      
+
       // Find or create user
       const user = await this.findOrCreateUser(userInfo);
 
@@ -31,7 +31,7 @@ export class Web3AuthService {
         expires_in: 7200,
         refresh_token: 'mock_refresh_token',
         scope: 'public',
-        created_at: Math.floor(Date.now() / 1000)
+        created_at: Math.floor(Date.now() / 1000),
       };
     } catch (error) {
       throw new UnauthorizedException('Invalid JWT token');
@@ -51,11 +51,11 @@ export class Web3AuthService {
                 type: 'google',
                 details: {
                   email: 'test@example.com',
-                  name: 'Test User'
-                }
-              }
-            ]
-          }
+                  name: 'Test User',
+                },
+              },
+            ],
+          },
         };
       }
       throw new Error('Invalid token');
@@ -66,11 +66,11 @@ export class Web3AuthService {
 
   private extractUserInfo(payload: any): any {
     const user = payload.user;
-    
+
     if (user && user.profiles && user.profiles.length > 0) {
       const profile = user.profiles[0];
       const userDetails = profile.details;
-      
+
       let email: string;
       let name: string;
       let autoConfirmed = false;
@@ -118,7 +118,7 @@ export class Web3AuthService {
         name,
         autoConfirmed,
         thirdwebMetadata: user,
-        type: 'social'
+        type: 'social',
       };
     } else {
       // Wallet authentication
@@ -129,46 +129,46 @@ export class Web3AuthService {
         autoConfirmed: false,
         thirdwebMetadata: {
           type: 'wallet',
-          address: address
+          address: address,
         },
-        type: 'wallet'
+        type: 'wallet',
       };
     }
   }
 
   private async findOrCreateUser(userInfo: any): Promise<any> {
     const { email, name, autoConfirmed, thirdwebMetadata, type } = userInfo;
-    
+
     // Check for existing user by email or thirdweb metadata
     let existingUser = await this.userService.findByEmail(email);
-    
+
     if (!existingUser) {
       // Create new user
       existingUser = await this.userService.create({
         name,
         email,
         password: this.generateRandomPassword(),
-        thirdwebMetadata
+        thirdwebMetadata,
       });
 
       // Auto-confirm if needed
       if (autoConfirmed) {
         await this.userService.update(existingUser.id, {
-          confirmedAt: new Date()
+          confirmedAt: new Date(),
         });
       }
     } else {
       // Update existing user if needed
       const updates: any = {};
-      
+
       if (existingUser.thirdwebMetadata !== thirdwebMetadata) {
         updates.thirdwebMetadata = thirdwebMetadata;
       }
-      
+
       if (!existingUser.confirmedAt && autoConfirmed) {
         updates.confirmedAt = new Date();
       }
-      
+
       if (Object.keys(updates).length > 0) {
         await this.userService.update(existingUser.id, updates);
       }
@@ -182,7 +182,9 @@ export class Web3AuthService {
   }
 
   private generateRandomPassword(): string {
-    return Math.random().toString(36).substring(2, 15) + 
-           Math.random().toString(36).substring(2, 15);
+    return (
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15)
+    );
   }
 }

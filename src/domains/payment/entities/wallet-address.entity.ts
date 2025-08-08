@@ -18,4 +18,4 @@ export class WalletAddress extends BaseEntity {
   @ManyToOne(() => User, user => user.walletAddresses)
   @JoinColumn({ name: 'owner_id' })
   owner: User;
-} 
+}

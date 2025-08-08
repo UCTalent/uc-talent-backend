@@ -227,4 +227,4 @@ export class UserListResponseDto {
     example: 10,
   })
   limit: number;
-} 
+}

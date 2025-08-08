@@ -64,7 +64,7 @@ export class PartnerRepository implements IBaseRepository<Partner> {
   async findUcTalentPartners(): Promise<Partner[]> {
     return this.repository.find({
       where: { isUcTalent: true },
-      relations: ['partnerHosts']
+      relations: ['partnerHosts'],
     });
   }
 
@@ -77,22 +77,28 @@ export class PartnerRepository implements IBaseRepository<Partner> {
     skip?: number;
     take?: number;
   }): Promise<{ data: Partner[]; total: number }> {
-    const queryBuilder = this.repository.createQueryBuilder('partner')
+    const queryBuilder = this.repository
+      .createQueryBuilder('partner')
       .leftJoinAndSelect('partner.partnerHosts', 'hosts');
 
     if (options.search) {
       queryBuilder.where(
         'partner.name ILIKE :search OR partner.description ILIKE :search',
-        { search: `%${options.search}%` }
+        { search: `%${options.search}%` },
       );
     }
 
     if (options.isUcTalent !== undefined) {
-      queryBuilder.andWhere('partner.isUcTalent = :isUcTalent', { isUcTalent: options.isUcTalent });
+      queryBuilder.andWhere('partner.isUcTalent = :isUcTalent', {
+        isUcTalent: options.isUcTalent,
+      });
     }
 
     if (options.sortBy) {
-      queryBuilder.orderBy(`partner.${options.sortBy}`, options.sortOrder || 'DESC');
+      queryBuilder.orderBy(
+        `partner.${options.sortBy}`,
+        options.sortOrder || 'DESC',
+      );
     } else {
       queryBuilder.orderBy('partner.createdAt', 'DESC');
     }
@@ -121,4 +127,4 @@ export class PartnerRepository implements IBaseRepository<Partner> {
       .groupBy('partner.id')
       .getMany();
   }
-} 
+}

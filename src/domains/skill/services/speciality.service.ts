@@ -4,9 +4,7 @@ import { SpecialityRepository } from '@skill/repositories/speciality.repository'
 
 @Injectable()
 export class SpecialityService {
-  constructor(
-    private readonly specialityRepository: SpecialityRepository,
-  ) {}
+  constructor(private readonly specialityRepository: SpecialityRepository) {}
 
   async findAll(): Promise<Speciality[]> {
     return this.specialityRepository.findAll();
@@ -15,4 +13,4 @@ export class SpecialityService {
   async findById(id: string): Promise<Speciality | null> {
     return this.specialityRepository.findById(id);
   }
-} 
+}

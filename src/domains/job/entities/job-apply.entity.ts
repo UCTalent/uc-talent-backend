@@ -46,7 +46,7 @@ export class JobApply extends BaseEntity {
   personalSign: string;
 
   // Relationships
-  @ManyToOne(() => Job, (job) => job.jobApplies)
+  @ManyToOne(() => Job, job => job.jobApplies)
   @JoinColumn({ name: 'jobId' })
   job: Job;
 
@@ -61,4 +61,4 @@ export class JobApply extends BaseEntity {
   @ManyToOne(() => JobReferral, { nullable: true })
   @JoinColumn({ name: 'jobReferralId' })
   jobReferral: JobReferral;
-} 
+}

@@ -20,37 +20,65 @@ export class OrganizationQueryDto {
   @IsString()
   search?: string;
 
-  @ApiProperty({ description: 'Organization status', example: 'active', required: false })
+  @ApiProperty({
+    description: 'Organization status',
+    example: 'active',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   status?: string;
 
-  @ApiProperty({ description: 'Industry ID', example: 'industry-uuid', required: false })
+  @ApiProperty({
+    description: 'Industry ID',
+    example: 'industry-uuid',
+    required: false,
+  })
   @IsOptional()
   @IsUUID()
   industry?: string;
 
-  @ApiProperty({ description: 'Country ID', example: 'country-uuid', required: false })
+  @ApiProperty({
+    description: 'Country ID',
+    example: 'country-uuid',
+    required: false,
+  })
   @IsOptional()
   @IsUUID()
   country?: string;
 
-  @ApiProperty({ description: 'City ID', example: 'city-uuid', required: false })
+  @ApiProperty({
+    description: 'City ID',
+    example: 'city-uuid',
+    required: false,
+  })
   @IsOptional()
   @IsUUID()
   city?: string;
 
-  @ApiProperty({ description: 'Organization size', example: 'large', required: false })
+  @ApiProperty({
+    description: 'Organization size',
+    example: 'large',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   size?: string;
 
-  @ApiProperty({ description: 'Organization type', example: 'company', required: false })
+  @ApiProperty({
+    description: 'Organization type',
+    example: 'company',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   orgType?: string;
 
-  @ApiProperty({ description: 'Sort by field', example: 'name', required: false })
+  @ApiProperty({
+    description: 'Sort by field',
+    example: 'name',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   sortBy?: string;
@@ -59,4 +87,4 @@ export class OrganizationQueryDto {
   @IsOptional()
   @IsString()
   sortOrder?: string;
-} 
+}

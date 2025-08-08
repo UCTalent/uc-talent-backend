@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsBoolean, IsString, IsIn, IsArray, ValidateNested } from 'class-validator';
+import {
+  IsOptional,
+  IsBoolean,
+  IsString,
+  IsIn,
+  IsArray,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class PrivacySettingsDto {

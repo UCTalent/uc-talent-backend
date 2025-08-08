@@ -26,4 +26,4 @@ import { RoleRepository } from './repositories/role.repository';
   controllers: [SkillController, SpecialityController, RoleController],
   exports: [SkillService, SpecialityService, RoleService],
 })
-export class SkillModule {} 
+export class SkillModule {}

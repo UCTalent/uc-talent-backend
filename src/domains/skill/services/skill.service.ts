@@ -4,9 +4,7 @@ import { SkillRepository } from '@skill/repositories/skill.repository';
 
 @Injectable()
 export class SkillService {
-  constructor(
-    private readonly skillRepository: SkillRepository,
-  ) {}
+  constructor(private readonly skillRepository: SkillRepository) {}
 
   async findAll(): Promise<Skill[]> {
     return this.skillRepository.findAll();
@@ -19,4 +17,4 @@ export class SkillService {
   async findByRoleId(roleId: string): Promise<Skill[]> {
     return this.skillRepository.findByRoleId(roleId);
   }
-} 
+}

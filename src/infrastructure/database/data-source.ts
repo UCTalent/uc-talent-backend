@@ -33,4 +33,4 @@ export const createDataSource = (configService: ConfigService) => {
     migrations: ['dist/infrastructure/database/migrations/*{.ts,.js}'],
     subscribers: ['dist/**/*.subscriber{.ts,.js}'],
   });
-}; 
+};

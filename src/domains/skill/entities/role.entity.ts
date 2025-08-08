@@ -11,6 +11,6 @@ export class Role extends BaseEntity {
   description: string;
 
   // Relationships
-  @OneToMany(() => Skill, (skill) => skill.role)
+  @OneToMany(() => Skill, skill => skill.role)
   skills: Skill[];
-} 
+}
