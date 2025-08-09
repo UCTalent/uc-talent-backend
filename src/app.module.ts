@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+// import { TypeOrmModule } from '@nestjs/typeorm';
 // import { GraphQLModule } from '@nestjs/graphql';
 // import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { BullModule } from '@nestjs/bull';
@@ -27,12 +27,15 @@ import { BackgroundJobsModule } from '@infrastructure/background-jobs/background
 import { EmailModule } from '@infrastructure/email/email.module';
 
 // Shared cross-cutting modules
+import { EnvModule } from '@shared/infrastructure/env/env.module';
 import { ValidationModule } from '@shared/cross-cutting/validation/validation.module';
 import { AuthorizationModule } from '@shared/cross-cutting/authorization';
 import { LoggingModule } from '@shared/cross-cutting/logging/logging.module';
 import { CachingModule } from '@shared/cross-cutting/caching/caching.module';
 import { HttpExceptionModule } from '@/shared/cross-cutting/exception/exception.module';
 import { TransformerModule } from '@shared/cross-cutting/transformer/transformer.module';
+
+import { env } from './shared/infrastructure/env';
 
 @Module({
   imports: [
@@ -56,8 +59,8 @@ import { TransformerModule } from '@shared/cross-cutting/transformer/transformer
     // Background Jobs
     BullModule.forRoot({
       redis: {
-        host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT) || 6379,
+        host: env.REDIS_HOST,
+        port: env.REDIS_PORT,
       },
     }),
 
@@ -89,6 +92,7 @@ import { TransformerModule } from '@shared/cross-cutting/transformer/transformer
     EmailModule,
 
     // Shared cross-cutting modules
+    EnvModule,
     ValidationModule,
     AuthorizationModule,
     LoggingModule,

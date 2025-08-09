@@ -10,6 +10,7 @@ import { map, Observable } from 'rxjs';
 
 import { SuccessResponseDto } from '@/shared/dtos/response.dto';
 import { ResponseHandler } from '@shared/utils/response-handler';
+import { env } from '@/shared/infrastructure/env';
 
 const NO_RETURN: SuccessResponseDto = {
   data: null,
@@ -34,12 +35,12 @@ export class TransformerInterceptor implements NestInterceptor {
           const errorStatusCode = data.statusCode || HttpStatus.BAD_REQUEST;
           response.status(errorStatusCode);
 
-          const isDev = process.env.NODE_ENV; // process.env.NODE_ENV === 'development';
+          const isLocal = env.NODE_ENV === 'local';
 
           return ResponseHandler.error({
             statusCode: errorStatusCode,
             message: data.message,
-            stack: isDev ? data.stack : undefined, // return stack only in development
+            stack: isLocal ? data.stack : undefined,
           });
         }
 

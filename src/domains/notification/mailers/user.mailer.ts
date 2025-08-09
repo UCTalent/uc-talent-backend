@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@infrastructure/email/services/mailer.service';
+import { env } from '@/shared/infrastructure/env';
 
 @Injectable()
 export class UserMailer {
@@ -27,7 +28,7 @@ export class UserMailer {
 
   async sendPasswordResetEmail(to: string, resetToken: string): Promise<void> {
     const subject = 'Password Reset Request';
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+    const resetUrl = `${env.FRONTEND_URL}/reset-password?token=${resetToken}`;
     const html = `
       <h1>Password Reset Request</h1>
       <p>You have requested to reset your password.</p>
@@ -46,7 +47,7 @@ export class UserMailer {
     confirmationToken: string,
   ): Promise<void> {
     const subject = 'Confirm Your Email Address';
-    const confirmUrl = `${process.env.FRONTEND_URL}/confirm-email?token=${confirmationToken}`;
+    const confirmUrl = `${env.FRONTEND_URL}/confirm-email?token=${confirmationToken}`;
     const html = `
       <h1>Confirm Your Email Address</h1>
       <p>Please confirm your email address by clicking the link below:</p>
