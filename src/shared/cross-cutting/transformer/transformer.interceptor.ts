@@ -8,10 +8,10 @@ import {
 import { Response } from 'express';
 import { map, Observable } from 'rxjs';
 
-import { SuccessResponse } from '@shared/schemas/response';
+import { SuccessResponseDto } from '@/shared/dtos/response.dto';
 import { ResponseHandler } from '@shared/utils/response-handler';
 
-const NO_RETURN: SuccessResponse = {
+const NO_RETURN: SuccessResponseDto = {
   data: null,
   message: 'no return',
 };
@@ -23,7 +23,7 @@ export class TransformerInterceptor implements NestInterceptor {
     const response: Response = ctx.getResponse();
 
     return next.handle().pipe(
-      map((data: SuccessResponse) => {
+      map((data: SuccessResponseDto) => {
         // case: no return
         if (!data) {
           return ResponseHandler.success(NO_RETURN);

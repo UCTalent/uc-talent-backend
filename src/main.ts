@@ -2,11 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import {
-  ValidationPipe,
-  AllExceptionsFilter,
-  TransformerInterceptor
-} from './shared/interceptors';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,11 +10,6 @@ async function bootstrap() {
 
   // Global prefix
   app.setGlobalPrefix('api/v1');
-
-  // Global validation pipe, exception and transformer interceptors
-  app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(new AllExceptionsFilter());
-  app.useGlobalInterceptors(new TransformerInterceptor());
 
   // CORS
   app.enableCors({
