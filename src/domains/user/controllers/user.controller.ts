@@ -27,6 +27,7 @@ import {
 import { User } from '@user/entities/user.entity';
 import { Public } from '@shared/cross-cutting/authorization/decorators/public.decorator';
 import { ResponseHandler } from '@shared/utils/response-handler';
+import { Docs } from '@documents/user/user.document';
 
 @ApiTags('users')
 @Controller('users')
@@ -35,21 +36,11 @@ export class UserController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiBody({ type: CreateUserDto })
-  @ApiResponse({
-    status: 201,
-    description: 'User created successfully',
-    type: UserResponseDto,
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Bad request - validation error',
-  })
-  @ApiResponse({
-    status: 409,
-    description: 'Conflict - user already exists',
-  })
+  @ApiOperation(Docs.createUser.operation)
+  @ApiBody(Docs.createUser.body)
+  @ApiResponse(Docs.createUser.responses.success[0])
+  @ApiResponse(Docs.createUser.responses.error![0])
+  @ApiResponse(Docs.createUser.responses.error![1])
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.userService.create(createUserDto);
     return ResponseHandler.success({
@@ -61,12 +52,8 @@ export class UserController {
 
   @Get()
   @Public() // Test endpoint - không cần authentication
-  @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({
-    status: 200,
-    description: 'Users retrieved successfully',
-    type: UserListResponseDto,
-  })
+  @ApiOperation(Docs.getUsers.operation)
+  @ApiResponse(Docs.getUsers.responses.success[0])
   async findAll() {
     const users = await this.userService.findAll();
     return ResponseHandler.success({
@@ -81,21 +68,10 @@ export class UserController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get user by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'User ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'User found successfully',
-    type: UserResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'User not found',
-  })
+  @ApiOperation(Docs.getUserById.operation)
+  @ApiParam(Docs.getUserById.param)
+  @ApiResponse(Docs.getUserById.responses.success[0])
+  @ApiResponse(Docs.getUserById.responses.error[0])
   async findById(@Param('id') id: string) {
     const user = await this.userService.findById(id);
     return ResponseHandler.success({
@@ -105,22 +81,11 @@ export class UserController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update user by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'User ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiBody({ type: UpdateUserDto })
-  @ApiResponse({
-    status: 200,
-    description: 'User updated successfully',
-    type: UserResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'User not found',
-  })
+  @ApiOperation(Docs.updateUser.operation)
+  @ApiParam(Docs.updateUser.param)
+  @ApiBody(Docs.updateUser.body)
+  @ApiResponse(Docs.updateUser.responses.success[0])
+  @ApiResponse(Docs.updateUser.responses.error[0])
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.userService.update(id, updateUserDto);
     return ResponseHandler.success({
@@ -130,20 +95,10 @@ export class UserController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete user by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'User ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'User deleted successfully',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'User not found',
-  })
+  @ApiOperation(Docs.deleteUser.operation)
+  @ApiParam(Docs.deleteUser.param)
+  @ApiResponse(Docs.deleteUser.responses.success[0])
+  @ApiResponse(Docs.deleteUser.responses.error[0])
   async delete(@Param('id') id: string) {
     await this.userService.delete(id);
     return ResponseHandler.success({
@@ -153,20 +108,10 @@ export class UserController {
   }
 
   @Patch(':id/soft-delete')
-  @ApiOperation({ summary: 'Soft delete user by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'User ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'User soft deleted successfully',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'User not found',
-  })
+  @ApiOperation(Docs.softDeleteUser.operation)
+  @ApiParam(Docs.softDeleteUser.param)
+  @ApiResponse(Docs.softDeleteUser.responses.success[0])
+  @ApiResponse(Docs.softDeleteUser.responses.error[0])
   async softDelete(@Param('id') id: string) {
     await this.userService.softDelete(id);
     return ResponseHandler.success({
@@ -176,20 +121,10 @@ export class UserController {
   }
 
   @Patch(':id/restore')
-  @ApiOperation({ summary: 'Restore soft deleted user by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'User ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'User restored successfully',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'User not found',
-  })
+  @ApiOperation(Docs.restoreUser.operation)
+  @ApiParam(Docs.restoreUser.param)
+  @ApiResponse(Docs.restoreUser.responses.success[0])
+  @ApiResponse(Docs.restoreUser.responses.error[0])
   async restore(@Param('id') id: string) {
     await this.userService.restore(id);
     return ResponseHandler.success({

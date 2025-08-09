@@ -32,6 +32,7 @@ import {
 } from '@organization/dtos/organization-response.dto';
 import { Organization } from '@organization/entities/organization.entity';
 import { ResponseHandler } from '@shared/utils/response-handler';
+import { Docs } from '@documents/organization/organization.document';
 
 @ApiTags('organizations')
 @Controller('organizations')
@@ -40,17 +41,10 @@ export class OrganizationController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create a new organization' })
-  @ApiBody({ type: CreateOrganizationDto })
-  @ApiResponse({
-    status: 201,
-    description: 'Organization created successfully',
-    type: OrganizationResponseDto,
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Bad request - validation error',
-  })
+  @ApiOperation(Docs.createOrganization.operation)
+  @ApiBody(Docs.createOrganization.body)
+  @ApiResponse(Docs.createOrganization.responses.success[0])
+  @ApiResponse(Docs.createOrganization.responses.error[0])
   async create(@Body() createOrganizationDto: CreateOrganizationDto) {
     const result = await this.organizationService.createOrganization(
       createOrganizationDto,
@@ -63,23 +57,9 @@ export class OrganizationController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get organizations list' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'search', required: false, type: String })
-  @ApiQuery({ name: 'status', required: false, type: String })
-  @ApiQuery({ name: 'industry', required: false, type: String })
-  @ApiQuery({ name: 'country', required: false, type: String })
-  @ApiQuery({ name: 'city', required: false, type: String })
-  @ApiQuery({ name: 'size', required: false, type: String })
-  @ApiQuery({ name: 'orgType', required: false, type: String })
-  @ApiQuery({ name: 'sortBy', required: false, type: String })
-  @ApiQuery({ name: 'sortOrder', required: false, type: String })
-  @ApiResponse({
-    status: 200,
-    description: 'Organizations retrieved successfully',
-    type: OrganizationListResponseDto,
-  })
+  @ApiOperation(Docs.getOrganizations.operation)
+  @ApiQuery(Docs.getOrganizations.query as any)
+  @ApiResponse(Docs.getOrganizations.responses.success[0])
   async getOrganizations(@Query() query: OrganizationQueryDto) {
     const result = await this.organizationService.getOrganizations(query);
     return ResponseHandler.success({
@@ -94,14 +74,9 @@ export class OrganizationController {
   }
 
   @Get('search')
-  @ApiOperation({ summary: 'Search organizations' })
-  @ApiQuery({ name: 'query', required: true, type: String })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiResponse({
-    status: 200,
-    description: 'Organizations search completed successfully',
-  })
+  @ApiOperation(Docs.searchOrganizations.operation)
+  @ApiQuery(Docs.searchOrganizations.query as any)
+  @ApiResponse(Docs.searchOrganizations.responses.success[0])
   async searchOrganizations(
     @Query('query') query: string,
     @Query() filters: any,
@@ -117,21 +92,10 @@ export class OrganizationController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get organization by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'Organization ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Organization found successfully',
-    type: OrganizationResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Organization not found',
-  })
+  @ApiOperation(Docs.getOrganizationById.operation)
+  @ApiParam(Docs.getOrganizationById.param)
+  @ApiResponse(Docs.getOrganizationById.responses.success[0])
+  @ApiResponse(Docs.getOrganizationById.responses.error[0])
   async findById(@Param('id') id: string) {
     const result = await this.organizationService.getOrganizationById(id);
     return ResponseHandler.success({
@@ -141,22 +105,11 @@ export class OrganizationController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update organization by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'Organization ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiBody({ type: UpdateOrganizationDto })
-  @ApiResponse({
-    status: 200,
-    description: 'Organization updated successfully',
-    type: OrganizationResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Organization not found',
-  })
+  @ApiOperation(Docs.updateOrganization.operation)
+  @ApiParam(Docs.updateOrganization.param)
+  @ApiBody(Docs.updateOrganization.body)
+  @ApiResponse(Docs.updateOrganization.responses.success[0])
+  @ApiResponse(Docs.updateOrganization.responses.error[0])
   async update(
     @Param('id') id: string,
     @Body() updateOrganizationDto: UpdateOrganizationDto,
@@ -172,20 +125,10 @@ export class OrganizationController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete organization by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'Organization ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Organization deleted successfully',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Organization not found',
-  })
+  @ApiOperation(Docs.deleteOrganization.operation)
+  @ApiParam(Docs.deleteOrganization.param)
+  @ApiResponse(Docs.deleteOrganization.responses.success[0])
+  @ApiResponse(Docs.deleteOrganization.responses.error[0])
   async delete(@Param('id') id: string) {
     await this.organizationService.deleteOrganization(id);
     return ResponseHandler.success({
@@ -196,28 +139,11 @@ export class OrganizationController {
 
   @Post(':id/logo')
   @UseInterceptors(FileInterceptor('logo'))
-  @ApiOperation({ summary: 'Upload organization logo' })
-  @ApiParam({
-    name: 'id',
-    description: 'Organization ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
+  @ApiOperation(Docs.uploadLogo.operation)
+  @ApiParam(Docs.uploadLogo.param)
   @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        logo: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Logo uploaded successfully',
-  })
+  @ApiBody(Docs.uploadLogo.body as any)
+  @ApiResponse(Docs.uploadLogo.responses.success[0])
   async uploadLogo(@Param('id') _id: string, @UploadedFile() file: any) {
     // TODO: Implement logo upload functionality
     return ResponseHandler.success({
@@ -234,16 +160,9 @@ export class OrganizationController {
   }
 
   @Delete(':id/logo')
-  @ApiOperation({ summary: 'Delete organization logo' })
-  @ApiParam({
-    name: 'id',
-    description: 'Organization ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Logo deleted successfully',
-  })
+  @ApiOperation(Docs.deleteLogo.operation)
+  @ApiParam(Docs.deleteLogo.param)
+  @ApiResponse(Docs.deleteLogo.responses.success[0])
   async deleteLogo(@Param('id') id: string) {
     // TODO: Implement logo deletion functionality
     return ResponseHandler.success({
@@ -253,16 +172,9 @@ export class OrganizationController {
   }
 
   @Get(':id/stats')
-  @ApiOperation({ summary: 'Get organization statistics' })
-  @ApiParam({
-    name: 'id',
-    description: 'Organization ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Organization statistics retrieved successfully',
-  })
+  @ApiOperation(Docs.getStats.operation)
+  @ApiParam(Docs.getStats.param)
+  @ApiResponse(Docs.getStats.responses.success[0])
   async getStats(@Param('id') id: string) {
     const result = await this.organizationService.getOrganizationById(id);
     return ResponseHandler.success({
@@ -272,12 +184,8 @@ export class OrganizationController {
   }
 
   @Get('all/list')
-  @ApiOperation({ summary: 'Get all organizations (simple list)' })
-  @ApiResponse({
-    status: 200,
-    description: 'All organizations retrieved successfully',
-    type: OrganizationListResponseDto,
-  })
+  @ApiOperation(Docs.getAllSimpleList.operation)
+  @ApiResponse(Docs.getAllSimpleList.responses.success[0])
   async findAll() {
     const organizations = await this.organizationService.findAll();
     return ResponseHandler.success({
