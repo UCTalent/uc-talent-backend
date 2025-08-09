@@ -307,7 +307,7 @@ export class JobRepository implements IBaseRepository<Job> {
         .orderBy('job.jobNumber', 'DESC')
         .getOne();
 
-      const newJobNumber = lastJob ? lastJob.jobNumber + 1 : 1;
+      const newJobNumber = lastJob ? Number(lastJob.jobNumber) + 1 : 1;
 
       return newJobNumber;
     });
