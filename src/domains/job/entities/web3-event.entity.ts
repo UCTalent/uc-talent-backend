@@ -4,26 +4,26 @@ import { Job } from './job.entity';
 
 @Entity('web3_events')
 export class Web3Event extends BaseEntity {
-  @Column()
+  @Column({ name: 'job_id' })
   jobId: string;
 
-  @Column()
+  @Column({ name: 'event_type' })
   eventType: string;
 
-  @Column({ type: 'jsonb' })
+  @Column({ name: 'event_data', type: 'jsonb' })
   eventData: Record<string, any>;
 
-  @Column({ nullable: true })
+  @Column({ name: 'transaction_hash', nullable: true })
   transactionHash: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'block_number', nullable: true })
   blockNumber: number;
 
-  @Column({ nullable: true })
+  @Column({ name: 'chain_id', nullable: true })
   chainId: string;
 
   // Relationships
   @ManyToOne(() => Job, job => job.web3Events)
-  @JoinColumn({ name: 'jobId' })
+  @JoinColumn({ name: 'job_id' })
   job: Job;
 }

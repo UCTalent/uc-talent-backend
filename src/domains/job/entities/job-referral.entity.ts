@@ -10,10 +10,10 @@ export enum JobReferralStatus {
 
 @Entity('job_referrals')
 export class JobReferral extends BaseEntity {
-  @Column()
+  @Column({ name: 'job_id' })
   jobId: string;
 
-  @Column()
+  @Column({ name: 'referrer_id' })
   referrerId: string;
 
   @Column()
@@ -46,10 +46,10 @@ export class JobReferral extends BaseEntity {
 
   // Relationships
   @ManyToOne(() => Job, job => job.jobReferrals)
-  @JoinColumn({ name: 'jobId' })
+  @JoinColumn({ name: 'job_id' })
   job: Job;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'referrerId' })
+  @JoinColumn({ name: 'referrer_id' })
   referrer: User;
 }

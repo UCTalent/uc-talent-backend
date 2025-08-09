@@ -61,7 +61,7 @@ export class Organization extends BaseEntity {
   @Column({ name: 'logo_filename', nullable: true })
   logoFilename: string;
 
-  @Column({ name: 'logo_size', nullable: true })
+  @Column({ name: 'logo_byte_size', nullable: true })
   logoSize: number;
 
   @Column({ name: 'logo_content_type', nullable: true })

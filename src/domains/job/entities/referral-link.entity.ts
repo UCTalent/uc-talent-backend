@@ -5,18 +5,18 @@ import { User } from '@user/entities/user.entity';
 
 @Entity('referral_links')
 export class ReferralLink extends BaseEntity {
-  @Column()
+  @Column({ name: 'job_id' })
   jobId: string;
 
-  @Column()
+  @Column({ name: 'referrer_id' })
   referrerId: string;
 
   // Relationships
   @ManyToOne(() => Job, job => job.referralLinks)
-  @JoinColumn({ name: 'jobId' })
+  @JoinColumn({ name: 'job_id' })
   job: Job;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'referrerId' })
+  @JoinColumn({ name: 'referrer_id' })
   referrer: User;
 }

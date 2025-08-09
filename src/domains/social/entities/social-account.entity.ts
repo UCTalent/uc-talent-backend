@@ -49,7 +49,7 @@ export class SocialAccount extends BaseEntity {
   @Column({ name: 'expires_at', nullable: true })
   expiresAt: Date;
 
-  @Column({ name: 'last_synced_at', nullable: true })
+  @Column({ name: 'last_synced_at', type: 'timestamp', nullable: true })
   lastSyncedAt: Date;
 
   @Column({

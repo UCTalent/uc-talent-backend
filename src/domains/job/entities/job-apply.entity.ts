@@ -17,13 +17,13 @@ export enum JobApplyStatus {
 
 @Entity('job_applies')
 export class JobApply extends BaseEntity {
-  @Column()
+  @Column({ name: 'job_id' })
   jobId: string;
 
-  @Column()
+  @Column({ name: 'talent_id' })
   talentId: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'uploaded_resume_id', nullable: true })
   uploadedResumeId: string;
 
   @Column({
@@ -36,7 +36,7 @@ export class JobApply extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   note: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'job_referral_id', nullable: true })
   jobReferralId: string;
 
   @Column({ nullable: true })
@@ -47,18 +47,18 @@ export class JobApply extends BaseEntity {
 
   // Relationships
   @ManyToOne(() => Job, job => job.jobApplies)
-  @JoinColumn({ name: 'jobId' })
+  @JoinColumn({ name: 'job_id' })
   job: Job;
 
   @ManyToOne(() => Talent)
-  @JoinColumn({ name: 'talentId' })
+  @JoinColumn({ name: 'talent_id' })
   talent: Talent;
 
   @ManyToOne(() => UploadedResume, { nullable: true })
-  @JoinColumn({ name: 'uploadedResumeId' })
+  @JoinColumn({ name: 'uploaded_resume_id' })
   uploadedResume: UploadedResume;
 
   @ManyToOne(() => JobReferral, { nullable: true })
-  @JoinColumn({ name: 'jobReferralId' })
+  @JoinColumn({ name: 'job_referral_id' })
   jobReferral: JobReferral;
 }

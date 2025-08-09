@@ -4,7 +4,7 @@ import { User } from '@user/entities/user.entity';
 
 @Entity('notes')
 export class Note extends BaseEntity {
-  @Column()
+  @Column({ name: 'user_id' })
   userId: string;
 
   @Column()
@@ -15,6 +15,6 @@ export class Note extends BaseEntity {
 
   // Relationships
   @ManyToOne(() => User, user => user.notes)
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 }

@@ -148,24 +148,24 @@ export class Talent extends BaseEntity {
   @ManyToMany(() => Speciality)
   @JoinTable({
     name: 'talent_specialities',
-    joinColumn: { name: 'talentId', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'specialityId', referencedColumnName: 'id' },
+    joinColumn: { name: 'talent_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'speciality_id', referencedColumnName: 'id' },
   })
   specialities: Speciality[];
 
   @ManyToMany(() => Skill)
   @JoinTable({
     name: 'talent_skills',
-    joinColumn: { name: 'talentId', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'skillId', referencedColumnName: 'id' },
+    joinColumn: { name: 'talent_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'skill_id', referencedColumnName: 'id' },
   })
   skills: Skill[];
 
   @ManyToMany(() => Role)
   @JoinTable({
     name: 'talent_roles',
-    joinColumn: { name: 'talentId', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'roleId', referencedColumnName: 'id' },
+    joinColumn: { name: 'talent_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
   })
   roles: Role[];
 }
