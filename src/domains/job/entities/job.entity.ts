@@ -39,7 +39,7 @@ export enum LocationType {
 
 @Entity('jobs')
 export class Job extends BaseEntity {
-  @Column({ type: 'bigint', unique: true })
+  @Column({ name: 'job_number', type: 'bigint', unique: true })
   @Index()
   jobNumber: number;
 
@@ -49,90 +49,82 @@ export class Job extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   about: string;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ name: 'experience_level', type: 'int', default: 0 })
   experienceLevel: number;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ name: 'management_level', type: 'int', default: 0 })
   managementLevel: number;
 
-  @Column({ nullable: true })
+  @Column({ name: 'job_type', nullable: true })
   jobType: string;
 
   @Column({ type: 'text', nullable: true })
   responsibilities: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'minimum_qualifications', type: 'text', nullable: true })
   minimumQualifications: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'preferred_requirement', type: 'text', nullable: true })
   preferredRequirement: string;
 
   @Column({ type: 'text', nullable: true })
   benefits: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'direct_manager', nullable: true })
   directManager: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'direct_manager_title', nullable: true })
   directManagerTitle: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'direct_manager_profile', nullable: true })
   directManagerProfile: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'direct_manager_logo', nullable: true })
   directManagerLogo: string;
 
-  @Column({
-    type: 'enum',
-    enum: LocationType,
-    default: LocationType.ON_SITE,
-  })
+  @Column({ name: 'location_type', type: 'enum', enum: LocationType, default: LocationType.ON_SITE })
   locationType: LocationType;
 
-  @Column({ nullable: true })
+  @Column({ name: 'location_value', nullable: true })
   locationValue: string;
 
-  @Column({ type: 'bigint', default: 0 })
+  @Column({ name: 'salary_from_cents', type: 'bigint', default: 0 })
   salaryFromCents: number;
 
-  @Column({ default: 'USD' })
+  @Column({ name: 'salary_from_currency', default: 'USD' })
   salaryFromCurrency: string;
 
-  @Column({ type: 'bigint', default: 0 })
+  @Column({ name: 'salary_to_cents', type: 'bigint', default: 0 })
   salaryToCents: number;
 
-  @Column({ default: 'USD' })
+  @Column({ name: 'salary_to_currency', default: 'USD' })
   salaryToCurrency: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'salary_type', nullable: true })
   salaryType: string;
 
-  @Column({ type: 'bigint', default: 0 })
+  @Column({ name: 'referral_cents', type: 'bigint', default: 0 })
   referralCents: number;
 
-  @Column({ default: 'USD' })
+  @Column({ name: 'referral_currency', default: 'USD' })
   referralCurrency: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'referral_type', nullable: true })
   referralType: string;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ name: 'referral_info', type: 'jsonb', nullable: true })
   referralInfo: Record<string, any>;
 
-  @Column({ nullable: true })
+  @Column({ name: 'apply_method', nullable: true })
   applyMethod: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'apply_target', nullable: true })
   applyTarget: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'english_level', nullable: true })
   englishLevel: string;
 
-  @Column({
-    type: 'enum',
-    enum: JobStatus,
-    default: JobStatus.PENDING_TO_REVIEW,
-  })
+  @Column({ type: 'enum', enum: JobStatus, default: JobStatus.PENDING_TO_REVIEW })
   status: JobStatus;
 
   @Column({ nullable: true })
@@ -144,68 +136,68 @@ export class Job extends BaseEntity {
   @Column({ nullable: true })
   network: string;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ name: 'posted_date', type: 'timestamp', nullable: true })
   postedDate: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ name: 'expired_date', type: 'timestamp', nullable: true })
   expiredDate: Date;
 
-  @Column({ nullable: true })
+  @Column({ name: 'address_token', nullable: true })
   addressToken: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'chain_id', nullable: true })
   chainId: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'created_by', nullable: true })
   createdBy: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'updated_by', nullable: true })
   updatedBy: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'organization_id', nullable: true })
   organizationId: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'speciality_id', nullable: true })
   specialityId: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'city_id', nullable: true })
   cityId: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'country_id', nullable: true })
   countryId: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'region_id', nullable: true })
   regionId: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'global_region_id', nullable: true })
   globalRegionId: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'partner_host_id', nullable: true })
   partnerHostId: string;
 
   // Relationships
   @ManyToOne(() => Organization, { nullable: true })
-  @JoinColumn({ name: 'organizationId' })
+  @JoinColumn({ name: 'organization_id' })
   organization: Organization;
 
   @ManyToOne(() => Speciality, { nullable: true })
-  @JoinColumn({ name: 'specialityId' })
+  @JoinColumn({ name: 'speciality_id' })
   speciality: Speciality;
 
   @ManyToOne(() => City, { nullable: true })
-  @JoinColumn({ name: 'cityId' })
+  @JoinColumn({ name: 'city_id' })
   city: City;
 
   @ManyToOne(() => Country, { nullable: true })
-  @JoinColumn({ name: 'countryId' })
+  @JoinColumn({ name: 'country_id' })
   country: Country;
 
   @ManyToOne(() => Region, { nullable: true })
-  @JoinColumn({ name: 'regionId' })
+  @JoinColumn({ name: 'region_id' })
   region: Region;
 
   @ManyToOne(() => PartnerHost, { nullable: true })
-  @JoinColumn({ name: 'partnerHostId' })
+  @JoinColumn({ name: 'partner_host_id' })
   partnerHost: PartnerHost;
 
   @OneToMany(() => JobApply, apply => apply.job)
@@ -226,16 +218,16 @@ export class Job extends BaseEntity {
   @ManyToMany(() => Skill)
   @JoinTable({
     name: 'job_skills',
-    joinColumn: { name: 'jobId', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'skillId', referencedColumnName: 'id' },
+    joinColumn: { name: 'job_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'skill_id', referencedColumnName: 'id' },
   })
   skills: Skill[];
 
   @ManyToMany(() => ChoiceOption)
   @JoinTable({
     name: 'job_choice_options',
-    joinColumn: { name: 'jobId', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'choiceOptionId', referencedColumnName: 'id' },
+    joinColumn: { name: 'job_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'choice_option_id', referencedColumnName: 'id' },
   })
   choiceOptions: ChoiceOption[];
 
