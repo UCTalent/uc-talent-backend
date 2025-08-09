@@ -42,7 +42,7 @@ export class EmailService {
   async sendJobApplicationEmail(
     to: string,
     jobTitle: string,
-    companyName: string,
+    companyName: string
   ): Promise<void> {
     const subject = 'Job Application Received';
     const html = `

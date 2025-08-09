@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsNumber, IsString, IsUUID } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class OrganizationQueryDto {
   @ApiProperty({ description: 'Page number', example: 1, required: false })

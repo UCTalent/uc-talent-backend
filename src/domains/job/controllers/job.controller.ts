@@ -1,36 +1,37 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Put,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  Request,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Put,
   Query,
+  Request,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
   ApiBody,
+  ApiOperation,
+  ApiParam,
   ApiQuery,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { JobService } from '@job/services/job.service';
-import { CreateJobDto } from '@job/dtos/create-job.dto';
-import { UpdateJobDto } from '@job/dtos/update-job.dto';
-import { ApplyJobDto } from '@job/dtos/apply-job.dto';
-import { ReferCandidateDto } from '@job/dtos/refer-candidate.dto';
-import { CloseJobDto } from '@job/dtos/close-job.dto';
-import { JobIndexQueryDto } from '@job/dtos/job-index-query.dto';
-import { JobResponseDto } from '@job/dtos/job-response.dto';
-import { Job } from '@job/entities/job.entity';
-import { ResponseHandler } from '@shared/utils/response-handler';
+
 import { Docs } from '@documents/job/job.document';
+import { ApplyJobDto } from '@job/dtos/apply-job.dto';
+import { CloseJobDto } from '@job/dtos/close-job.dto';
+import { CreateJobDto } from '@job/dtos/create-job.dto';
+import { JobIndexQueryDto } from '@job/dtos/job-index-query.dto';
+import type { JobResponseDto } from '@job/dtos/job-response.dto';
+import { ReferCandidateDto } from '@job/dtos/refer-candidate.dto';
+import { UpdateJobDto } from '@job/dtos/update-job.dto';
+import type { Job } from '@job/entities/job.entity';
+import { JobService } from '@job/services/job.service';
+import { ResponseHandler } from '@shared/utils/response-handler';
 
 @ApiTags('jobs')
 @Controller('jobs')
@@ -60,7 +61,7 @@ export class JobController {
     const result = await this.jobService.getJobs(query);
     return ResponseHandler.success({
       data: {
-        jobs: result.jobs.map(job => this.mapToResponseDto(job)),
+        jobs: result.jobs.map((job) => this.mapToResponseDto(job)),
         pagination: result.pagination,
       },
       message: 'Jobs retrieved successfully',
@@ -89,7 +90,7 @@ export class JobController {
   async update(
     @Param('id') id: string,
     @Body() updateJobDto: UpdateJobDto,
-    @Request() req: any,
+    @Request() req: any
   ) {
     const job = await this.jobService.update(id, updateJobDto, req.user?.id);
     return ResponseHandler.success({
@@ -146,12 +147,12 @@ export class JobController {
   async applyForJob(
     @Param('id') id: string,
     @Body() applyJobDto: ApplyJobDto,
-    @Request() req: any,
+    @Request() req: any
   ) {
     const result = await this.jobService.applyForJob(
       id,
       applyJobDto,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: result,
@@ -169,12 +170,12 @@ export class JobController {
   async closeJob(
     @Param('id') id: string,
     @Body() closeJobDto: CloseJobDto,
-    @Request() req: any,
+    @Request() req: any
   ) {
     const result = await this.jobService.closeJob(
       id,
       closeJobDto,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: result,
@@ -204,12 +205,12 @@ export class JobController {
   async referCandidate(
     @Param('id') id: string,
     @Body() referCandidateDto: ReferCandidateDto,
-    @Request() req: any,
+    @Request() req: any
   ) {
     const result = await this.jobService.referCandidate(
       id,
       referCandidateDto,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: result,
@@ -226,7 +227,7 @@ export class JobController {
     const jobs = await this.jobService.getSimilarJobs(id);
     return ResponseHandler.success({
       data: {
-        jobs: jobs.map(job => this.mapToResponseDto(job)),
+        jobs: jobs.map((job) => this.mapToResponseDto(job)),
         pagination: {
           current_page: 1,
           total_pages: 1,

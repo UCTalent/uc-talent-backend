@@ -1,5 +1,7 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
 import { Talent } from './talent.entity';
 
 @Entity('experiences')
@@ -32,7 +34,7 @@ export class Experience extends BaseEntity {
   jobType: string;
 
   // Relationships
-  @ManyToOne(() => Talent, talent => talent.experiences)
+  @ManyToOne(() => Talent, (talent) => talent.experiences)
   @JoinColumn({ name: 'talent_id' })
   talent: Talent;
 }

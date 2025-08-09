@@ -1,4 +1,5 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 import { User } from '@user/entities/user.entity';
 
@@ -15,7 +16,7 @@ export class WalletAddress extends BaseEntity {
   ownerId: string;
 
   // Relationships
-  @ManyToOne(() => User, user => user.walletAddresses)
+  @ManyToOne(() => User, (user) => user.walletAddresses)
   @JoinColumn({ name: 'owner_id' })
   owner: User;
 }

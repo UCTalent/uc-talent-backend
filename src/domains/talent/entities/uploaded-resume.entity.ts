@@ -1,5 +1,7 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
 import { Talent } from './talent.entity';
 
 export enum ResumeStatus {
@@ -24,7 +26,7 @@ export class UploadedResume extends BaseEntity {
   status: ResumeStatus;
 
   // Relationships
-  @ManyToOne(() => Talent, talent => talent.uploadedResumes)
+  @ManyToOne(() => Talent, (talent) => talent.uploadedResumes)
   @JoinColumn({ name: 'talent_id' })
   talent: Talent;
 }

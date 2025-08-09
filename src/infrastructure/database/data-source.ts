@@ -1,5 +1,7 @@
 import { DataSource } from 'typeorm';
-import { env, EnvService } from '@/shared/infrastructure/env';
+
+import type { EnvService } from '@/shared/infrastructure/env';
+import { env } from '@/shared/infrastructure/env';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',

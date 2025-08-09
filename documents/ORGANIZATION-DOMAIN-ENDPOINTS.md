@@ -7,6 +7,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Organizat
 ## 🏗️ Organization Domain Architecture
 
 ### Core Features
+
 - **Organization Management**: CRUD operations, profile management
 - **Organization Search**: Full-text search, filtering
 - **Logo Management**: File upload, image processing
@@ -23,6 +24,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Organizat
 #### Endpoint: `GET /api/v1/organizations`
 
 #### Query Parameters
+
 ```typescript
 {
   page?: number;        // Default: 1
@@ -40,6 +42,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Organizat
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -93,6 +96,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Organizat
 #### Endpoint: `GET /api/v1/organizations/:id`
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -159,6 +163,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Organizat
 #### Endpoint: `POST /api/v1/organizations`
 
 #### Request Body
+
 ```json
 {
   "name": "New Tech Startup",
@@ -183,6 +188,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Organizat
 ```
 
 #### Response Success (201)
+
 ```json
 {
   "success": true,
@@ -209,6 +215,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Organizat
 #### Endpoint: `PATCH /api/v1/organizations/:id`
 
 #### Request Body
+
 ```json
 {
   "name": "Updated Tech Startup",
@@ -223,6 +230,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Organizat
 #### Endpoint: `DELETE /api/v1/organizations/:id`
 
 #### Response Success (204)
+
 ```json
 {
   "success": true,
@@ -239,6 +247,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Organizat
 #### Endpoint: `GET /api/v1/organizations/search`
 
 #### Query Parameters
+
 ```typescript
 {
   query: string;        // Search term
@@ -255,6 +264,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Organizat
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -307,13 +317,15 @@ Document này mô tả chi tiết các endpoint và business logic cho Organizat
 #### Endpoint: `POST /api/v1/organizations/:id/logo`
 
 #### Request Body (Multipart Form)
+
 ```typescript
 {
-  logo: File;  // Image file (PNG, JPG, JPEG)
+  logo: File; // Image file (PNG, JPG, JPEG)
 }
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -337,6 +349,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Organizat
 #### Endpoint: `DELETE /api/v1/organizations/:id/logo`
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -353,6 +366,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Organizat
 #### Endpoint: `GET /api/v1/organizations/:id/stats`
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -594,20 +608,32 @@ export class OrganizationService {
   ) {}
 
   async getOrganizations(query: OrganizationQueryDto) {
-    const { page = 1, limit = 20, search, status, industry, country, city, size, orgType, sortBy = 'createdAt', sortOrder = 'DESC' } = query;
+    const {
+      page = 1,
+      limit = 20,
+      search,
+      status,
+      industry,
+      country,
+      city,
+      size,
+      orgType,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = query;
     const skip = (page - 1) * limit;
 
-    const queryBuilder = this.organizationRepository.createQueryBuilder('org')
+    const queryBuilder = this.organizationRepository
+      .createQueryBuilder('org')
       .leftJoinAndSelect('org.industry', 'industry')
       .leftJoinAndSelect('org.city', 'city')
       .leftJoinAndSelect('org.country', 'country')
       .leftJoinAndSelect('org.logo', 'logo');
 
     if (search) {
-      queryBuilder.where(
-        'org.name ILIKE :search OR org.about ILIKE :search',
-        { search: `%${search}%` }
-      );
+      queryBuilder.where('org.name ILIKE :search OR org.about ILIKE :search', {
+        search: `%${search}%`,
+      });
     }
 
     if (status) {
@@ -644,10 +670,12 @@ export class OrganizationService {
     // Get jobs count for each organization
     const organizationsWithStats = await Promise.all(
       organizations.map(async (org) => {
-        const jobsCount = await this.jobRepository.count({ where: { organizationId: org.id } });
+        const jobsCount = await this.jobRepository.count({
+          where: { organizationId: org.id },
+        });
         return {
           ...org,
-          jobsCount
+          jobsCount,
         };
       })
     );
@@ -660,16 +688,16 @@ export class OrganizationService {
           page,
           limit,
           total,
-          totalPages: Math.ceil(total / limit)
-        }
-      }
+          totalPages: Math.ceil(total / limit),
+        },
+      },
     };
   }
 
   async getOrganizationById(id: string) {
     const organization = await this.organizationRepository.findOne({
       where: { id },
-      relations: ['industry', 'city', 'country', 'logo', 'jobs']
+      relations: ['industry', 'city', 'country', 'logo', 'jobs'],
     });
 
     if (!organization) {
@@ -679,7 +707,9 @@ export class OrganizationService {
     // Get additional stats
     const [totalJobs, activeJobs] = await Promise.all([
       this.jobRepository.count({ where: { organizationId: id } }),
-      this.jobRepository.count({ where: { organizationId: id, status: 'active' } })
+      this.jobRepository.count({
+        where: { organizationId: id, status: 'active' },
+      }),
     ]);
 
     return {
@@ -688,39 +718,45 @@ export class OrganizationService {
         ...organization,
         stats: {
           totalJobs,
-          activeJobs
-        }
-      }
+          activeJobs,
+        },
+      },
     };
   }
 
   async createOrganization(createDto: CreateOrganizationDto) {
     const organization = this.organizationRepository.create(createDto);
-    const savedOrganization = await this.organizationRepository.save(organization);
+    const savedOrganization =
+      await this.organizationRepository.save(organization);
 
     return {
       success: true,
-      data: savedOrganization
+      data: savedOrganization,
     };
   }
 
   async updateOrganization(id: string, updateDto: UpdateOrganizationDto) {
-    const organization = await this.organizationRepository.findOne({ where: { id } });
+    const organization = await this.organizationRepository.findOne({
+      where: { id },
+    });
     if (!organization) {
       throw new NotFoundException('Organization not found');
     }
 
     Object.assign(organization, updateDto);
-    const updatedOrganization = await this.organizationRepository.save(organization);
+    const updatedOrganization =
+      await this.organizationRepository.save(organization);
 
     return {
       success: true,
-      data: updatedOrganization
+      data: updatedOrganization,
     };
   }
 
   async deleteOrganization(id: string) {
-    const organization = await this.organizationRepository.findOne({ where: { id } });
+    const organization = await this.organizationRepository.findOne({
+      where: { id },
+    });
     if (!organization) {
       throw new NotFoundException('Organization not found');
     }
@@ -729,12 +765,14 @@ export class OrganizationService {
 
     return {
       success: true,
-      message: 'Organization deleted successfully'
+      message: 'Organization deleted successfully',
     };
   }
 
   async uploadLogo(id: string, file: Express.Multer.File) {
-    const organization = await this.organizationRepository.findOne({ where: { id } });
+    const organization = await this.organizationRepository.findOne({
+      where: { id },
+    });
     if (!organization) {
       throw new NotFoundException('Organization not found');
     }
@@ -749,31 +787,35 @@ export class OrganizationService {
     return {
       success: true,
       data: {
-        logo: uploadedFile
-      }
+        logo: uploadedFile,
+      },
     };
   }
 
   async searchOrganizations(query: string, filters?: any) {
-    const queryBuilder = this.organizationRepository.createQueryBuilder('org')
+    const queryBuilder = this.organizationRepository
+      .createQueryBuilder('org')
       .leftJoinAndSelect('org.industry', 'industry')
       .leftJoinAndSelect('org.city', 'city')
       .leftJoinAndSelect('org.country', 'country')
       .leftJoinAndSelect('org.logo', 'logo');
 
     if (query) {
-      queryBuilder.where(
-        'org.name ILIKE :query OR org.about ILIKE :query',
-        { query: `%${query}%` }
-      );
+      queryBuilder.where('org.name ILIKE :query OR org.about ILIKE :query', {
+        query: `%${query}%`,
+      });
     }
 
     if (filters) {
       if (filters.industry) {
-        queryBuilder.andWhere('industry.id = :industry', { industry: filters.industry });
+        queryBuilder.andWhere('industry.id = :industry', {
+          industry: filters.industry,
+        });
       }
       if (filters.country) {
-        queryBuilder.andWhere('country.id = :country', { country: filters.country });
+        queryBuilder.andWhere('country.id = :country', {
+          country: filters.country,
+        });
       }
       if (filters.city) {
         queryBuilder.andWhere('city.id = :city', { city: filters.city });
@@ -782,7 +824,9 @@ export class OrganizationService {
         queryBuilder.andWhere('org.size = :size', { size: filters.size });
       }
       if (filters.orgType) {
-        queryBuilder.andWhere('org.orgType = :orgType', { orgType: filters.orgType });
+        queryBuilder.andWhere('org.orgType = :orgType', {
+          orgType: filters.orgType,
+        });
       }
     }
 
@@ -795,9 +839,9 @@ export class OrganizationService {
         searchStats: {
           query,
           totalResults: organizations.length,
-          searchTime: 0.15 // Mock value
-        }
-      }
+          searchTime: 0.15, // Mock value
+        },
+      },
     };
   }
 }
@@ -820,4 +864,4 @@ export class OrganizationService {
 
 ---
 
-**🎉 Ready for implementation!** 
+**🎉 Ready for implementation!**

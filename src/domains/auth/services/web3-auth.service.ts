@@ -1,15 +1,17 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserService } from '@user/services/user.service';
-import { Web3AuthDto } from '../dtos/web3-auth.dto';
-import * as jwt from 'jsonwebtoken';
 import * as crypto from 'crypto';
+import * as jwt from 'jsonwebtoken';
+
+import { UserService } from '@user/services/user.service';
+
+import type { Web3AuthDto } from '../dtos/web3-auth.dto';
 
 @Injectable()
 export class Web3AuthService {
   constructor(
     private readonly userService: UserService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {}
 
   async authenticate(web3AuthDto: Web3AuthDto) {

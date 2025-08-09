@@ -1,19 +1,22 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { LocationService } from '@location/services/location.service';
-import { City } from '@location/entities/city.entity';
-import { Country } from '@location/entities/country.entity';
-import { Region } from '@location/entities/region.entity';
-import {
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+
+import { Docs } from '@documents/location/location.document';
+import type {
   CityResponseDto,
   CountryResponseDto,
   RegionResponseDto,
+} from '@location/dtos/location-response.dto';
+import {
   CityListResponseDto,
   CountryListResponseDto,
   RegionListResponseDto,
 } from '@location/dtos/location-response.dto';
+import type { City } from '@location/entities/city.entity';
+import type { Country } from '@location/entities/country.entity';
+import type { Region } from '@location/entities/region.entity';
+import { LocationService } from '@location/services/location.service';
 import { ResponseHandler } from '@shared/utils/response-handler';
-import { Docs } from '@documents/location/location.document';
 
 @ApiTags('locations')
 @Controller('locations')
@@ -27,7 +30,7 @@ export class LocationController {
     const cities = await this.locationService.findAllCities();
     return ResponseHandler.success({
       data: {
-        cities: cities.map(city => this.mapCityToResponseDto(city)),
+        cities: cities.map((city) => this.mapCityToResponseDto(city)),
         total: cities.length,
         page: 1,
         limit: cities.length,
@@ -44,7 +47,7 @@ export class LocationController {
     const cities = await this.locationService.findCitiesByCountry(countryId);
     return ResponseHandler.success({
       data: {
-        cities: cities.map(city => this.mapCityToResponseDto(city)),
+        cities: cities.map((city) => this.mapCityToResponseDto(city)),
         total: cities.length,
         page: 1,
         limit: cities.length,
@@ -79,8 +82,8 @@ export class LocationController {
     const countries = await this.locationService.findAllCountries();
     return ResponseHandler.success({
       data: {
-        countries: countries.map(country =>
-          this.mapCountryToResponseDto(country),
+        countries: countries.map((country) =>
+          this.mapCountryToResponseDto(country)
         ),
         total: countries.length,
         page: 1,
@@ -116,7 +119,7 @@ export class LocationController {
     const regions = await this.locationService.findAllRegions();
     return ResponseHandler.success({
       data: {
-        regions: regions.map(region => this.mapRegionToResponseDto(region)),
+        regions: regions.map((region) => this.mapRegionToResponseDto(region)),
         total: regions.length,
         page: 1,
         limit: regions.length,

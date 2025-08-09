@@ -10,7 +10,17 @@ Document này mô tả các entities và database schema cần thiết cho authe
 
 ```typescript
 // user.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany, ManyToOne, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  OneToMany,
+  ManyToOne,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { Talent } from '@/modules/talent/entities/talent.entity';
 import { WalletAddress } from '@/modules/payment/entities/wallet-address.entity';
@@ -105,22 +115,25 @@ export class User extends BaseEntity {
   unconfirmedEmail: string;
 
   // Relationships
-  @OneToOne(() => Talent, talent => talent.user)
+  @OneToOne(() => Talent, (talent) => talent.user)
   talent: Talent;
 
-  @OneToMany(() => WalletAddress, walletAddress => walletAddress.owner)
+  @OneToMany(() => WalletAddress, (walletAddress) => walletAddress.owner)
   walletAddresses: WalletAddress[];
 
-  @OneToMany(() => PaymentDistribution, paymentDistribution => paymentDistribution.recipient)
+  @OneToMany(
+    () => PaymentDistribution,
+    (paymentDistribution) => paymentDistribution.recipient
+  )
   paymentDistributions: PaymentDistribution[];
 
-  @OneToMany(() => Note, note => note.user)
+  @OneToMany(() => Note, (note) => note.user)
   notes: Note[];
 
-  @OneToMany(() => SocialAccount, socialAccount => socialAccount.user)
+  @OneToMany(() => SocialAccount, (socialAccount) => socialAccount.user)
   socialAccounts: SocialAccount[];
 
-  @ManyToOne(() => City, city => city.users)
+  @ManyToOne(() => City, (city) => city.users)
   locationCity: City;
 }
 ```
@@ -129,7 +142,14 @@ export class User extends BaseEntity {
 
 ```typescript
 // access-token.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { User } from '@/modules/user/entities/user.entity';
 
@@ -161,7 +181,7 @@ export class AccessToken extends BaseEntity {
   previousRefreshToken: string;
 
   // Relationships
-  @ManyToOne(() => User, user => user.accessTokens)
+  @ManyToOne(() => User, (user) => user.accessTokens)
   @JoinColumn({ name: 'resource_owner_id' })
   resourceOwner: User;
 }
@@ -171,7 +191,14 @@ export class AccessToken extends BaseEntity {
 
 ```typescript
 // refresh-token.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { User } from '@/modules/user/entities/user.entity';
 
@@ -194,7 +221,7 @@ export class RefreshToken extends BaseEntity {
   applicationId: string;
 
   // Relationships
-  @ManyToOne(() => User, user => user.refreshTokens)
+  @ManyToOne(() => User, (user) => user.refreshTokens)
   @JoinColumn({ name: 'resource_owner_id' })
   resourceOwner: User;
 }
@@ -204,7 +231,13 @@ export class RefreshToken extends BaseEntity {
 
 ```typescript
 // application.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { AccessToken } from './access-token.entity';
 
@@ -230,7 +263,7 @@ export class Application extends BaseEntity {
   confidential: boolean;
 
   // Relationships
-  @OneToMany(() => AccessToken, accessToken => accessToken.application)
+  @OneToMany(() => AccessToken, (accessToken) => accessToken.application)
   accessTokens: AccessToken[];
 }
 ```
@@ -239,7 +272,12 @@ export class Application extends BaseEntity {
 
 ```typescript
 // jwt-deny-list.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 
 @Entity('jwt_deny_list')
@@ -425,7 +463,7 @@ export class CreateUsers1700000000000 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create indexes
@@ -434,7 +472,7 @@ export class CreateUsers1700000000000 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_USERS_EMAIL',
         columnNames: ['email'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -442,7 +480,7 @@ export class CreateUsers1700000000000 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_USERS_FIREBASE_UID',
         columnNames: ['firebase_uid'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -450,7 +488,7 @@ export class CreateUsers1700000000000 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_USERS_CONFIRMATION_TOKEN',
         columnNames: ['confirmation_token'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -458,7 +496,7 @@ export class CreateUsers1700000000000 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_USERS_RESET_PASSWORD_TOKEN',
         columnNames: ['reset_password_token'],
-      }),
+      })
     );
   }
 
@@ -472,7 +510,13 @@ export class CreateUsers1700000000000 implements MigrationInterface {
 
 ```typescript
 // 1700000000001-CreateOAuthTables.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateOAuthTables1700000000001 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -529,7 +573,7 @@ export class CreateOAuthTables1700000000001 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create oauth_access_tokens table
@@ -596,7 +640,7 @@ export class CreateOAuthTables1700000000001 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create oauth_refresh_tokens table
@@ -646,7 +690,7 @@ export class CreateOAuthTables1700000000001 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create jwt_deny_list table
@@ -682,7 +726,7 @@ export class CreateOAuthTables1700000000001 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create foreign keys
@@ -693,7 +737,7 @@ export class CreateOAuthTables1700000000001 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -703,7 +747,7 @@ export class CreateOAuthTables1700000000001 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create indexes
@@ -712,7 +756,7 @@ export class CreateOAuthTables1700000000001 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_OAUTH_ACCESS_TOKENS_TOKEN',
         columnNames: ['token'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -720,7 +764,7 @@ export class CreateOAuthTables1700000000001 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_OAUTH_REFRESH_TOKENS_TOKEN',
         columnNames: ['token'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -728,7 +772,7 @@ export class CreateOAuthTables1700000000001 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_JWT_DENY_LIST_JTI',
         columnNames: ['jti'],
-      }),
+      })
     );
   }
 
@@ -757,7 +801,7 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class UserRepository extends BaseRepository<User> {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>
   ) {
     super(userRepository);
   }
@@ -775,7 +819,9 @@ export class UserRepository extends BaseRepository<User> {
   }
 
   async findByResetPasswordToken(token: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { resetPasswordToken: token } });
+    return this.userRepository.findOne({
+      where: { resetPasswordToken: token },
+    });
   }
 
   async updateConfirmationToken(userId: string, token: string): Promise<void> {
@@ -783,24 +829,24 @@ export class UserRepository extends BaseRepository<User> {
   }
 
   async updateResetPasswordToken(userId: string, token: string): Promise<void> {
-    await this.userRepository.update(userId, { 
+    await this.userRepository.update(userId, {
       resetPasswordToken: token,
-      resetPasswordSentAt: new Date()
+      resetPasswordSentAt: new Date(),
     });
   }
 
   async confirmUser(userId: string): Promise<void> {
-    await this.userRepository.update(userId, { 
+    await this.userRepository.update(userId, {
       confirmedAt: new Date(),
-      confirmationToken: null
+      confirmationToken: null,
     });
   }
 
   async resetPassword(userId: string, password: string): Promise<void> {
-    await this.userRepository.update(userId, { 
+    await this.userRepository.update(userId, {
       password,
       resetPasswordToken: null,
-      resetPasswordSentAt: null
+      resetPasswordSentAt: null,
     });
   }
 
@@ -810,28 +856,30 @@ export class UserRepository extends BaseRepository<User> {
       lastSignInAt: new Date(),
       lastSignInIp: ip,
       currentSignInAt: new Date(),
-      currentSignInIp: ip
+      currentSignInIp: ip,
     });
   }
 
   async lockUser(userId: string): Promise<void> {
-    await this.userRepository.update(userId, { 
+    await this.userRepository.update(userId, {
       lockedAt: new Date(),
-      unlockToken: this.generateUnlockToken()
+      unlockToken: this.generateUnlockToken(),
     });
   }
 
   async unlockUser(userId: string): Promise<void> {
-    await this.userRepository.update(userId, { 
+    await this.userRepository.update(userId, {
       lockedAt: null,
       unlockToken: null,
-      failedAttempts: 0
+      failedAttempts: 0,
     });
   }
 
   private generateUnlockToken(): string {
-    return Math.random().toString(36).substring(2, 15) + 
-           Math.random().toString(36).substring(2, 15);
+    return (
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15)
+    );
   }
 }
 ```
@@ -850,22 +898,22 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class AccessTokenRepository extends BaseRepository<AccessToken> {
   constructor(
     @InjectRepository(AccessToken)
-    private readonly accessTokenRepository: Repository<AccessToken>,
+    private readonly accessTokenRepository: Repository<AccessToken>
   ) {
     super(accessTokenRepository);
   }
 
   async findByToken(token: string): Promise<AccessToken | null> {
-    return this.accessTokenRepository.findOne({ 
+    return this.accessTokenRepository.findOne({
       where: { token },
-      relations: ['resourceOwner']
+      relations: ['resourceOwner'],
     });
   }
 
   async findByRefreshToken(refreshToken: string): Promise<AccessToken | null> {
-    return this.accessTokenRepository.findOne({ 
+    return this.accessTokenRepository.findOne({
       where: { refreshToken },
-      relations: ['resourceOwner']
+      relations: ['resourceOwner'],
     });
   }
 
@@ -874,8 +922,8 @@ export class AccessTokenRepository extends BaseRepository<AccessToken> {
       where: {
         resourceOwnerId: userId,
         revokedAt: null,
-        expiresAt: MoreThan(new Date())
-      }
+        expiresAt: MoreThan(new Date()),
+      },
     });
   }
 
@@ -921,7 +969,7 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class JwtDenyListRepository extends BaseRepository<JwtDenyList> {
   constructor(
     @InjectRepository(JwtDenyList)
-    private readonly jwtDenyListRepository: Repository<JwtDenyList>,
+    private readonly jwtDenyListRepository: Repository<JwtDenyList>
   ) {
     super(jwtDenyListRepository);
   }
@@ -938,7 +986,7 @@ export class JwtDenyListRepository extends BaseRepository<JwtDenyList> {
 
   async cleanupExpired(): Promise<void> {
     await this.jwtDenyListRepository.delete({
-      exp: LessThan(new Date())
+      exp: LessThan(new Date()),
     });
   }
 }
@@ -950,7 +998,11 @@ export class JwtDenyListRepository extends BaseRepository<JwtDenyList> {
 
 ```typescript
 // user.service.ts
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserRepository } from './repositories/user.repository';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
@@ -959,9 +1011,7 @@ import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService extends BaseService<User> {
-  constructor(
-    private readonly userRepository: UserRepository,
-  ) {
+  constructor(private readonly userRepository: UserRepository) {
     super(userRepository);
   }
 
@@ -982,11 +1032,11 @@ export class UserService extends BaseService<User> {
 
     // Generate confirmation token
     const confirmationToken = this.generateConfirmationToken();
-    
+
     const user = await this.userRepository.create({
       ...createUserDto,
       confirmationToken,
-      confirmedAt: null
+      confirmedAt: null,
     });
 
     return user;
@@ -1014,7 +1064,7 @@ export class UserService extends BaseService<User> {
 
     const hashedPassword = await this.hashPassword(password);
     await this.userRepository.resetPassword(user.id, hashedPassword);
-    
+
     return this.findById(user.id);
   }
 
@@ -1027,19 +1077,21 @@ export class UserService extends BaseService<User> {
     if (!user) return;
 
     const newFailedAttempts = user.failedAttempts + 1;
-    
+
     if (newFailedAttempts >= 5) {
       await this.userRepository.lockUser(userId);
     } else {
-      await this.userRepository.update(userId, { 
-        failedAttempts: newFailedAttempts 
+      await this.userRepository.update(userId, {
+        failedAttempts: newFailedAttempts,
       });
     }
   }
 
   private generateConfirmationToken(): string {
-    return Math.random().toString(36).substring(2, 15) + 
-           Math.random().toString(36).substring(2, 15);
+    return (
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15)
+    );
   }
 
   private async hashPassword(password: string): Promise<string> {
@@ -1124,4 +1176,4 @@ describe('User Entity', () => {
 
 ---
 
-**🎉 Ready for implementation!** 
+**🎉 Ready for implementation!**

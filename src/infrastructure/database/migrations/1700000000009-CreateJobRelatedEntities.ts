@@ -1,9 +1,5 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableForeignKey,
-} from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+import { Table, TableForeignKey } from 'typeorm';
 
 export class CreateJobRelatedEntities1700000000009
   implements MigrationInterface
@@ -86,7 +82,7 @@ export class CreateJobRelatedEntities1700000000009
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create job_referrals table
@@ -140,7 +136,7 @@ export class CreateJobRelatedEntities1700000000009
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create job_closure_reasons table
@@ -180,7 +176,7 @@ export class CreateJobRelatedEntities1700000000009
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create choice_options table
@@ -219,7 +215,7 @@ export class CreateJobRelatedEntities1700000000009
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create referral_links table
@@ -255,7 +251,7 @@ export class CreateJobRelatedEntities1700000000009
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create web3_events table
@@ -309,7 +305,7 @@ export class CreateJobRelatedEntities1700000000009
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create foreign keys for job_applies
@@ -320,7 +316,7 @@ export class CreateJobRelatedEntities1700000000009
         referencedColumnNames: ['id'],
         referencedTableName: 'jobs',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -330,7 +326,7 @@ export class CreateJobRelatedEntities1700000000009
         referencedColumnNames: ['id'],
         referencedTableName: 'talents',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -340,7 +336,7 @@ export class CreateJobRelatedEntities1700000000009
         referencedColumnNames: ['id'],
         referencedTableName: 'job_referrals',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     // Create foreign keys for job_referrals
@@ -351,7 +347,7 @@ export class CreateJobRelatedEntities1700000000009
         referencedColumnNames: ['id'],
         referencedTableName: 'jobs',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -361,7 +357,7 @@ export class CreateJobRelatedEntities1700000000009
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for job_closure_reasons
@@ -372,7 +368,7 @@ export class CreateJobRelatedEntities1700000000009
         referencedColumnNames: ['id'],
         referencedTableName: 'jobs',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for choice_options
@@ -383,7 +379,7 @@ export class CreateJobRelatedEntities1700000000009
         referencedColumnNames: ['id'],
         referencedTableName: 'jobs',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for referral_links
@@ -394,7 +390,7 @@ export class CreateJobRelatedEntities1700000000009
         referencedColumnNames: ['id'],
         referencedTableName: 'jobs',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for web3_events
@@ -405,7 +401,7 @@ export class CreateJobRelatedEntities1700000000009
         referencedColumnNames: ['id'],
         referencedTableName: 'jobs',
         onDelete: 'CASCADE',
-      }),
+      })
     );
   }
 
@@ -413,7 +409,7 @@ export class CreateJobRelatedEntities1700000000009
     // Drop foreign keys for web3_events
     const web3EventsTable = await queryRunner.getTable('web3_events');
     const web3EventsForeignKey = web3EventsTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('job_id') !== -1,
+      (fk) => fk.columnNames.indexOf('job_id') !== -1
     );
     if (web3EventsForeignKey) {
       await queryRunner.dropForeignKey('web3_events', web3EventsForeignKey);
@@ -422,38 +418,38 @@ export class CreateJobRelatedEntities1700000000009
     // Drop foreign keys for referral_links
     const referralLinksTable = await queryRunner.getTable('referral_links');
     const referralLinksForeignKey = referralLinksTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('job_id') !== -1,
+      (fk) => fk.columnNames.indexOf('job_id') !== -1
     );
     if (referralLinksForeignKey) {
       await queryRunner.dropForeignKey(
         'referral_links',
-        referralLinksForeignKey,
+        referralLinksForeignKey
       );
     }
 
     // Drop foreign keys for choice_options
     const choiceOptionsTable = await queryRunner.getTable('choice_options');
     const choiceOptionsForeignKey = choiceOptionsTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('job_id') !== -1,
+      (fk) => fk.columnNames.indexOf('job_id') !== -1
     );
     if (choiceOptionsForeignKey) {
       await queryRunner.dropForeignKey(
         'choice_options',
-        choiceOptionsForeignKey,
+        choiceOptionsForeignKey
       );
     }
 
     // Drop foreign keys for job_closure_reasons
     const jobClosureReasonsTable = await queryRunner.getTable(
-      'job_closure_reasons',
+      'job_closure_reasons'
     );
     const jobClosureReasonsForeignKey = jobClosureReasonsTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('job_id') !== -1,
+      (fk) => fk.columnNames.indexOf('job_id') !== -1
     );
     if (jobClosureReasonsForeignKey) {
       await queryRunner.dropForeignKey(
         'job_closure_reasons',
-        jobClosureReasonsForeignKey,
+        jobClosureReasonsForeignKey
       );
     }
 
@@ -479,6 +475,6 @@ export class CreateJobRelatedEntities1700000000009
     await queryRunner.dropTable('job_referrals');
     await queryRunner.dropTable('job_applies');
 
-    await queryRunner.query(`DROP TYPE "public"."job_apply_status_enum"`);
+    await queryRunner.query('DROP TYPE "public"."job_apply_status_enum"');
   }
 }

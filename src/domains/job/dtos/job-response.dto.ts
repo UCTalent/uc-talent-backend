@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+
 import { JobStatus, LocationType } from '@job/entities/job.entity';
 
 export class JobResponseDto {

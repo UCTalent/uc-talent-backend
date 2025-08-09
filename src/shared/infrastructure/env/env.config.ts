@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import * as dotenv from 'dotenv';
+import { z } from 'zod';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -58,7 +58,7 @@ const safeParseEnv = (): Env => {
   if (!parsedEnv.success) {
     console.error(
       '❌ Invalid environment variables:',
-      parsedEnv.error.format(),
+      parsedEnv.error.format()
     );
     process.exit(1);
   }

@@ -1,17 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Organization } from '@organization/entities/organization.entity';
+
 import { Job, JobStatus } from '@job/entities/job.entity';
-import { CreateOrganizationDto } from '@organization/dtos/create-organization.dto';
-import { UpdateOrganizationDto } from '@organization/dtos/update-organization.dto';
-import { OrganizationQueryDto } from '@organization/dtos/organization-query.dto';
-import { OrganizationRepository } from '@organization/repositories/organization.repository';
 import { JobRepository } from '@job/repositories/job.repository';
+import type { CreateOrganizationDto } from '@organization/dtos/create-organization.dto';
+import type { OrganizationQueryDto } from '@organization/dtos/organization-query.dto';
+import type { UpdateOrganizationDto } from '@organization/dtos/update-organization.dto';
+import type { Organization } from '@organization/entities/organization.entity';
+import { OrganizationRepository } from '@organization/repositories/organization.repository';
 
 @Injectable()
 export class OrganizationService {
   constructor(
     private organizationRepo: OrganizationRepository,
-    private jobRepo: JobRepository,
+    private jobRepo: JobRepository
   ) {}
 
   async getOrganizations(query: OrganizationQueryDto) {
@@ -47,7 +48,7 @@ export class OrganizationService {
 
     // Get jobs count for each organization
     const organizationsWithStats = await Promise.all(
-      organizations.map(async org => {
+      organizations.map(async (org) => {
         const jobsCount = await this.jobRepo.count({
           where: { organizationId: org.id },
         });
@@ -55,7 +56,7 @@ export class OrganizationService {
           ...org,
           jobsCount,
         };
-      }),
+      })
     );
 
     return {
@@ -141,7 +142,7 @@ export class OrganizationService {
   async searchOrganizations(query: string, filters?: any) {
     const organizations = await this.organizationRepo.searchWithFilters(
       query,
-      filters,
+      filters
     );
 
     return {
@@ -159,7 +160,7 @@ export class OrganizationService {
 
   // Legacy methods for backward compatibility
   async create(
-    createOrganizationDto: CreateOrganizationDto,
+    createOrganizationDto: CreateOrganizationDto
   ): Promise<Organization> {
     const dto: any = { ...createOrganizationDto };
     if (dto.foundDate && typeof dto.foundDate === 'string') {
@@ -182,7 +183,7 @@ export class OrganizationService {
 
   async update(
     id: string,
-    updateOrganizationDto: UpdateOrganizationDto,
+    updateOrganizationDto: UpdateOrganizationDto
   ): Promise<Organization> {
     const organization = await this.findById(id);
     const dto: any = { ...updateOrganizationDto };

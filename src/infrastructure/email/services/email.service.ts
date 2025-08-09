@@ -1,27 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { MailerService } from './mailer.service';
 import * as fs from 'fs';
 import * as path from 'path';
+
+import { MailerService } from './mailer.service';
 
 @Injectable()
 export class EmailService {
   constructor(
     private readonly mailerService: MailerService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {}
 
   async sendConfirmationEmail(
     email: string,
     name: string,
-    confirmationToken: string,
+    confirmationToken: string
   ): Promise<void> {
     const confirmationUrl = this.buildConfirmationUrl(confirmationToken);
 
     // Read email template
     const templatePath = path.join(
       __dirname,
-      '../templates/confirmation-email.template.html',
+      '../templates/confirmation-email.template.html'
     );
     let htmlTemplate = fs.readFileSync(templatePath, 'utf8');
 
@@ -39,14 +40,14 @@ export class EmailService {
   async sendPasswordResetEmail(
     email: string,
     name: string,
-    resetToken: string,
+    resetToken: string
   ): Promise<void> {
     const resetUrl = this.buildPasswordResetUrl(resetToken);
 
     // Read email template
     const templatePath = path.join(
       __dirname,
-      '../templates/password-reset.template.html',
+      '../templates/password-reset.template.html'
     );
     let htmlTemplate = fs.readFileSync(templatePath, 'utf8');
 
@@ -63,7 +64,7 @@ export class EmailService {
   private buildConfirmationUrl(token: string): string {
     const frontendUrl = this.configService.get(
       'FRONTEND_URL',
-      'http://localhost:3000',
+      'http://localhost:3000'
     );
     return `${frontendUrl}/confirm-email?token=${token}`;
   }
@@ -71,7 +72,7 @@ export class EmailService {
   private buildPasswordResetUrl(token: string): string {
     const frontendUrl = this.configService.get(
       'FRONTEND_URL',
-      'http://localhost:3000',
+      'http://localhost:3000'
     );
     return `${frontendUrl}/reset-password?token=${token}`;
   }

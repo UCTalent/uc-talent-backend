@@ -10,7 +10,14 @@ Document này mô tả các entities và database schema cần thiết cho Admin
 
 ```typescript
 // admin.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { AuditLog } from './audit-log.entity';
 
@@ -45,7 +52,7 @@ export class Admin extends BaseEntity {
   lockedUntil: Date;
 
   // Relationships
-  @OneToMany(() => AuditLog, auditLog => auditLog.admin)
+  @OneToMany(() => AuditLog, (auditLog) => auditLog.admin)
   auditLogs: AuditLog[];
 }
 ```
@@ -54,7 +61,14 @@ export class Admin extends BaseEntity {
 
 ```typescript
 // audit-log.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { Admin } from './admin.entity';
 
@@ -82,7 +96,7 @@ export class AuditLog extends BaseEntity {
   userAgent: string;
 
   // Relationships
-  @ManyToOne(() => Admin, admin => admin.auditLogs)
+  @ManyToOne(() => Admin, (admin) => admin.auditLogs)
   @JoinColumn({ name: 'admin_id' })
   admin: Admin;
 }
@@ -92,7 +106,13 @@ export class AuditLog extends BaseEntity {
 
 ```typescript
 // system-setting.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 
 @Entity('system_settings')
@@ -119,7 +139,14 @@ export class SystemSetting extends BaseEntity {
 
 ```typescript
 // admin-session.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { Admin } from './admin.entity';
 
@@ -145,7 +172,7 @@ export class AdminSession extends BaseEntity {
   isActive: boolean;
 
   // Relationships
-  @ManyToOne(() => Admin, admin => admin.sessions)
+  @ManyToOne(() => Admin, (admin) => admin.sessions)
   @JoinColumn({ name: 'admin_id' })
   admin: Admin;
 }
@@ -155,7 +182,15 @@ export class AdminSession extends BaseEntity {
 
 ```typescript
 // admin-permission.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { Admin } from './admin.entity';
 
@@ -178,11 +213,11 @@ export class AdminPermission extends BaseEntity {
   isActive: boolean;
 
   // Relationships
-  @ManyToMany(() => Admin, admin => admin.permissions)
+  @ManyToMany(() => Admin, (admin) => admin.permissions)
   @JoinTable({
     name: 'admin_permission_mappings',
     joinColumn: { name: 'permission_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'admin_id', referencedColumnName: 'id' }
+    inverseJoinColumn: { name: 'admin_id', referencedColumnName: 'id' },
   })
   admins: Admin[];
 }
@@ -202,7 +237,13 @@ export class CreateAdmins1700000000012 implements MigrationInterface {
       new Table({
         name: 'admins',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'email', type: 'varchar', isUnique: true },
           { name: 'password', type: 'varchar' },
           { name: 'first_name', type: 'varchar' },
@@ -212,11 +253,19 @@ export class CreateAdmins1700000000012 implements MigrationInterface {
           { name: 'last_login_at', type: 'timestamp', isNullable: true },
           { name: 'login_attempts', type: 'integer', default: 0 },
           { name: 'locked_until', type: 'timestamp', isNullable: true },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createIndex(
@@ -224,7 +273,7 @@ export class CreateAdmins1700000000012 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_ADMINS_EMAIL',
         columnNames: ['email'],
-      }),
+      })
     );
   }
 
@@ -238,7 +287,13 @@ export class CreateAdmins1700000000012 implements MigrationInterface {
 
 ```typescript
 // 1700000000013-CreateAuditLogs.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateAuditLogs1700000000013 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -246,7 +301,13 @@ export class CreateAuditLogs1700000000013 implements MigrationInterface {
       new Table({
         name: 'audit_logs',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'action', type: 'varchar' },
           { name: 'admin_id', type: 'uuid' },
           { name: 'target_type', type: 'varchar', isNullable: true },
@@ -254,11 +315,19 @@ export class CreateAuditLogs1700000000013 implements MigrationInterface {
           { name: 'details', type: 'jsonb', isNullable: true },
           { name: 'ip_address', type: 'varchar', isNullable: true },
           { name: 'user_agent', type: 'varchar', isNullable: true },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createForeignKey(
@@ -268,7 +337,7 @@ export class CreateAuditLogs1700000000013 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'admins',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -276,21 +345,21 @@ export class CreateAuditLogs1700000000013 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_AUDIT_LOGS_ADMIN_ID',
         columnNames: ['admin_id'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'audit_logs',
       new TableIndex({
         name: 'IDX_AUDIT_LOGS_ACTION',
         columnNames: ['action'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'audit_logs',
       new TableIndex({
         name: 'IDX_AUDIT_LOGS_CREATED_AT',
         columnNames: ['created_at'],
-      }),
+      })
     );
   }
 
@@ -312,17 +381,31 @@ export class CreateSystemSettings1700000000014 implements MigrationInterface {
       new Table({
         name: 'system_settings',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'key', type: 'varchar', isUnique: true },
           { name: 'value', type: 'text' },
           { name: 'description', type: 'text', isNullable: true },
           { name: 'type', type: 'varchar', default: "'string'" },
           { name: 'encrypted', type: 'boolean', default: false },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createIndex(
@@ -330,7 +413,7 @@ export class CreateSystemSettings1700000000014 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_SYSTEM_SETTINGS_KEY',
         columnNames: ['key'],
-      }),
+      })
     );
   }
 
@@ -344,7 +427,13 @@ export class CreateSystemSettings1700000000014 implements MigrationInterface {
 
 ```typescript
 // 1700000000015-CreateAdminSessions.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateAdminSessions1700000000015 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -352,18 +441,32 @@ export class CreateAdminSessions1700000000015 implements MigrationInterface {
       new Table({
         name: 'admin_sessions',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'session_token', type: 'varchar' },
           { name: 'admin_id', type: 'uuid' },
           { name: 'expires_at', type: 'timestamp' },
           { name: 'ip_address', type: 'varchar', isNullable: true },
           { name: 'user_agent', type: 'varchar', isNullable: true },
           { name: 'is_active', type: 'boolean', default: true },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createForeignKey(
@@ -373,7 +476,7 @@ export class CreateAdminSessions1700000000015 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'admins',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -381,14 +484,14 @@ export class CreateAdminSessions1700000000015 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_ADMIN_SESSIONS_TOKEN',
         columnNames: ['session_token'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'admin_sessions',
       new TableIndex({
         name: 'IDX_ADMIN_SESSIONS_ADMIN_ID',
         columnNames: ['admin_id'],
-      }),
+      })
     );
   }
 
@@ -414,7 +517,7 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class AdminRepository extends BaseRepository<Admin> {
   constructor(
     @InjectRepository(Admin)
-    private readonly adminRepository: Repository<Admin>,
+    private readonly adminRepository: Repository<Admin>
   ) {
     super(adminRepository);
   }
@@ -432,7 +535,10 @@ export class AdminRepository extends BaseRepository<Admin> {
   }
 
   async resetLoginAttempts(id: string): Promise<void> {
-    await this.adminRepository.update(id, { loginAttempts: 0, lockedUntil: null });
+    await this.adminRepository.update(id, {
+      loginAttempts: 0,
+      lockedUntil: null,
+    });
   }
 }
 ```
@@ -451,12 +557,15 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class AuditLogRepository extends BaseRepository<AuditLog> {
   constructor(
     @InjectRepository(AuditLog)
-    private readonly auditLogRepository: Repository<AuditLog>,
+    private readonly auditLogRepository: Repository<AuditLog>
   ) {
     super(auditLogRepository);
   }
 
-  async findByAdmin(adminId: string, options?: { page?: number; limit?: number }): Promise<[AuditLog[], number]> {
+  async findByAdmin(
+    adminId: string,
+    options?: { page?: number; limit?: number }
+  ): Promise<[AuditLog[], number]> {
     const { page = 1, limit = 20 } = options || {};
     const skip = (page - 1) * limit;
 
@@ -464,11 +573,14 @@ export class AuditLogRepository extends BaseRepository<AuditLog> {
       where: { adminId },
       order: { createdAt: 'DESC' },
       skip,
-      take: limit
+      take: limit,
     });
   }
 
-  async findByAction(action: string, options?: { page?: number; limit?: number }): Promise<[AuditLog[], number]> {
+  async findByAction(
+    action: string,
+    options?: { page?: number; limit?: number }
+  ): Promise<[AuditLog[], number]> {
     const { page = 1, limit = 20 } = options || {};
     const skip = (page - 1) * limit;
 
@@ -476,7 +588,7 @@ export class AuditLogRepository extends BaseRepository<AuditLog> {
       where: { action },
       order: { createdAt: 'DESC' },
       skip,
-      take: limit
+      take: limit,
     });
   }
 
@@ -509,7 +621,7 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class SystemSettingRepository extends BaseRepository<SystemSetting> {
   constructor(
     @InjectRepository(SystemSetting)
-    private readonly systemSettingRepository: Repository<SystemSetting>,
+    private readonly systemSettingRepository: Repository<SystemSetting>
   ) {
     super(systemSettingRepository);
   }
@@ -534,15 +646,24 @@ export class SystemSettingRepository extends BaseRepository<SystemSetting> {
     }
   }
 
-  async setValue(key: string, value: any, description?: string): Promise<SystemSetting> {
+  async setValue(
+    key: string,
+    value: any,
+    description?: string
+  ): Promise<SystemSetting> {
     let setting = await this.findByKey(key);
-    
+
     if (!setting) {
       setting = this.systemSettingRepository.create({
         key,
         value: String(value),
         description,
-        type: typeof value === 'number' ? 'number' : typeof value === 'boolean' ? 'boolean' : 'string'
+        type:
+          typeof value === 'number'
+            ? 'number'
+            : typeof value === 'boolean'
+              ? 'boolean'
+              : 'string',
       });
     } else {
       setting.value = String(value);
@@ -580,7 +701,7 @@ export class AdminJwtStrategy extends PassportStrategy(Strategy, 'admin-jwt') {
       id: payload.sub,
       email: payload.email,
       role: payload.role,
-      type: 'admin'
+      type: 'admin',
     };
   }
 }
@@ -590,7 +711,13 @@ export class AdminJwtStrategy extends PassportStrategy(Strategy, 'admin-jwt') {
 
 ```typescript
 // admin.guard.ts
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -600,11 +727,11 @@ export class AdminGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
-    
+
     if (!token) {
       throw new UnauthorizedException();
     }
-    
+
     try {
       const payload = this.jwtService.verify(token);
       if (payload.type !== 'admin') {
@@ -644,4 +771,4 @@ export class AdminGuard implements CanActivate {
 
 ---
 
-**🎉 Ready for implementation!** 
+**🎉 Ready for implementation!**

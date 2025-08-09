@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import type { SocialProvider } from '@domains/social/entities/social-account.entity';
 import {
   SocialAccount,
-  SocialProvider,
   SocialAccountStatus,
 } from '@domains/social/entities/social-account.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class SocialAccountRepository implements IBaseRepository<SocialAccount> {
   constructor(
     @InjectRepository(SocialAccount)
-    private readonly repository: Repository<SocialAccount>,
+    private readonly repository: Repository<SocialAccount>
   ) {}
 
   async findById(id: string): Promise<SocialAccount | null> {
@@ -35,7 +36,7 @@ export class SocialAccountRepository implements IBaseRepository<SocialAccount> {
 
   async update(
     id: string,
-    data: Partial<SocialAccount>,
+    data: Partial<SocialAccount>
   ): Promise<SocialAccount> {
     await this.repository.update(id, data);
     return this.findById(id);
@@ -60,7 +61,7 @@ export class SocialAccountRepository implements IBaseRepository<SocialAccount> {
 
   async findByProviderAndUid(
     provider: SocialProvider,
-    uid: string,
+    uid: string
   ): Promise<SocialAccount | null> {
     return this.repository.findOne({
       where: { provider, uid },
@@ -70,7 +71,7 @@ export class SocialAccountRepository implements IBaseRepository<SocialAccount> {
 
   async findByUserAndProvider(
     userId: string,
-    provider: SocialProvider,
+    provider: SocialProvider
   ): Promise<SocialAccount | null> {
     return this.repository.findOne({
       where: { userId, provider },
@@ -111,7 +112,7 @@ export class SocialAccountRepository implements IBaseRepository<SocialAccount> {
 
   async searchByMetadata(
     searchTerm: string,
-    provider?: SocialProvider,
+    provider?: SocialProvider
   ): Promise<SocialAccount[]> {
     const queryBuilder = this.repository
       .createQueryBuilder('social_account')
@@ -123,7 +124,7 @@ export class SocialAccountRepository implements IBaseRepository<SocialAccount> {
           social_account.metadata->>'headline' ILIKE :search OR
           social_account.metadata->>'bio' ILIKE :search
         )`,
-        { search: `%${searchTerm}%` },
+        { search: `%${searchTerm}%` }
       );
 
     if (provider) {

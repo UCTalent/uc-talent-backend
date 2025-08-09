@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { AuditLog } from '@admin/entities/audit-log.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class AuditLogRepository implements IBaseRepository<AuditLog> {
   constructor(
     @InjectRepository(AuditLog)
-    private readonly repository: Repository<AuditLog>,
+    private readonly repository: Repository<AuditLog>
   ) {}
 
   async findById(id: string): Promise<AuditLog | null> {
@@ -48,7 +49,7 @@ export class AuditLogRepository implements IBaseRepository<AuditLog> {
 
   async findByAdmin(
     adminId: string,
-    options?: { page?: number; limit?: number },
+    options?: { page?: number; limit?: number }
   ): Promise<[AuditLog[], number]> {
     const { page = 1, limit = 20 } = options || {};
     const skip = (page - 1) * limit;
@@ -64,7 +65,7 @@ export class AuditLogRepository implements IBaseRepository<AuditLog> {
 
   async findByAction(
     action: string,
-    options?: { page?: number; limit?: number },
+    options?: { page?: number; limit?: number }
   ): Promise<[AuditLog[], number]> {
     const { page = 1, limit = 20 } = options || {};
     const skip = (page - 1) * limit;

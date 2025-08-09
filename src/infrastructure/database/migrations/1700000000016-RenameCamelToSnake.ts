@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class RenameCamelToSnake1700000000016 implements MigrationInterface {
   name = 'RenameCamelToSnake1700000000016';

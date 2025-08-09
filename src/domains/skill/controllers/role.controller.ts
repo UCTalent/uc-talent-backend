@@ -1,20 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { RoleService } from '@skill/services/role.service';
-import { Role } from '@skill/entities/role.entity';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+
 import { Docs } from '@documents/skill/role.document';
-import {
-  RoleResponseDto,
+import type {
   RoleListResponseDto,
+  RoleResponseDto,
 } from '@skill/dtos/skill-response.dto';
+import type { Role } from '@skill/entities/role.entity';
+import { RoleService } from '@skill/services/role.service';
 
 @ApiTags('roles')
 @Controller('roles')
@@ -27,7 +28,7 @@ export class RoleController {
   async findAll(): Promise<RoleListResponseDto> {
     const roles = await this.roleService.findAll();
     return {
-      roles: roles.map(role => this.mapToResponseDto(role)),
+      roles: roles.map((role) => this.mapToResponseDto(role)),
       total: roles.length,
       page: 1,
       limit: roles.length,

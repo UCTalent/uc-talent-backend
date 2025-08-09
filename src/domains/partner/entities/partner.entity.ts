@@ -1,5 +1,7 @@
-import { Entity, Column, OneToMany, Index } from 'typeorm';
+import { Column, Entity, Index, OneToMany } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
 import { PartnerHost } from './partner-host.entity';
 
 @Entity('partners')
@@ -16,7 +18,7 @@ export class Partner extends BaseEntity {
   isUcTalent: boolean;
 
   // Relationships
-  @OneToMany(() => PartnerHost, partnerHost => partnerHost.partner)
+  @OneToMany(() => PartnerHost, (partnerHost) => partnerHost.partner)
   partnerHosts: PartnerHost[];
 
   // Virtual fields for computed properties

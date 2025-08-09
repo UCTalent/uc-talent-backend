@@ -1,14 +1,14 @@
-import { Document } from '@documents/interface';
+import type { Document } from '@documents/interface';
 import { LinkSocialAccountDto } from '@domains/social/dtos/link-social-account.dto';
-import { SocialSettingsDto } from '@domains/social/dtos/social-settings.dto';
-import { SocialSearchDto } from '@domains/social/dtos/social-search.dto';
+import { SocialAuthDto } from '@domains/social/dtos/social-auth.dto';
 import {
   SocialAccountResponseDto,
   SocialProfileResponseDto,
   SocialSettingsResponseDto,
   SyncResultResponseDto,
 } from '@domains/social/dtos/social-response.dto';
-import { SocialAuthDto } from '@domains/social/dtos/social-auth.dto';
+import { SocialSearchDto } from '@domains/social/dtos/social-search.dto';
+import { SocialSettingsDto } from '@domains/social/dtos/social-settings.dto';
 
 const getUserSocialAccounts: Document = {
   operation: { summary: 'Get user social accounts' },

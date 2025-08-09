@@ -1,7 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
 import { UserService } from '@user/services/user.service';
-import { FirebaseAuthDto } from '../dtos/firebase-auth.dto';
+
+import type { FirebaseAuthDto } from '../dtos/firebase-auth.dto';
 
 @Injectable()
 export class FirebaseAuthService {
@@ -9,7 +11,7 @@ export class FirebaseAuthService {
 
   constructor(
     private readonly userService: UserService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {
     // Initialize Firebase Admin SDK
     this.initializeFirebaseAdmin();

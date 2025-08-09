@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Role } from '@skill/entities/role.entity';
+
+import type { Role } from '@skill/entities/role.entity';
 import { RoleRepository } from '@skill/repositories/role.repository';
 
 @Injectable()

@@ -1,8 +1,10 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
-import { Job } from './job.entity';
 import { Talent } from '@talent/entities/talent.entity';
 import { UploadedResume } from '@talent/entities/uploaded-resume.entity';
+
+import { Job } from './job.entity';
 import { JobReferral } from './job-referral.entity';
 
 export enum JobApplyStatus {
@@ -46,7 +48,7 @@ export class JobApply extends BaseEntity {
   personalSign: string;
 
   // Relationships
-  @ManyToOne(() => Job, job => job.jobApplies)
+  @ManyToOne(() => Job, (job) => job.jobApplies)
   @JoinColumn({ name: 'job_id' })
   job: Job;
 

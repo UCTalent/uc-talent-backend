@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { SystemSetting } from '@admin/entities/system-setting.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class SystemSettingRepository implements IBaseRepository<SystemSetting> {
   constructor(
     @InjectRepository(SystemSetting)
-    private readonly repository: Repository<SystemSetting>,
+    private readonly repository: Repository<SystemSetting>
   ) {}
 
   async findById(id: string): Promise<SystemSetting | null> {
@@ -28,7 +29,7 @@ export class SystemSettingRepository implements IBaseRepository<SystemSetting> {
 
   async update(
     id: string,
-    data: Partial<SystemSetting>,
+    data: Partial<SystemSetting>
   ): Promise<SystemSetting> {
     await this.repository.update(id, data);
     return this.findById(id);
@@ -69,7 +70,7 @@ export class SystemSettingRepository implements IBaseRepository<SystemSetting> {
   async setValue(
     key: string,
     value: any,
-    description?: string,
+    description?: string
   ): Promise<SystemSetting> {
     let setting = await this.findByKey(key);
 

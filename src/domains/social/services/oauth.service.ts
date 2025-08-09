@@ -1,11 +1,11 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 export interface IOAuthService {
   exchangeCodeForToken(
     provider: string,
     code: string,
-    redirectUri?: string,
+    redirectUri?: string
   ): Promise<any>;
   refreshToken(provider: string, refreshToken: string): Promise<any>;
   fetchProfileData(provider: string, accessToken: string): Promise<any>;
@@ -19,7 +19,7 @@ export class OAuthService implements IOAuthService {
   async exchangeCodeForToken(
     provider: string,
     code: string,
-    redirectUri?: string,
+    redirectUri?: string
   ): Promise<any> {
     // Mock implementation - replace with actual OAuth implementation when needed
     return {

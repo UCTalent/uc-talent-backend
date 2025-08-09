@@ -1,14 +1,14 @@
+import type { Document } from '@documents/interface';
+import { ApplyJobDto } from '@domains/job/dtos/apply-job.dto';
+import { CloseJobDto } from '@domains/job/dtos/close-job.dto';
 import { CreateJobDto } from '@domains/job/dtos/create-job.dto';
+import { JobIndexQueryDto } from '@domains/job/dtos/job-index-query.dto';
 import {
   JobListResponseDto,
   JobResponseDto,
 } from '@domains/job/dtos/job-response.dto';
-import { UpdateJobDto } from '@domains/job/dtos/update-job.dto';
-import { JobIndexQueryDto } from '@domains/job/dtos/job-index-query.dto';
-import { Document } from '@documents/interface';
-import { ApplyJobDto } from '@domains/job/dtos/apply-job.dto';
-import { CloseJobDto } from '@domains/job/dtos/close-job.dto';
 import { ReferCandidateDto } from '@domains/job/dtos/refer-candidate.dto';
+import { UpdateJobDto } from '@domains/job/dtos/update-job.dto';
 
 const createJob: Document = {
   operation: { summary: 'Create a new job' },

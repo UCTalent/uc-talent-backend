@@ -10,7 +10,16 @@ Document này mô tả các entities và database schema cần thiết cho Socia
 
 ```typescript
 // social-account.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { User } from '@/modules/user/entities/user.entity';
 
@@ -22,21 +31,21 @@ export enum SocialProvider {
   GITHUB = 'github',
   INSTAGRAM = 'instagram',
   DISCORD = 'discord',
-  TELEGRAM = 'telegram'
+  TELEGRAM = 'telegram',
 }
 
 export enum SocialAccountStatus {
   ACTIVE = 'active',
   EXPIRED = 'expired',
   REVOKED = 'revoked',
-  DISCONNECTED = 'disconnected'
+  DISCONNECTED = 'disconnected',
 }
 
 @Entity('social_accounts')
 export class SocialAccount extends BaseEntity {
   @Column({
     type: 'enum',
-    enum: SocialProvider
+    enum: SocialProvider,
   })
   @Index()
   provider: SocialProvider;
@@ -60,7 +69,7 @@ export class SocialAccount extends BaseEntity {
   @Column({
     type: 'enum',
     enum: SocialAccountStatus,
-    default: SocialAccountStatus.ACTIVE
+    default: SocialAccountStatus.ACTIVE,
   })
   status: SocialAccountStatus;
 
@@ -72,7 +81,7 @@ export class SocialAccount extends BaseEntity {
   userId: string;
 
   // Relationships
-  @ManyToOne(() => User, user => user.socialAccounts)
+  @ManyToOne(() => User, (user) => user.socialAccounts)
   @JoinColumn({ name: 'user_id' })
   user: User;
 }
@@ -82,7 +91,15 @@ export class SocialAccount extends BaseEntity {
 
 ```typescript
 // social-setting.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { User } from '@/modules/user/entities/user.entity';
 
@@ -109,7 +126,11 @@ export class SocialSetting extends BaseEntity {
   @Column({ name: 'sync_frequency', default: 'daily' })
   syncFrequency: string; // daily, weekly, monthly
 
-  @Column({ name: 'sync_fields', type: 'jsonb', default: '["profile", "connections"]' })
+  @Column({
+    name: 'sync_fields',
+    type: 'jsonb',
+    default: '["profile", "connections"]',
+  })
   syncFields: string[];
 
   // Foreign Keys
@@ -117,7 +138,7 @@ export class SocialSetting extends BaseEntity {
   userId: string;
 
   // Relationships
-  @OneToOne(() => User, user => user.socialSetting)
+  @OneToOne(() => User, (user) => user.socialSetting)
   @JoinColumn({ name: 'user_id' })
   user: User;
 }
@@ -127,21 +148,30 @@ export class SocialSetting extends BaseEntity {
 
 ```typescript
 // social-sync-log.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { SocialAccount } from './social-account.entity';
 
 export enum SyncStatus {
   SUCCESS = 'success',
   FAILED = 'failed',
-  PARTIAL = 'partial'
+  PARTIAL = 'partial',
 }
 
 @Entity('social_sync_logs')
 export class SocialSyncLog extends BaseEntity {
   @Column({
     type: 'enum',
-    enum: SyncStatus
+    enum: SyncStatus,
   })
   @Index()
   status: SyncStatus;
@@ -166,7 +196,7 @@ export class SocialSyncLog extends BaseEntity {
   socialAccountId: string;
 
   // Relationships
-  @ManyToOne(() => SocialAccount, socialAccount => socialAccount.syncLogs)
+  @ManyToOne(() => SocialAccount, (socialAccount) => socialAccount.syncLogs)
   @JoinColumn({ name: 'social_account_id' })
   socialAccount: SocialAccount;
 }
@@ -178,7 +208,13 @@ export class SocialSyncLog extends BaseEntity {
 
 ```typescript
 // 1700000000022-CreateSocialAccounts.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateSocialAccounts1700000000022 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -186,7 +222,13 @@ export class CreateSocialAccounts1700000000022 implements MigrationInterface {
       new Table({
         name: 'social_accounts',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'provider', type: 'varchar' },
           { name: 'uid', type: 'varchar' },
           { name: 'access_token', type: 'varchar', isNullable: true },
@@ -196,11 +238,19 @@ export class CreateSocialAccounts1700000000022 implements MigrationInterface {
           { name: 'status', type: 'varchar', default: "'active'" },
           { name: 'metadata', type: 'jsonb', isNullable: true },
           { name: 'user_id', type: 'uuid' },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createForeignKey(
@@ -210,7 +260,7 @@ export class CreateSocialAccounts1700000000022 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -218,14 +268,14 @@ export class CreateSocialAccounts1700000000022 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_SOCIAL_ACCOUNTS_PROVIDER',
         columnNames: ['provider'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'social_accounts',
       new TableIndex({
         name: 'IDX_SOCIAL_ACCOUNTS_UID',
         columnNames: ['uid'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'social_accounts',
@@ -233,14 +283,14 @@ export class CreateSocialAccounts1700000000022 implements MigrationInterface {
         name: 'IDX_SOCIAL_ACCOUNTS_PROVIDER_UID',
         columnNames: ['provider', 'uid'],
         isUnique: true,
-      }),
+      })
     );
     await queryRunner.createIndex(
       'social_accounts',
       new TableIndex({
         name: 'IDX_SOCIAL_ACCOUNTS_USER_ID',
         columnNames: ['user_id'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'social_accounts',
@@ -248,7 +298,7 @@ export class CreateSocialAccounts1700000000022 implements MigrationInterface {
         name: 'IDX_SOCIAL_ACCOUNTS_USER_ID_PROVIDER',
         columnNames: ['user_id', 'provider'],
         isUnique: true,
-      }),
+      })
     );
   }
 
@@ -262,7 +312,13 @@ export class CreateSocialAccounts1700000000022 implements MigrationInterface {
 
 ```typescript
 // 1700000000023-CreateSocialSettings.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateSocialSettings1700000000023 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -270,7 +326,13 @@ export class CreateSocialSettings1700000000023 implements MigrationInterface {
       new Table({
         name: 'social_settings',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'show_linkedin_profile', type: 'boolean', default: true },
           { name: 'show_github_repos', type: 'boolean', default: true },
           { name: 'show_social_connections', type: 'boolean', default: false },
@@ -278,13 +340,25 @@ export class CreateSocialSettings1700000000023 implements MigrationInterface {
           { name: 'public_social_links', type: 'jsonb', default: "'[]'" },
           { name: 'auto_sync', type: 'boolean', default: true },
           { name: 'sync_frequency', type: 'varchar', default: "'daily'" },
-          { name: 'sync_fields', type: 'jsonb', default: "'[\"profile\", \"connections\"]'" },
+          {
+            name: 'sync_fields',
+            type: 'jsonb',
+            default: '\'["profile", "connections"]\'',
+          },
           { name: 'user_id', type: 'uuid' },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createForeignKey(
@@ -294,7 +368,7 @@ export class CreateSocialSettings1700000000023 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -303,7 +377,7 @@ export class CreateSocialSettings1700000000023 implements MigrationInterface {
         name: 'IDX_SOCIAL_SETTINGS_USER_ID',
         columnNames: ['user_id'],
         isUnique: true,
-      }),
+      })
     );
   }
 
@@ -317,7 +391,13 @@ export class CreateSocialSettings1700000000023 implements MigrationInterface {
 
 ```typescript
 // 1700000000024-CreateSocialSyncLogs.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateSocialSyncLogs1700000000024 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -325,7 +405,13 @@ export class CreateSocialSyncLogs1700000000024 implements MigrationInterface {
       new Table({
         name: 'social_sync_logs',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'status', type: 'varchar' },
           { name: 'sync_type', type: 'varchar' },
           { name: 'changes_count', type: 'integer', default: 0 },
@@ -333,11 +419,19 @@ export class CreateSocialSyncLogs1700000000024 implements MigrationInterface {
           { name: 'error_message', type: 'text', isNullable: true },
           { name: 'sync_duration_ms', type: 'integer', isNullable: true },
           { name: 'social_account_id', type: 'uuid' },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createForeignKey(
@@ -347,7 +441,7 @@ export class CreateSocialSyncLogs1700000000024 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'social_accounts',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -355,21 +449,21 @@ export class CreateSocialSyncLogs1700000000024 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_SOCIAL_SYNC_LOGS_STATUS',
         columnNames: ['status'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'social_sync_logs',
       new TableIndex({
         name: 'IDX_SOCIAL_SYNC_LOGS_SOCIAL_ACCOUNT_ID',
         columnNames: ['social_account_id'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'social_sync_logs',
       new TableIndex({
         name: 'IDX_SOCIAL_SYNC_LOGS_CREATED_AT',
         columnNames: ['created_at'],
-      }),
+      })
     );
   }
 
@@ -388,42 +482,51 @@ export class CreateSocialSyncLogs1700000000024 implements MigrationInterface {
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SocialAccount, SocialProvider } from './entities/social-account.entity';
+import {
+  SocialAccount,
+  SocialProvider,
+} from './entities/social-account.entity';
 import { BaseRepository } from '@/shared/common/base.repository';
 
 @Injectable()
 export class SocialAccountRepository extends BaseRepository<SocialAccount> {
   constructor(
     @InjectRepository(SocialAccount)
-    private readonly socialAccountRepository: Repository<SocialAccount>,
+    private readonly socialAccountRepository: Repository<SocialAccount>
   ) {
     super(socialAccountRepository);
   }
 
-  async findByProviderAndUid(provider: SocialProvider, uid: string): Promise<SocialAccount | null> {
+  async findByProviderAndUid(
+    provider: SocialProvider,
+    uid: string
+  ): Promise<SocialAccount | null> {
     return this.socialAccountRepository.findOne({
       where: { provider, uid },
-      relations: ['user']
+      relations: ['user'],
     });
   }
 
-  async findByUserAndProvider(userId: string, provider: SocialProvider): Promise<SocialAccount | null> {
+  async findByUserAndProvider(
+    userId: string,
+    provider: SocialProvider
+  ): Promise<SocialAccount | null> {
     return this.socialAccountRepository.findOne({
-      where: { userId, provider }
+      where: { userId, provider },
     });
   }
 
   async findByUser(userId: string): Promise<SocialAccount[]> {
     return this.socialAccountRepository.find({
       where: { userId },
-      order: { createdAt: 'DESC' }
+      order: { createdAt: 'DESC' },
     });
   }
 
   async findActiveByUser(userId: string): Promise<SocialAccount[]> {
     return this.socialAccountRepository.find({
       where: { userId, status: 'active' },
-      order: { createdAt: 'DESC' }
+      order: { createdAt: 'DESC' },
     });
   }
 
@@ -439,11 +542,14 @@ export class SocialAccountRepository extends BaseRepository<SocialAccount> {
   async findByProvider(provider: SocialProvider): Promise<SocialAccount[]> {
     return this.socialAccountRepository.find({
       where: { provider },
-      relations: ['user']
+      relations: ['user'],
     });
   }
 
-  async searchByMetadata(searchTerm: string, provider?: SocialProvider): Promise<SocialAccount[]> {
+  async searchByMetadata(
+    searchTerm: string,
+    provider?: SocialProvider
+  ): Promise<SocialAccount[]> {
     const queryBuilder = this.socialAccountRepository
       .createQueryBuilder('social_account')
       .leftJoinAndSelect('social_account.user', 'user')
@@ -458,7 +564,9 @@ export class SocialAccountRepository extends BaseRepository<SocialAccount> {
       );
 
     if (provider) {
-      queryBuilder.andWhere('social_account.provider = :provider', { provider });
+      queryBuilder.andWhere('social_account.provider = :provider', {
+        provider,
+      });
     }
 
     return queryBuilder.getMany();
@@ -480,20 +588,20 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class SocialSettingRepository extends BaseRepository<SocialSetting> {
   constructor(
     @InjectRepository(SocialSetting)
-    private readonly socialSettingRepository: Repository<SocialSetting>,
+    private readonly socialSettingRepository: Repository<SocialSetting>
   ) {
     super(socialSettingRepository);
   }
 
   async findByUser(userId: string): Promise<SocialSetting | null> {
     return this.socialSettingRepository.findOne({
-      where: { userId }
+      where: { userId },
     });
   }
 
   async findOrCreateByUser(userId: string): Promise<SocialSetting> {
     let setting = await this.findByUser(userId);
-    
+
     if (!setting) {
       setting = this.socialSettingRepository.create({
         userId,
@@ -504,7 +612,7 @@ export class SocialSettingRepository extends BaseRepository<SocialSetting> {
         publicSocialLinks: [],
         autoSync: true,
         syncFrequency: 'daily',
-        syncFields: ['profile', 'connections']
+        syncFields: ['profile', 'connections'],
       });
       setting = await this.socialSettingRepository.save(setting);
     }
@@ -515,7 +623,7 @@ export class SocialSettingRepository extends BaseRepository<SocialSetting> {
   async findUsersWithAutoSync(): Promise<SocialSetting[]> {
     return this.socialSettingRepository.find({
       where: { autoSync: true },
-      relations: ['user']
+      relations: ['user'],
     });
   }
 }
@@ -535,18 +643,21 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class SocialSyncLogRepository extends BaseRepository<SocialSyncLog> {
   constructor(
     @InjectRepository(SocialSyncLog)
-    private readonly socialSyncLogRepository: Repository<SocialSyncLog>,
+    private readonly socialSyncLogRepository: Repository<SocialSyncLog>
   ) {
     super(socialSyncLogRepository);
   }
 
-  async findBySocialAccount(socialAccountId: string, options?: { limit?: number }): Promise<SocialSyncLog[]> {
+  async findBySocialAccount(
+    socialAccountId: string,
+    options?: { limit?: number }
+  ): Promise<SocialSyncLog[]> {
     const { limit = 10 } = options || {};
 
     return this.socialSyncLogRepository.find({
       where: { socialAccountId },
       order: { createdAt: 'DESC' },
-      take: limit
+      take: limit,
     });
   }
 
@@ -571,7 +682,9 @@ export class SocialSyncLogRepository extends BaseRepository<SocialSyncLog> {
       .groupBy('sync_log.status');
 
     if (socialAccountId) {
-      queryBuilder.where('sync_log.socialAccountId = :socialAccountId', { socialAccountId });
+      queryBuilder.where('sync_log.socialAccountId = :socialAccountId', {
+        socialAccountId,
+      });
     }
 
     return queryBuilder.getRawMany();
@@ -599,7 +712,11 @@ export class SocialSyncLogRepository extends BaseRepository<SocialSyncLog> {
 ```typescript
 // oauth.service.interface.ts
 export interface IOAuthService {
-  exchangeCodeForToken(provider: string, code: string, redirectUri?: string): Promise<any>;
+  exchangeCodeForToken(
+    provider: string,
+    code: string,
+    redirectUri?: string
+  ): Promise<any>;
   refreshToken(provider: string, refreshToken: string): Promise<any>;
   fetchProfileData(provider: string, accessToken: string): Promise<any>;
   revokeToken(provider: string, token: string): Promise<boolean>;
@@ -617,7 +734,11 @@ export class OAuthService implements IOAuthService {
     private configService: ConfigService
   ) {}
 
-  async exchangeCodeForToken(provider: string, code: string, redirectUri?: string): Promise<any> {
+  async exchangeCodeForToken(
+    provider: string,
+    code: string,
+    redirectUri?: string
+  ): Promise<any> {
     switch (provider) {
       case 'linkedin':
         return this.linkedInExchangeCode(code, redirectUri);
@@ -670,30 +791,42 @@ export class OAuthService implements IOAuthService {
   }
 
   // LinkedIn implementation
-  private async linkedInExchangeCode(code: string, redirectUri?: string): Promise<any> {
-    const response = await this.httpService.post('https://www.linkedin.com/oauth/v2/accessToken', {
-      grant_type: 'authorization_code',
-      code,
-      client_id: this.configService.get('LINKEDIN_CLIENT_ID'),
-      client_secret: this.configService.get('LINKEDIN_CLIENT_SECRET'),
-      redirect_uri: redirectUri
-    }).toPromise();
+  private async linkedInExchangeCode(
+    code: string,
+    redirectUri?: string
+  ): Promise<any> {
+    const response = await this.httpService
+      .post('https://www.linkedin.com/oauth/v2/accessToken', {
+        grant_type: 'authorization_code',
+        code,
+        client_id: this.configService.get('LINKEDIN_CLIENT_ID'),
+        client_secret: this.configService.get('LINKEDIN_CLIENT_SECRET'),
+        redirect_uri: redirectUri,
+      })
+      .toPromise();
 
     return {
       accessToken: response.data.access_token,
       refreshToken: response.data.refresh_token,
-      expiresAt: new Date(Date.now() + response.data.expires_in * 1000)
+      expiresAt: new Date(Date.now() + response.data.expires_in * 1000),
     };
   }
 
   private async linkedInFetchProfile(accessToken: string): Promise<any> {
     const [profile, email] = await Promise.all([
-      this.httpService.get('https://api.linkedin.com/v2/people/~', {
-        headers: { Authorization: `Bearer ${accessToken}` }
-      }).toPromise(),
-      this.httpService.get('https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))', {
-        headers: { Authorization: `Bearer ${accessToken}` }
-      }).toPromise()
+      this.httpService
+        .get('https://api.linkedin.com/v2/people/~', {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+        .toPromise(),
+      this.httpService
+        .get(
+          'https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))',
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        )
+        .toPromise(),
     ]);
 
     return {
@@ -703,32 +836,45 @@ export class OAuthService implements IOAuthService {
       firstName: profile.data.localizedFirstName,
       lastName: profile.data.localizedLastName,
       profileUrl: `https://linkedin.com/in/${profile.data.vanityName}`,
-      pictureUrl: profile.data.profilePicture?.['displayImage~']?.elements[0]?.identifiers[0]?.identifier
+      pictureUrl:
+        profile.data.profilePicture?.['displayImage~']?.elements[0]
+          ?.identifiers[0]?.identifier,
     };
   }
 
   // GitHub implementation
-  private async githubExchangeCode(code: string, redirectUri?: string): Promise<any> {
-    const response = await this.httpService.post('https://github.com/login/oauth/access_token', {
-      client_id: this.configService.get('GITHUB_CLIENT_ID'),
-      client_secret: this.configService.get('GITHUB_CLIENT_SECRET'),
-      code,
-      redirect_uri: redirectUri
-    }, {
-      headers: { Accept: 'application/json' }
-    }).toPromise();
+  private async githubExchangeCode(
+    code: string,
+    redirectUri?: string
+  ): Promise<any> {
+    const response = await this.httpService
+      .post(
+        'https://github.com/login/oauth/access_token',
+        {
+          client_id: this.configService.get('GITHUB_CLIENT_ID'),
+          client_secret: this.configService.get('GITHUB_CLIENT_SECRET'),
+          code,
+          redirect_uri: redirectUri,
+        },
+        {
+          headers: { Accept: 'application/json' },
+        }
+      )
+      .toPromise();
 
     return {
       accessToken: response.data.access_token,
       refreshToken: null, // GitHub doesn't provide refresh tokens
-      expiresAt: null // GitHub tokens don't expire
+      expiresAt: null, // GitHub tokens don't expire
     };
   }
 
   private async githubFetchProfile(accessToken: string): Promise<any> {
-    const response = await this.httpService.get('https://api.github.com/user', {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    }).toPromise();
+    const response = await this.httpService
+      .get('https://api.github.com/user', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .toPromise();
 
     return {
       id: response.data.id.toString(),
@@ -741,7 +887,7 @@ export class OAuthService implements IOAuthService {
       bio: response.data.bio,
       publicRepos: response.data.public_repos,
       followers: response.data.followers,
-      following: response.data.following
+      following: response.data.following,
     };
   }
 

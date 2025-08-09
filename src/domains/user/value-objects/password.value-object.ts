@@ -1,5 +1,5 @@
-import { IsNotEmpty, MinLength } from 'class-validator';
 import * as bcrypt from 'bcrypt';
+import { IsNotEmpty, MinLength } from 'class-validator';
 
 export class Password {
   @IsNotEmpty()
@@ -30,7 +30,7 @@ export class Password {
 
   static async verify(
     plainPassword: string,
-    hashedPassword: string,
+    hashedPassword: string
   ): Promise<boolean> {
     return bcrypt.compare(plainPassword, hashedPassword);
   }

@@ -1,5 +1,7 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
 import { PartnerHost } from './partner-host.entity';
 
 export enum NetworkType {
@@ -26,7 +28,7 @@ export class PartnerHostNetwork extends BaseEntity {
   partnerHostId: string;
 
   // Relationships
-  @ManyToOne(() => PartnerHost, partnerHost => partnerHost.networks)
+  @ManyToOne(() => PartnerHost, (partnerHost) => partnerHost.networks)
   @JoinColumn({ name: 'partner_host_id' })
   partnerHost: PartnerHost;
 }

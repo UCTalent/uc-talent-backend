@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 import { ExternalLink } from '@social/entities/external-link.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class ExternalLinkRepository implements IBaseRepository<ExternalLink> {
   constructor(
     @InjectRepository(ExternalLink)
-    private readonly repository: Repository<ExternalLink>,
+    private readonly repository: Repository<ExternalLink>
   ) {}
 
   async findById(id: string): Promise<ExternalLink | null> {

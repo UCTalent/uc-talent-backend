@@ -1,5 +1,7 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
 import { Talent } from './talent.entity';
 
 @Entity('educations')
@@ -29,7 +31,7 @@ export class Education extends BaseEntity {
   description: string;
 
   // Relationships
-  @ManyToOne(() => Talent, talent => talent.educations)
+  @ManyToOne(() => Talent, (talent) => talent.educations)
   @JoinColumn({ name: 'talent_id' })
   talent: Talent;
 }

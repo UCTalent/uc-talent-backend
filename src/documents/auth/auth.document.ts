@@ -1,10 +1,10 @@
+import type { Document } from '@documents/interface';
+import { FirebaseAuthDto } from '@domains/auth/dtos/firebase-auth.dto';
+import { ForgotPasswordDto } from '@domains/auth/dtos/forgot-password.dto';
 import { LoginDto } from '@domains/auth/dtos/login.dto';
 import { RegisterDto } from '@domains/auth/dtos/register.dto';
-import { FirebaseAuthDto } from '@domains/auth/dtos/firebase-auth.dto';
-import { Web3AuthDto } from '@domains/auth/dtos/web3-auth.dto';
-import { ForgotPasswordDto } from '@domains/auth/dtos/forgot-password.dto';
 import { ResetPasswordDto } from '@domains/auth/dtos/reset-password.dto';
-import { Document } from '@documents/interface';
+import { Web3AuthDto } from '@domains/auth/dtos/web3-auth.dto';
 
 const login: Document = {
   operation: { summary: 'Login with email and password' },
@@ -122,7 +122,9 @@ const confirmEmail: Document = {
         description: 'Email confirmed successfully',
       },
     ],
-    error: [{ status: 400, description: 'Invalid or expired confirmation token' }],
+    error: [
+      { status: 400, description: 'Invalid or expired confirmation token' },
+    ],
   },
 } as const;
 

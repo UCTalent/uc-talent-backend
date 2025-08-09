@@ -69,6 +69,7 @@ src/
 ## 📊 Domain Statistics
 
 ### Entities Created: 25+
+
 - User, Talent, Job, Organization
 - Experience, Education, ExternalLink
 - JobApply, JobReferral, PaymentDistribution
@@ -78,6 +79,7 @@ src/
 - Partner, PartnerHost, Note
 
 ### Services Created: 15+
+
 - UserService, TalentService, JobService
 - OrganizationService, LocationService
 - PaymentService, WalletService
@@ -85,6 +87,7 @@ src/
 - Background job processors
 
 ### Controllers Created: 10+
+
 - REST API endpoints cho tất cả domains
 - Proper HTTP status codes
 - Request/response validation
@@ -92,23 +95,27 @@ src/
 ## 🔧 Technical Stack
 
 ### Core Framework
+
 - **NestJS**: Main framework
 - **TypeScript**: Language
 - **TypeORM**: Database ORM
 - **PostgreSQL**: Database
 
 ### Authentication & Security
+
 - **JWT**: Token-based auth
 - **Passport**: Authentication strategies
 - **bcrypt**: Password hashing
 - **class-validator**: Input validation
 
 ### Background Processing
+
 - **BullMQ**: Job queue
 - **Redis**: Cache & queue storage
 - **Processors**: Job application, recommendations
 
 ### External Services
+
 - **AWS SES**: Email service
 - **Firebase**: Authentication
 - **GraphQL**: Apollo Server
@@ -116,6 +123,7 @@ src/
 ## 🎯 API Endpoints
 
 ### REST API (Base: `/api/v1`)
+
 - `POST /users` - Create user
 - `GET /users/:id` - Get user
 - `PUT /users/:id` - Update user
@@ -127,6 +135,7 @@ src/
 - `GET /skills` - List skills
 
 ### GraphQL
+
 - Playground: `/graphql`
 - Queries: jobs, users, talents, organizations
 - Mutations: createJob, updateJob, createUser
@@ -134,6 +143,7 @@ src/
 ## 🚀 Next Steps
 
 ### Phase 1: Core Setup ✅
+
 - [x] Project structure
 - [x] Database entities
 - [x] Basic services & controllers
@@ -141,6 +151,7 @@ src/
 - [x] Background jobs
 
 ### Phase 2: Advanced Features
+
 - [ ] GraphQL resolvers
 - [ ] File uploads (AWS S3)
 - [ ] Web3 integration
@@ -148,6 +159,7 @@ src/
 - [ ] Real-time notifications
 
 ### Phase 3: Testing & Deployment
+
 - [ ] Unit tests
 - [ ] E2E tests
 - [ ] CI/CD pipeline
@@ -157,6 +169,7 @@ src/
 ## 📝 Environment Setup
 
 ### Required Environment Variables
+
 ```bash
 # Database
 DATABASE_HOST=localhost
@@ -208,4 +221,4 @@ yarn format             # Format code
 
 ---
 
-**Status**: ✅ **COMPLETED** - DDD architecture successfully implemented with all core components ready for development. 
+**Status**: ✅ **COMPLETED** - DDD architecture successfully implemented with all core components ready for development.

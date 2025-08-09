@@ -1,11 +1,11 @@
-import { Document } from '@documents/interface';
+import type { Document } from '@documents/interface';
 import { CreateOrganizationDto } from '@organization/dtos/create-organization.dto';
-import { UpdateOrganizationDto } from '@organization/dtos/update-organization.dto';
 import { OrganizationQueryDto } from '@organization/dtos/organization-query.dto';
 import {
-  OrganizationResponseDto,
   OrganizationListResponseDto,
+  OrganizationResponseDto,
 } from '@organization/dtos/organization-response.dto';
+import { UpdateOrganizationDto } from '@organization/dtos/update-organization.dto';
 
 const createOrganization: Document = {
   operation: { summary: 'Create a new organization' },

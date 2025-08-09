@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { Organization } from '@organization/entities/organization.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class OrganizationRepository implements IBaseRepository<Organization> {
   constructor(
     @InjectRepository(Organization)
-    private readonly repository: Repository<Organization>,
+    private readonly repository: Repository<Organization>
   ) {}
 
   async findById(id: string): Promise<Organization | null> {
@@ -107,7 +108,7 @@ export class OrganizationRepository implements IBaseRepository<Organization> {
     if (options.sortBy) {
       queryBuilder.orderBy(
         `org.${options.sortBy}`,
-        options.sortOrder || 'DESC',
+        options.sortOrder || 'DESC'
       );
     } else {
       queryBuilder.orderBy('org.createdAt', 'DESC');
@@ -133,7 +134,7 @@ export class OrganizationRepository implements IBaseRepository<Organization> {
       city?: string;
       size?: string;
       orgType?: string;
-    },
+    }
   ): Promise<Organization[]> {
     const queryBuilder = this.repository
       .createQueryBuilder('org')

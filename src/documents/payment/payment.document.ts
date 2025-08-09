@@ -1,10 +1,10 @@
-import { Document } from '@documents/interface';
+import type { Document } from '@documents/interface';
 import { ClaimPaymentDto } from '@payment/dtos/claim-payment.dto';
-import { UpdateBlockchainStatusDto } from '@payment/dtos/update-blockchain-status.dto';
 import {
-  PaymentDistributionResponseDto,
   PaymentDistributionListResponseDto,
+  PaymentDistributionResponseDto,
 } from '@payment/dtos/payment-response.dto';
+import { UpdateBlockchainStatusDto } from '@payment/dtos/update-blockchain-status.dto';
 
 const getPaymentDistributionById: Document = {
   operation: { summary: 'Get payment distribution by ID' },

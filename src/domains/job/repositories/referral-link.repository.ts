@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+
 import { ReferralLink } from '../../../domains/job/entities/referral-link.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class ReferralLinkRepository implements IBaseRepository<ReferralLink> {
   constructor(
     @InjectRepository(ReferralLink)
-    private readonly repository: Repository<ReferralLink>,
+    private readonly repository: Repository<ReferralLink>
   ) {}
 
   async findById(id: string): Promise<ReferralLink | null> {
@@ -43,7 +45,7 @@ export class ReferralLinkRepository implements IBaseRepository<ReferralLink> {
 
   async findByJobAndReferrer(
     jobId: string,
-    referrerId: string,
+    referrerId: string
   ): Promise<ReferralLink | null> {
     return this.repository.findOne({
       where: { jobId, referrerId },

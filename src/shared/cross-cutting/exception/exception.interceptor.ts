@@ -1,13 +1,12 @@
-import { env } from '@/shared/infrastructure/env';
+import type { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import {
-  ArgumentsHost,
   BadRequestException,
   Catch,
-  ExceptionFilter,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
 
+import { env } from '@/shared/infrastructure/env';
 import { ResponseHandler } from '@shared/utils/response-handler';
 
 @Catch()
@@ -27,7 +26,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
     }
 
     const httpStatusName = Object.keys(HttpStatus).find(
-      key => typeof HttpStatus[key] === 'number' && HttpStatus[key] === status,
+      (key) => typeof HttpStatus[key] === 'number' && HttpStatus[key] === status
     );
 
     return response.status(status).json(
@@ -38,7 +37,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
           : [httpStatusName],
         message: exception.message,
         stack: isLocal ? exception.stack : undefined,
-      }),
+      })
     );
   }
 }

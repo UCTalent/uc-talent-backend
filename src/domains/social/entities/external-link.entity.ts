@@ -1,4 +1,5 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 import { Talent } from '@talent/entities/talent.entity';
 
@@ -14,7 +15,7 @@ export class ExternalLink extends BaseEntity {
   url: string;
 
   // Relationships
-  @ManyToOne(() => Talent, talent => talent.externalLinks)
+  @ManyToOne(() => Talent, (talent) => talent.externalLinks)
   @JoinColumn({ name: 'talent_id' })
   talent: Talent;
 }

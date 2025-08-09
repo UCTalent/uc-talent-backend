@@ -1,9 +1,9 @@
-import { Document } from '@documents/interface';
+import type { Document } from '@documents/interface';
 import { CreateUserDto } from '@user/dtos/create-user.dto';
 import { UpdateUserDto } from '@user/dtos/update-user.dto';
 import {
-  UserResponseDto,
   UserListResponseDto,
+  UserResponseDto,
 } from '@user/dtos/user-response.dto';
 
 const createUser: Document = {

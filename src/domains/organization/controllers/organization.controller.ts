@@ -1,38 +1,37 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Put,
   Body,
-  Param,
+  Controller,
   Delete,
-  Query,
+  Get,
   HttpCode,
   HttpStatus,
-  UseInterceptors,
+  Param,
+  Post,
+  Put,
+  Query,
   UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
   ApiBody,
-  ApiQuery,
   ApiConsumes,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { OrganizationService } from '@organization/services/organization.service';
-import { CreateOrganizationDto } from '@organization/dtos/create-organization.dto';
-import { UpdateOrganizationDto } from '@organization/dtos/update-organization.dto';
-import { OrganizationQueryDto } from '@organization/dtos/organization-query.dto';
-import {
-  OrganizationResponseDto,
-  OrganizationListResponseDto,
-} from '@organization/dtos/organization-response.dto';
-import { Organization } from '@organization/entities/organization.entity';
-import { ResponseHandler } from '@shared/utils/response-handler';
+
 import { Docs } from '@documents/organization/organization.document';
+import { CreateOrganizationDto } from '@organization/dtos/create-organization.dto';
+import { OrganizationQueryDto } from '@organization/dtos/organization-query.dto';
+import type { OrganizationResponseDto } from '@organization/dtos/organization-response.dto';
+import { OrganizationListResponseDto } from '@organization/dtos/organization-response.dto';
+import { UpdateOrganizationDto } from '@organization/dtos/update-organization.dto';
+import type { Organization } from '@organization/entities/organization.entity';
+import { OrganizationService } from '@organization/services/organization.service';
+import { ResponseHandler } from '@shared/utils/response-handler';
 
 @ApiTags('organizations')
 @Controller('organizations')
@@ -47,7 +46,7 @@ export class OrganizationController {
   @ApiResponse(Docs.createOrganization.responses.error[0])
   async create(@Body() createOrganizationDto: CreateOrganizationDto) {
     const result = await this.organizationService.createOrganization(
-      createOrganizationDto,
+      createOrganizationDto
     );
     return ResponseHandler.success({
       data: this.mapToResponseDto(result.data),
@@ -64,8 +63,8 @@ export class OrganizationController {
     const result = await this.organizationService.getOrganizations(query);
     return ResponseHandler.success({
       data: {
-        organizations: result.data.organizations.map(org =>
-          this.mapToResponseDto(org),
+        organizations: result.data.organizations.map((org) =>
+          this.mapToResponseDto(org)
         ),
         pagination: result.data.pagination,
       },
@@ -79,11 +78,11 @@ export class OrganizationController {
   @ApiResponse(Docs.searchOrganizations.responses.success[0])
   async searchOrganizations(
     @Query('query') query: string,
-    @Query() filters: any,
+    @Query() filters: any
   ) {
     const result = await this.organizationService.searchOrganizations(
       query,
-      filters,
+      filters
     );
     return ResponseHandler.success({
       data: result,
@@ -112,11 +111,11 @@ export class OrganizationController {
   @ApiResponse(Docs.updateOrganization.responses.error[0])
   async update(
     @Param('id') id: string,
-    @Body() updateOrganizationDto: UpdateOrganizationDto,
+    @Body() updateOrganizationDto: UpdateOrganizationDto
   ) {
     const result = await this.organizationService.updateOrganization(
       id,
-      updateOrganizationDto,
+      updateOrganizationDto
     );
     return ResponseHandler.success({
       data: this.mapToResponseDto(result.data),
@@ -190,7 +189,7 @@ export class OrganizationController {
     const organizations = await this.organizationService.findAll();
     return ResponseHandler.success({
       data: {
-        organizations: organizations.map(org => this.mapToResponseDto(org)),
+        organizations: organizations.map((org) => this.mapToResponseDto(org)),
         total: organizations.length,
         page: 1,
         limit: organizations.length,
@@ -200,7 +199,7 @@ export class OrganizationController {
   }
 
   private mapToResponseDto(
-    organization: Organization,
+    organization: Organization
   ): OrganizationResponseDto {
     return {
       id: organization.id,

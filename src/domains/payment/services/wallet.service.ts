@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { WalletAddress } from '../entities/wallet-address.entity';
+
+import type { WalletAddress } from '../entities/wallet-address.entity';
 import { WalletAddressRepository } from '../repositories/wallet-address.repository';
 
 @Injectable()
@@ -7,7 +8,7 @@ export class WalletService {
   constructor(private readonly walletAddressRepo: WalletAddressRepository) {}
 
   async createWalletAddress(
-    data: Partial<WalletAddress>,
+    data: Partial<WalletAddress>
   ): Promise<WalletAddress> {
     return this.walletAddressRepo.create(data);
   }
@@ -27,7 +28,7 @@ export class WalletService {
   }
 
   async findWalletAddressByAddress(
-    address: string,
+    address: string
   ): Promise<WalletAddress | null> {
     return this.walletAddressRepo.findByAddress(address);
   }

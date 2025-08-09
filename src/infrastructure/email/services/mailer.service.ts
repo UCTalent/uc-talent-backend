@@ -44,7 +44,7 @@ export class MailerService {
   async sendTemplatedEmail(
     to: string,
     templateName: string,
-    templateData: any,
+    templateData: any
   ): Promise<void> {
     const params = {
       Source: this.configService.get('AWS_SES_FROM_EMAIL'),

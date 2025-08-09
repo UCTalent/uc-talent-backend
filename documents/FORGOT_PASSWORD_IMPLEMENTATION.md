@@ -7,6 +7,7 @@ The forgot password functionality allows users to reset their password through a
 ## Features
 
 ### Security Features
+
 - **Token Expiration**: Reset tokens expire after 24 hours
 - **Account Validation**: Only confirmed accounts can request password reset
 - **Locked Account Protection**: Locked accounts cannot reset passwords
@@ -14,6 +15,7 @@ The forgot password functionality allows users to reset their password through a
 - **Token Cleanup**: Expired tokens are automatically cleared
 
 ### User Experience
+
 - **Professional Email Template**: Modern, responsive email design
 - **Clear Instructions**: Step-by-step guidance for users
 - **Token Validation**: Frontend can validate tokens before showing reset form
@@ -22,6 +24,7 @@ The forgot password functionality allows users to reset their password through a
 ## API Endpoints
 
 ### 1. Request Password Reset
+
 ```http
 POST /auth/forgot-password
 Content-Type: application/json
@@ -32,6 +35,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "message": "If an account with that email exists, a password reset link has been sent"
@@ -39,16 +43,19 @@ Content-Type: application/json
 ```
 
 **Validation:**
+
 - Email must be valid format
 - User account must be confirmed
 - User account must not be locked
 
 ### 2. Validate Reset Token
+
 ```http
 GET /auth/validate-reset-token?token=reset_token_here
 ```
 
 **Response:**
+
 ```json
 {
   "valid": true,
@@ -57,6 +64,7 @@ GET /auth/validate-reset-token?token=reset_token_here
 ```
 
 **Or for invalid/expired token:**
+
 ```json
 {
   "valid": false,
@@ -65,6 +73,7 @@ GET /auth/validate-reset-token?token=reset_token_here
 ```
 
 ### 3. Reset Password
+
 ```http
 PUT /auth/reset-password
 Content-Type: application/json
@@ -76,6 +85,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Password updated successfully"
@@ -83,6 +93,7 @@ Content-Type: application/json
 ```
 
 **Validation:**
+
 - Token must be valid and not expired
 - Password must be at least 8 characters
 - User account must not be locked
@@ -90,14 +101,18 @@ Content-Type: application/json
 ## Implementation Details
 
 ### Database Schema
+
 The User entity includes these fields for password reset:
+
 - `resetPasswordToken`: The reset token string
 - `resetPasswordSentAt`: Timestamp when token was sent
 
 ### Email Template
+
 Located at: `src/infrastructure/email/templates/password-reset.template.html`
 
 Features:
+
 - Responsive design
 - Professional styling
 - Security warnings
@@ -115,24 +130,25 @@ Features:
 
 ### Error Handling
 
-| Error Case | HTTP Status | Message |
-|------------|-------------|---------|
-| Email not confirmed | 400 | "Please confirm your email first before requesting password reset" |
-| Account locked | 400 | "Account is locked. Please contact support." |
-| Invalid token | 400 | "Invalid or expired reset password token" |
-| Expired token | 400 | "Reset password token has expired. Please request a new one." |
-| Weak password | 400 | "Password must be at least 8 characters long" |
+| Error Case          | HTTP Status | Message                                                            |
+| ------------------- | ----------- | ------------------------------------------------------------------ |
+| Email not confirmed | 400         | "Please confirm your email first before requesting password reset" |
+| Account locked      | 400         | "Account is locked. Please contact support."                       |
+| Invalid token       | 400         | "Invalid or expired reset password token"                          |
+| Expired token       | 400         | "Reset password token has expired. Please request a new one."      |
+| Weak password       | 400         | "Password must be at least 8 characters long"                      |
 
 ## Frontend Integration
 
 ### 1. Request Password Reset
+
 ```javascript
 const requestReset = async (email) => {
   try {
     const response = await fetch('/auth/forgot-password', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
+      body: JSON.stringify({ email }),
     });
     const data = await response.json();
     return data;
@@ -143,6 +159,7 @@ const requestReset = async (email) => {
 ```
 
 ### 2. Validate Token (for reset page)
+
 ```javascript
 const validateToken = async (token) => {
   try {
@@ -156,13 +173,14 @@ const validateToken = async (token) => {
 ```
 
 ### 3. Reset Password
+
 ```javascript
 const resetPassword = async (token, password) => {
   try {
     const response = await fetch('/auth/reset-password', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token, password })
+      body: JSON.stringify({ token, password }),
     });
     const data = await response.json();
     return data;
@@ -175,6 +193,7 @@ const resetPassword = async (token, password) => {
 ## Testing
 
 ### Unit Tests
+
 - Test token generation
 - Test email sending
 - Test password validation
@@ -182,12 +201,14 @@ const resetPassword = async (token, password) => {
 - Test account state validation
 
 ### Integration Tests
+
 - Test complete forgot password flow
 - Test invalid token handling
 - Test expired token handling
 - Test email template rendering
 
 ### Manual Testing
+
 1. Request password reset with valid email
 2. Check email delivery and template rendering
 3. Test token validation endpoint
@@ -197,9 +218,11 @@ const resetPassword = async (token, password) => {
 ## Configuration
 
 ### Environment Variables
+
 - `FRONTEND_URL`: Base URL for reset password links (default: http://localhost:3000)
 
 ### Email Configuration
+
 - SMTP settings in email service configuration
 - Email templates in `src/infrastructure/email/templates/`
 

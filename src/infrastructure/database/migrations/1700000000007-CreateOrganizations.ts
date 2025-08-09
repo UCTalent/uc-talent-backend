@@ -1,10 +1,5 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableIndex,
-  TableForeignKey,
-} from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+import { Table, TableForeignKey, TableIndex } from 'typeorm';
 
 export class CreateOrganizations1700000000007 implements MigrationInterface {
   name = 'CreateOrganizations1700000000007';
@@ -38,7 +33,7 @@ export class CreateOrganizations1700000000007 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create organizations table
@@ -169,7 +164,7 @@ export class CreateOrganizations1700000000007 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create foreign keys
@@ -180,7 +175,7 @@ export class CreateOrganizations1700000000007 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'cities',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -190,7 +185,7 @@ export class CreateOrganizations1700000000007 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'countries',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -200,7 +195,7 @@ export class CreateOrganizations1700000000007 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'industries',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     // Create indexes
@@ -209,7 +204,7 @@ export class CreateOrganizations1700000000007 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_ORGANIZATIONS_NAME',
         columnNames: ['name'],
-      }),
+      })
     );
   }
 

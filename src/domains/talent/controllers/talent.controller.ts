@@ -1,38 +1,37 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Put,
   Body,
-  Param,
+  Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
+  Post,
+  Put,
   Query,
   Request,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
   ApiBody,
+  ApiOperation,
+  ApiParam,
   ApiQuery,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { TalentService } from '@talent/services/talent.service';
-import { CreateTalentDto } from '@talent/dtos/create-talent.dto';
-import { UpdateTalentDto } from '@talent/dtos/update-talent.dto';
-import { TalentIndexQueryDto } from '@talent/dtos/talent-index-query.dto';
-import { CreateExperienceDto } from '@talent/dtos/create-experience.dto';
-import { CreateEducationDto } from '@talent/dtos/create-education.dto';
-import { CreateExternalLinkDto } from '@talent/dtos/create-external-link.dto';
-import {
-  TalentResponseDto,
-  TalentListResponseDto,
-} from '@talent/dtos/talent-response.dto';
-import { Talent } from '@talent/entities/talent.entity';
-import { ResponseHandler } from '@shared/utils/response-handler';
+
 import { Docs } from '@documents/talent/talent.document';
+import { ResponseHandler } from '@shared/utils/response-handler';
+import { CreateEducationDto } from '@talent/dtos/create-education.dto';
+import { CreateExperienceDto } from '@talent/dtos/create-experience.dto';
+import { CreateExternalLinkDto } from '@talent/dtos/create-external-link.dto';
+import { CreateTalentDto } from '@talent/dtos/create-talent.dto';
+import { TalentIndexQueryDto } from '@talent/dtos/talent-index-query.dto';
+import type { TalentResponseDto } from '@talent/dtos/talent-response.dto';
+// import { TalentListResponseDto } from '@talent/dtos/talent-response.dto';
+import { UpdateTalentDto } from '@talent/dtos/update-talent.dto';
+import type { Talent } from '@talent/entities/talent.entity';
+import { TalentService } from '@talent/services/talent.service';
 
 @ApiTags('talents')
 @Controller('talents')
@@ -48,7 +47,7 @@ export class TalentController {
   async create(@Body() createTalentDto: CreateTalentDto, @Request() req: any) {
     const talent = await this.talentService.create(
       createTalentDto,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: this.mapToResponseDto(talent),
@@ -65,7 +64,7 @@ export class TalentController {
     const result = await this.talentService.getTalents(query);
     return ResponseHandler.success({
       data: {
-        talents: result.talents.map(talent => this.mapToResponseDto(talent)),
+        talents: result.talents.map((talent) => this.mapToResponseDto(talent)),
         pagination: result.pagination,
       },
       message: 'Talents retrieved successfully',
@@ -94,12 +93,12 @@ export class TalentController {
   async update(
     @Param('id') id: string,
     @Body() updateTalentDto: UpdateTalentDto,
-    @Request() req: any,
+    @Request() req: any
   ) {
     const talent = await this.talentService.update(
       id,
       updateTalentDto,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: this.mapToResponseDto(talent),
@@ -145,7 +144,7 @@ export class TalentController {
   async getProfileCompletion(@Param('id') id: string, @Request() req: any) {
     const completion = await this.talentService.getProfileCompletion(
       id,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: completion,
@@ -161,12 +160,12 @@ export class TalentController {
   async addExperience(
     @Param('id') id: string,
     @Body() createExperienceDto: CreateExperienceDto,
-    @Request() req: any,
+    @Request() req: any
   ) {
     const experience = await this.talentService.addExperience(
       id,
       createExperienceDto,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: experience,
@@ -183,12 +182,12 @@ export class TalentController {
   async addEducation(
     @Param('id') id: string,
     @Body() createEducationDto: CreateEducationDto,
-    @Request() req: any,
+    @Request() req: any
   ) {
     const education = await this.talentService.addEducation(
       id,
       createEducationDto,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: education,
@@ -205,12 +204,12 @@ export class TalentController {
   async addExternalLink(
     @Param('id') id: string,
     @Body() createExternalLinkDto: CreateExternalLinkDto,
-    @Request() req: any,
+    @Request() req: any
   ) {
     const externalLink = await this.talentService.addExternalLink(
       id,
       createExternalLinkDto,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: externalLink,
@@ -227,7 +226,7 @@ export class TalentController {
     const talents = await this.talentService.getSimilarTalents(id);
     return ResponseHandler.success({
       data: {
-        talents: talents.map(talent => this.mapToResponseDto(talent)),
+        talents: talents.map((talent) => this.mapToResponseDto(talent)),
         total: talents.length,
       },
       message: 'Similar talents retrieved successfully',

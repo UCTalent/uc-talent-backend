@@ -1,7 +1,9 @@
-import { Entity, Column, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
-import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
+
 import { Job } from '@job/entities/job.entity';
+import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 import { Talent } from '@talent/entities/talent.entity';
+
 import { Role } from './role.entity';
 
 @Entity('skills')

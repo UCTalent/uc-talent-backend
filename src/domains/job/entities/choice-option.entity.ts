@@ -1,4 +1,5 @@
-import { Entity, Column } from 'typeorm';
+import { Column, Entity } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 
 @Entity('choice_options')

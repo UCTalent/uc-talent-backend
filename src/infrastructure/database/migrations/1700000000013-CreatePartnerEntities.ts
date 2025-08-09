@@ -1,10 +1,5 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableIndex,
-  TableForeignKey,
-} from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+import { Table, TableForeignKey, TableIndex } from 'typeorm';
 
 export class CreatePartnerEntities1700000000013 implements MigrationInterface {
   name = 'CreatePartnerEntities1700000000013';
@@ -48,7 +43,7 @@ export class CreatePartnerEntities1700000000013 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create partner_hosts table
@@ -98,7 +93,7 @@ export class CreatePartnerEntities1700000000013 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create partner_host_networks table
@@ -138,7 +133,7 @@ export class CreatePartnerEntities1700000000013 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create indexes for partners
@@ -147,7 +142,7 @@ export class CreatePartnerEntities1700000000013 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_PARTNERS_NAME',
         columnNames: ['name'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -155,7 +150,7 @@ export class CreatePartnerEntities1700000000013 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_PARTNERS_SLUG',
         columnNames: ['slug'],
-      }),
+      })
     );
 
     // Create foreign keys for partner_hosts
@@ -166,7 +161,7 @@ export class CreatePartnerEntities1700000000013 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'partners',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for partner_host_networks
@@ -177,7 +172,7 @@ export class CreatePartnerEntities1700000000013 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'partner_hosts',
         onDelete: 'CASCADE',
-      }),
+      })
     );
   }
 
@@ -188,23 +183,23 @@ export class CreatePartnerEntities1700000000013 implements MigrationInterface {
 
     // Drop foreign keys for partner_host_networks
     const partnerHostNetworksTable = await queryRunner.getTable(
-      'partner_host_networks',
+      'partner_host_networks'
     );
     const partnerHostNetworksForeignKey =
       partnerHostNetworksTable.foreignKeys.find(
-        fk => fk.columnNames.indexOf('partner_host_id') !== -1,
+        (fk) => fk.columnNames.indexOf('partner_host_id') !== -1
       );
     if (partnerHostNetworksForeignKey) {
       await queryRunner.dropForeignKey(
         'partner_host_networks',
-        partnerHostNetworksForeignKey,
+        partnerHostNetworksForeignKey
       );
     }
 
     // Drop foreign keys for partner_hosts
     const partnerHostsTable = await queryRunner.getTable('partner_hosts');
     const partnerHostsForeignKey = partnerHostsTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('partner_id') !== -1,
+      (fk) => fk.columnNames.indexOf('partner_id') !== -1
     );
     if (partnerHostsForeignKey) {
       await queryRunner.dropForeignKey('partner_hosts', partnerHostsForeignKey);

@@ -1,9 +1,9 @@
-import { Document } from '@documents/interface';
-import { AdminUserQueryDto } from '@admin/dtos/admin-user-query.dto';
-import { UpdateUserStatusDto } from '@admin/dtos/update-user-status.dto';
 import { AdminJobQueryDto } from '@admin/dtos/admin-job-query.dto';
-import { UpdateJobStatusDto } from '@admin/dtos/update-job-status.dto';
+import { AdminUserQueryDto } from '@admin/dtos/admin-user-query.dto';
 import { BulkJobActionDto } from '@admin/dtos/bulk-job-action.dto';
+import { UpdateJobStatusDto } from '@admin/dtos/update-job-status.dto';
+import { UpdateUserStatusDto } from '@admin/dtos/update-user-status.dto';
+import type { Document } from '@documents/interface';
 
 const dashboard: Document = {
   operation: { summary: 'Get dashboard statistics' },

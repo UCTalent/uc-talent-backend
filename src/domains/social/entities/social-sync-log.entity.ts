@@ -1,5 +1,7 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
 import { SocialAccount } from './social-account.entity';
 
 export enum SyncStatus {
@@ -37,7 +39,7 @@ export class SocialSyncLog extends BaseEntity {
   socialAccountId: string;
 
   // Relationships
-  @ManyToOne(() => SocialAccount, socialAccount => socialAccount.syncLogs)
+  @ManyToOne(() => SocialAccount, (socialAccount) => socialAccount.syncLogs)
   @JoinColumn({ name: 'social_account_id' })
   socialAccount: SocialAccount;
 }

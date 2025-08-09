@@ -1,17 +1,18 @@
 import {
+  BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
-  BadRequestException,
   UnauthorizedException,
-  ConflictException,
 } from '@nestjs/common';
+
+import type { ApplyJobDto } from '@job/dtos/apply-job.dto';
+import type { CloseJobDto } from '@job/dtos/close-job.dto';
+import type { CreateJobDto } from '@job/dtos/create-job.dto';
+import type { JobIndexQueryDto } from '@job/dtos/job-index-query.dto';
+import type { ReferCandidateDto } from '@job/dtos/refer-candidate.dto';
+import type { UpdateJobDto } from '@job/dtos/update-job.dto';
 import { Job, JobStatus } from '@job/entities/job.entity';
-import { CreateJobDto } from '@job/dtos/create-job.dto';
-import { UpdateJobDto } from '@job/dtos/update-job.dto';
-import { ApplyJobDto } from '@job/dtos/apply-job.dto';
-import { ReferCandidateDto } from '@job/dtos/refer-candidate.dto';
-import { CloseJobDto } from '@job/dtos/close-job.dto';
-import { JobIndexQueryDto } from '@job/dtos/job-index-query.dto';
 import { JobRepository } from '@job/repositories/job.repository';
 import { JobApplyRepository } from '@job/repositories/job-apply.repository';
 import { JobReferralRepository } from '@job/repositories/job-referral.repository';
@@ -23,7 +24,7 @@ export class JobService {
     private readonly jobRepository: JobRepository,
     private readonly jobApplyRepository: JobApplyRepository,
     private readonly jobReferralRepository: JobReferralRepository,
-    private readonly referralLinkRepository: ReferralLinkRepository,
+    private readonly referralLinkRepository: ReferralLinkRepository
   ) {}
 
   async create(createJobDto: CreateJobDto, userId: string): Promise<Job> {
@@ -58,7 +59,7 @@ export class JobService {
   async update(
     id: string,
     updateJobDto: UpdateJobDto,
-    userId: string,
+    userId: string
   ): Promise<Job> {
     const job = await this.findById(id);
 
@@ -98,7 +99,7 @@ export class JobService {
   }
 
   async getJobs(
-    query: JobIndexQueryDto,
+    query: JobIndexQueryDto
   ): Promise<{ jobs: Job[]; pagination: any }> {
     const { page = 1, ...filters } = query;
     const perPage = 10;
@@ -118,7 +119,7 @@ export class JobService {
 
   async getJob(
     id: string,
-    userId?: string,
+    userId?: string
   ): Promise<{ job: Job; job_apply?: any }> {
     const job = await this.jobRepository.findById(id);
 
@@ -148,7 +149,7 @@ export class JobService {
   async applyForJob(
     jobId: string,
     applyJobDto: ApplyJobDto,
-    userId: string,
+    userId: string
   ): Promise<any> {
     // 1. Validate job
     const job = await this.jobRepository.findById(jobId);
@@ -198,7 +199,7 @@ export class JobService {
   async closeJob(
     id: string,
     closeJobDto: CloseJobDto,
-    userId: string,
+    userId: string
   ): Promise<{ message: string }> {
     const job = await this.jobRepository.findById(id);
 
@@ -225,7 +226,7 @@ export class JobService {
 
   async generateReferralLink(
     jobId: string,
-    userId: string,
+    userId: string
   ): Promise<{ link_token: string }> {
     // 1. Find job
     const job = await this.jobRepository.findById(jobId);
@@ -237,7 +238,7 @@ export class JobService {
     // 2. Find or create referral link
     let referralLink = await this.referralLinkRepository.findByJobAndReferrer(
       jobId,
-      userId,
+      userId
     );
 
     if (!referralLink) {
@@ -253,7 +254,7 @@ export class JobService {
   async referCandidate(
     jobId: string,
     referCandidateDto: ReferCandidateDto,
-    userId: string,
+    userId: string
   ): Promise<any> {
     // 1. Validate job
     const job = await this.jobRepository.findById(jobId);

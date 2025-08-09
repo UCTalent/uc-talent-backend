@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { PaymentDistribution } from '@payment/entities/payment-distribution.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class PaymentDistributionRepository
@@ -10,7 +11,7 @@ export class PaymentDistributionRepository
 {
   constructor(
     @InjectRepository(PaymentDistribution)
-    private readonly repository: Repository<PaymentDistribution>,
+    private readonly repository: Repository<PaymentDistribution>
   ) {}
 
   async findById(id: string): Promise<PaymentDistribution | null> {
@@ -27,7 +28,7 @@ export class PaymentDistributionRepository
   }
 
   async create(
-    data: Partial<PaymentDistribution>,
+    data: Partial<PaymentDistribution>
   ): Promise<PaymentDistribution> {
     const payment = this.repository.create(data);
     return this.repository.save(payment);
@@ -35,7 +36,7 @@ export class PaymentDistributionRepository
 
   async update(
     id: string,
-    data: Partial<PaymentDistribution>,
+    data: Partial<PaymentDistribution>
   ): Promise<PaymentDistribution> {
     await this.repository.update(id, data);
     return this.findById(id);
@@ -81,7 +82,7 @@ export class PaymentDistributionRepository
     id: string,
     status: string,
     claimedAt?: Date,
-    transactionHash?: string,
+    transactionHash?: string
   ): Promise<PaymentDistribution> {
     const updateData: any = { status };
     if (claimedAt) {

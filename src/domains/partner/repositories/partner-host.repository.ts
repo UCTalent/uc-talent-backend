@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { PartnerHost } from '@domains/partner/entities/partner-host.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 import * as crypto from 'crypto';
+import { Repository } from 'typeorm';
+
+import { PartnerHost } from '@domains/partner/entities/partner-host.entity';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class PartnerHostRepository implements IBaseRepository<PartnerHost> {
   constructor(
     @InjectRepository(PartnerHost)
-    private readonly repository: Repository<PartnerHost>,
+    private readonly repository: Repository<PartnerHost>
   ) {}
 
   async findById(id: string): Promise<PartnerHost | null> {
@@ -97,7 +98,7 @@ export class PartnerHostRepository implements IBaseRepository<PartnerHost> {
     if (options.search) {
       queryBuilder.where(
         'host.host ILIKE :search OR host.slug ILIKE :search OR partner.name ILIKE :search',
-        { search: `%${options.search}%` },
+        { search: `%${options.search}%` }
       );
     }
 
@@ -116,7 +117,7 @@ export class PartnerHostRepository implements IBaseRepository<PartnerHost> {
     if (options.sortBy) {
       queryBuilder.orderBy(
         `host.${options.sortBy}`,
-        options.sortOrder || 'DESC',
+        options.sortOrder || 'DESC'
       );
     } else {
       queryBuilder.orderBy('host.createdAt', 'DESC');

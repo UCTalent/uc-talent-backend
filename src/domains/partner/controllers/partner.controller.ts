@@ -1,45 +1,46 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Patch,
   Body,
-  Param,
-  Query,
-  UseGuards,
+  Controller,
+  Delete,
+  Get,
   Headers,
   HttpCode,
   HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiQuery,
-  ApiParam,
   ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { PartnerService } from '@domains/partner/services/partner.service';
+
+import { Docs as PartnerDocs } from '@documents/partner/partner.document';
 import { CreatePartnerDto } from '@domains/partner/dtos/create-partner.dto';
-import { UpdatePartnerDto } from '@domains/partner/dtos/update-partner.dto';
 import { CreatePartnerHostDto } from '@domains/partner/dtos/create-partner-host.dto';
-import { UpdatePartnerHostDto } from '@domains/partner/dtos/update-partner-host.dto';
-import {
-  PartnerQueryDto,
-  PartnerHostQueryDto,
-} from '@domains/partner/dtos/partner-query.dto';
 import {
   CreatePartnerNetworkDto,
   UpdatePartnerNetworkDto,
 } from '@domains/partner/dtos/partner-network.dto';
 import {
-  PartnerResponseDto,
+  PartnerHostQueryDto,
+  PartnerQueryDto,
+} from '@domains/partner/dtos/partner-query.dto';
+import {
   PartnerHostResponseDto,
   PartnerNetworkResponseDto,
+  PartnerResponseDto,
 } from '@domains/partner/dtos/partner-response.dto';
-import { Docs as PartnerDocs } from '@documents/partner/partner.document';
+import { UpdatePartnerDto } from '@domains/partner/dtos/update-partner.dto';
+import { UpdatePartnerHostDto } from '@domains/partner/dtos/update-partner-host.dto';
+import { PartnerService } from '@domains/partner/services/partner.service';
 
 @ApiTags('Partners')
 @Controller('partners')
@@ -79,7 +80,7 @@ export class PartnerController {
   @ApiResponse(PartnerDocs.updatePartner.responses.error[0])
   async updatePartner(
     @Param('id') id: string,
-    @Body() updatePartnerDto: UpdatePartnerDto,
+    @Body() updatePartnerDto: UpdatePartnerDto
   ) {
     return this.partnerService.updatePartner(id, updatePartnerDto);
   }
@@ -142,7 +143,7 @@ export class PartnerHostController {
   @ApiResponse(PartnerDocs.updatePartnerHost.responses.error[0])
   async updatePartnerHost(
     @Param('id') id: string,
-    @Body() updatePartnerHostDto: UpdatePartnerHostDto,
+    @Body() updatePartnerHostDto: UpdatePartnerHostDto
   ) {
     // Note: This method would need to be implemented in the service
     // return this.partnerService.updatePartnerHost(id, updatePartnerHostDto);
@@ -177,11 +178,11 @@ export class PartnerHostController {
   @ApiResponse(PartnerDocs.addNetworkToPartnerHost.responses.error[0])
   async addNetworkToPartnerHost(
     @Param('hostId') hostId: string,
-    @Body() createNetworkDto: CreatePartnerNetworkDto,
+    @Body() createNetworkDto: CreatePartnerNetworkDto
   ) {
     return this.partnerService.addNetworkToPartnerHost(
       hostId,
-      createNetworkDto,
+      createNetworkDto
     );
   }
 
@@ -193,12 +194,12 @@ export class PartnerHostController {
   async updatePartnerNetwork(
     @Param('hostId') hostId: string,
     @Param('networkId') networkId: string,
-    @Body() updateNetworkDto: UpdatePartnerNetworkDto,
+    @Body() updateNetworkDto: UpdatePartnerNetworkDto
   ) {
     return this.partnerService.updatePartnerNetwork(
       hostId,
       networkId,
-      updateNetworkDto,
+      updateNetworkDto
     );
   }
 }
@@ -215,7 +216,7 @@ export class PartnerAuthController {
   @HttpCode(HttpStatus.OK)
   async validatePartnerToken(
     @Headers('x-partner-token') token: string,
-    @Headers('x-partner-host') host: string,
+    @Headers('x-partner-host') host: string
   ) {
     return this.partnerService.validatePartnerToken(token, host);
   }

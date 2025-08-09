@@ -1,11 +1,13 @@
 # Authentication Domain
 
 ## Overview
+
 The Authentication domain handles all authentication and authorization operations including traditional email/password login, Firebase authentication, and Web3/Thirdweb authentication.
 
 ## Features
 
 ### 🔐 Traditional Authentication
+
 - Email/password registration and login
 - Password hashing with bcrypt
 - Email confirmation workflow
@@ -13,12 +15,14 @@ The Authentication domain handles all authentication and authorization operation
 - Account locking and unlock
 
 ### 🔥 Firebase Authentication
+
 - Firebase token verification
 - Automatic user creation/linking
 - Support for multiple Firebase providers (Google, Facebook, etc.)
 - Auto-confirmation for Firebase users
 
 ### 🌐 Web3/Thirdweb Authentication
+
 - JWT token verification
 - Support for multiple social providers:
   - Google
@@ -37,7 +41,9 @@ The Authentication domain handles all authentication and authorization operation
 ### Services
 
 #### AuthService
+
 Main authentication service that orchestrates all authentication methods:
+
 - `login()`: Traditional email/password login
 - `register()`: User registration with email confirmation
 - `firebaseAuth()`: Firebase authentication
@@ -47,13 +53,17 @@ Main authentication service that orchestrates all authentication methods:
 - `confirmEmail()`: Email confirmation
 
 #### FirebaseAuthService
+
 Handles Firebase-specific authentication:
+
 - `authenticate()`: Verify Firebase token and create/link user
 - `extractUserData()`: Extract user information from Firebase token
 - `findOrCreateUser()`: Find existing user or create new one
 
 #### Web3AuthService
+
 Handles Web3/Thirdweb-specific authentication:
+
 - `authenticate()`: Verify JWT token and create/link user
 - `extractUserInfo()`: Extract user information from JWT payload
 - `findOrCreateUser()`: Find existing user or create new one
@@ -61,6 +71,7 @@ Handles Web3/Thirdweb-specific authentication:
 ### DTOs
 
 #### LoginDto
+
 ```typescript
 {
   email: string;
@@ -69,6 +80,7 @@ Handles Web3/Thirdweb-specific authentication:
 ```
 
 #### RegisterDto
+
 ```typescript
 {
   name: string;
@@ -80,6 +92,7 @@ Handles Web3/Thirdweb-specific authentication:
 ```
 
 #### FirebaseAuthDto
+
 ```typescript
 {
   firebase_token: string;
@@ -87,6 +100,7 @@ Handles Web3/Thirdweb-specific authentication:
 ```
 
 #### Web3AuthDto
+
 ```typescript
 {
   jwt_token: string;
@@ -96,6 +110,7 @@ Handles Web3/Thirdweb-specific authentication:
 ```
 
 #### ForgotPasswordDto
+
 ```typescript
 {
   email: string;
@@ -103,6 +118,7 @@ Handles Web3/Thirdweb-specific authentication:
 ```
 
 #### ResetPasswordDto
+
 ```typescript
 {
   token: string;
@@ -115,6 +131,7 @@ Handles Web3/Thirdweb-specific authentication:
 ### Traditional Authentication
 
 #### Login
+
 ```
 POST /api/v1/auth/login
 Content-Type: application/json
@@ -139,6 +156,7 @@ Response:
 ```
 
 #### Register
+
 ```
 POST /api/v1/auth/register
 Content-Type: application/json
@@ -166,6 +184,7 @@ Response:
 ### Firebase Authentication
 
 #### Firebase Auth
+
 ```
 POST /api/v1/auth/firebase
 Content-Type: application/json
@@ -194,6 +213,7 @@ Response:
 ### Web3/Thirdweb Authentication
 
 #### Web3 Auth
+
 ```
 POST /api/v1/auth/web3
 Content-Type: application/json
@@ -218,6 +238,7 @@ Response:
 ### Password Management
 
 #### Forgot Password
+
 ```
 POST /api/v1/auth/forgot-password
 Content-Type: application/json
@@ -233,6 +254,7 @@ Response:
 ```
 
 #### Reset Password
+
 ```
 PUT /api/v1/auth/reset-password
 Content-Type: application/json
@@ -249,6 +271,7 @@ Response:
 ```
 
 #### Confirm Email
+
 ```
 GET /api/v1/auth/confirm-email?confirmation_token=token
 
@@ -263,13 +286,16 @@ Response:
 The User entity includes all necessary fields for authentication:
 
 ### Firebase Fields
+
 - `firebaseUid`: Firebase user ID
 - `firebaseProvider`: Firebase authentication provider
 
 ### Web3 Fields
+
 - `thirdwebMetadata`: JSONB field for Thirdweb user metadata
 
 ### Traditional Fields
+
 - `email`: User email address
 - `encryptedPassword`: Hashed password
 - `confirmationToken`: Email confirmation token
@@ -278,6 +304,7 @@ The User entity includes all necessary fields for authentication:
 - `resetPasswordSentAt`: Password reset sent timestamp
 
 ### Security Fields
+
 - `lockedAt`: Account lock timestamp
 - `failedAttempts`: Failed login attempts count
 - `unlockToken`: Account unlock token
@@ -285,18 +312,21 @@ The User entity includes all necessary fields for authentication:
 ## Implementation Notes
 
 ### Firebase Authentication
+
 - Uses Firebase Admin SDK for token verification
 - Automatically creates users for new Firebase accounts
 - Links existing users by email or Firebase UID
 - Auto-confirms Firebase users (no email confirmation required)
 
 ### Web3/Thirdweb Authentication
+
 - Supports multiple social providers with automatic email generation
 - Handles wallet authentication
 - Stores provider metadata in `thirdwebMetadata` field
 - Auto-confirms certain providers (Google, Discord with email)
 
 ### Security Features
+
 - Password hashing with bcrypt (12 rounds)
 - Account locking after failed attempts
 - Email confirmation workflow
@@ -306,6 +336,7 @@ The User entity includes all necessary fields for authentication:
 ## Environment Variables
 
 Required environment variables:
+
 ```bash
 # JWT Configuration
 JWT_SECRET=your-super-secret-jwt-key
@@ -333,10 +364,12 @@ UC_GATEWAY_API_KEY=your_gateway_api_key
 ## Testing
 
 ### Mock Tokens for Testing
+
 - Firebase: Use `"valid_firebase_token"` for successful authentication
 - Web3: Use `"valid_jwt_token"` for successful authentication
 
 ### Test Scenarios
+
 1. Traditional email/password login
 2. User registration with email confirmation
 3. Firebase authentication with new user
@@ -348,6 +381,7 @@ UC_GATEWAY_API_KEY=your_gateway_api_key
 ## Migration from Rails
 
 This implementation follows the same patterns as the Rails migration guide:
+
 - Firebase token verification and user management
 - JWT decoding and user extraction
 - Automatic user creation/linking
@@ -355,6 +389,7 @@ This implementation follows the same patterns as the Rails migration guide:
 - Metadata storage for Web3 users
 
 The main differences are:
+
 - Uses NestJS instead of Rails
 - Uses TypeORM instead of ActiveRecord
 - Uses JWT instead of Doorkeeper OAuth

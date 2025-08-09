@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { Partner } from '@domains/partner/entities/partner.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class PartnerRepository implements IBaseRepository<Partner> {
   constructor(
     @InjectRepository(Partner)
-    private readonly repository: Repository<Partner>,
+    private readonly repository: Repository<Partner>
   ) {}
 
   async findById(id: string): Promise<Partner | null> {
@@ -84,7 +85,7 @@ export class PartnerRepository implements IBaseRepository<Partner> {
     if (options.search) {
       queryBuilder.where(
         'partner.name ILIKE :search OR partner.description ILIKE :search',
-        { search: `%${options.search}%` },
+        { search: `%${options.search}%` }
       );
     }
 
@@ -97,7 +98,7 @@ export class PartnerRepository implements IBaseRepository<Partner> {
     if (options.sortBy) {
       queryBuilder.orderBy(
         `partner.${options.sortBy}`,
-        options.sortOrder || 'DESC',
+        options.sortOrder || 'DESC'
       );
     } else {
       queryBuilder.orderBy('partner.createdAt', 'DESC');

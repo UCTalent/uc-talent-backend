@@ -10,7 +10,15 @@ Document này mô tả các entities và database schema cần thiết cho Payme
 
 ```typescript
 // payment-distribution.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { User } from '@/modules/user/entities/user.entity';
 import { Job } from '@/modules/job/entities/job.entity';
@@ -55,11 +63,13 @@ export class PaymentDistribution extends BaseEntity {
   jobId: string;
 
   // Relationships
-  @ManyToOne(() => Job, job => job.paymentDistributions)
+  @ManyToOne(() => Job, (job) => job.paymentDistributions)
   @JoinColumn({ name: 'job_id' })
   job: Job;
 
-  @ManyToOne(() => User, user => user.paymentDistributions, { nullable: true })
+  @ManyToOne(() => User, (user) => user.paymentDistributions, {
+    nullable: true,
+  })
   @JoinColumn({ name: 'recipient_id' })
   recipient: User;
 }
@@ -69,7 +79,15 @@ export class PaymentDistribution extends BaseEntity {
 
 ```typescript
 // wallet-address.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { User } from '@/modules/user/entities/user.entity';
 
@@ -86,7 +104,7 @@ export class WalletAddress extends BaseEntity {
   ownerId: string;
 
   // Relationships
-  @ManyToOne(() => User, user => user.walletAddresses)
+  @ManyToOne(() => User, (user) => user.walletAddresses)
   @JoinColumn({ name: 'owner_id' })
   owner: User;
 }
@@ -96,7 +114,15 @@ export class WalletAddress extends BaseEntity {
 
 ```typescript
 // web3-event.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { Job } from '@/modules/job/entities/job.entity';
 
@@ -113,7 +139,7 @@ export class Web3Event extends BaseEntity {
   jobId: string;
 
   // Relationships
-  @ManyToOne(() => Job, job => job.web3Events)
+  @ManyToOne(() => Job, (job) => job.web3Events)
   @JoinColumn({ name: 'job_id' })
   job: Job;
 }
@@ -125,15 +151,29 @@ export class Web3Event extends BaseEntity {
 
 ```typescript
 // 1700000000009-CreatePaymentDistributions.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
-export class CreatePaymentDistributions1700000000009 implements MigrationInterface {
+export class CreatePaymentDistributions1700000000009
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
         name: 'payment_distributions',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'amount_cents', type: 'bigint', default: 0 },
           { name: 'amount_currency', type: 'varchar', default: "'USDT'" },
           { name: 'claimed_at', type: 'timestamp', isNullable: true },
@@ -146,11 +186,19 @@ export class CreatePaymentDistributions1700000000009 implements MigrationInterfa
           { name: 'status', type: 'varchar', default: "'pending'" },
           { name: 'transaction_hash', type: 'varchar', isNullable: true },
           { name: 'job_id', type: 'uuid' },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createForeignKey(
@@ -160,7 +208,7 @@ export class CreatePaymentDistributions1700000000009 implements MigrationInterfa
         referencedColumnNames: ['id'],
         referencedTableName: 'jobs',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -170,7 +218,7 @@ export class CreatePaymentDistributions1700000000009 implements MigrationInterfa
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -178,14 +226,14 @@ export class CreatePaymentDistributions1700000000009 implements MigrationInterfa
       new TableIndex({
         name: 'IDX_PAYMENT_DISTRIBUTIONS_JOB_ID',
         columnNames: ['job_id'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'payment_distributions',
       new TableIndex({
         name: 'IDX_PAYMENT_DISTRIBUTIONS_STATUS',
         columnNames: ['status'],
-      }),
+      })
     );
   }
 
@@ -199,7 +247,13 @@ export class CreatePaymentDistributions1700000000009 implements MigrationInterfa
 
 ```typescript
 // 1700000000010-CreateWalletAddresses.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateWalletAddresses1700000000010 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -207,15 +261,29 @@ export class CreateWalletAddresses1700000000010 implements MigrationInterface {
       new Table({
         name: 'wallet_addresses',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'address', type: 'varchar' },
           { name: 'chain_name', type: 'varchar' },
           { name: 'owner_id', type: 'uuid' },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createForeignKey(
@@ -225,7 +293,7 @@ export class CreateWalletAddresses1700000000010 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -233,7 +301,7 @@ export class CreateWalletAddresses1700000000010 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_WALLET_ADDRESSES_OWNER_ID',
         columnNames: ['owner_id'],
-      }),
+      })
     );
   }
 
@@ -247,7 +315,13 @@ export class CreateWalletAddresses1700000000010 implements MigrationInterface {
 
 ```typescript
 // 1700000000011-CreateWeb3Events.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateWeb3Events1700000000011 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -255,15 +329,29 @@ export class CreateWeb3Events1700000000011 implements MigrationInterface {
       new Table({
         name: 'web3_events',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'event_type', type: 'varchar' },
           { name: 'data', type: 'jsonb' },
           { name: 'job_id', type: 'uuid' },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createForeignKey(
@@ -273,7 +361,7 @@ export class CreateWeb3Events1700000000011 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'jobs',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -281,7 +369,7 @@ export class CreateWeb3Events1700000000011 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_WEB3_EVENTS_JOB_ID',
         columnNames: ['job_id'],
-      }),
+      })
     );
   }
 
@@ -307,25 +395,28 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class PaymentDistributionRepository extends BaseRepository<PaymentDistribution> {
   constructor(
     @InjectRepository(PaymentDistribution)
-    private readonly paymentDistributionRepository: Repository<PaymentDistribution>,
+    private readonly paymentDistributionRepository: Repository<PaymentDistribution>
   ) {
     super(paymentDistributionRepository);
   }
 
-  async findClaimableByUser(jobId: string, userId: string): Promise<PaymentDistribution[]> {
+  async findClaimableByUser(
+    jobId: string,
+    userId: string
+  ): Promise<PaymentDistribution[]> {
     return this.paymentDistributionRepository.find({
       where: {
         jobId,
         recipientId: userId,
         status: 'pending',
-        role: Not('platform_fee')
-      }
+        role: Not('platform_fee'),
+      },
     });
   }
 
   async findByJob(jobId: string): Promise<PaymentDistribution[]> {
     return this.paymentDistributionRepository.find({
-      where: { jobId }
+      where: { jobId },
     });
   }
 }
@@ -345,14 +436,14 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class WalletAddressRepository extends BaseRepository<WalletAddress> {
   constructor(
     @InjectRepository(WalletAddress)
-    private readonly walletAddressRepository: Repository<WalletAddress>,
+    private readonly walletAddressRepository: Repository<WalletAddress>
   ) {
     super(walletAddressRepository);
   }
 
   async findByOwner(ownerId: string): Promise<WalletAddress[]> {
     return this.walletAddressRepository.find({
-      where: { ownerId }
+      where: { ownerId },
     });
   }
 }
@@ -372,14 +463,14 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class Web3EventRepository extends BaseRepository<Web3Event> {
   constructor(
     @InjectRepository(Web3Event)
-    private readonly web3EventRepository: Repository<Web3Event>,
+    private readonly web3EventRepository: Repository<Web3Event>
   ) {
     super(web3EventRepository);
   }
 
   async findByJob(jobId: string): Promise<Web3Event[]> {
     return this.web3EventRepository.find({
-      where: { jobId }
+      where: { jobId },
     });
   }
 }

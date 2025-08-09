@@ -1,46 +1,46 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
   Body,
-  Param,
-  Query,
-  UseGuards,
+  Controller,
+  Delete,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
-  ApiTags,
+  ApiBearerAuth,
   ApiOperation,
-  ApiResponse,
   ApiParam,
   ApiQuery,
-  ApiBearerAuth,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { SocialAccountService } from '@domains/social/services/social-account.service';
-import { SocialAuthService } from '@domains/social/services/social-auth.service';
+
+import { Docs as SocialDocs } from '@documents/social/social.document';
 import { LinkSocialAccountDto } from '@domains/social/dtos/link-social-account.dto';
 import { SocialAuthDto } from '@domains/social/dtos/social-auth.dto';
-import { SocialSettingsDto } from '@domains/social/dtos/social-settings.dto';
-import { SocialSearchDto } from '@domains/social/dtos/social-search.dto';
 import {
   SocialAccountResponseDto,
-  SocialSettingsResponseDto,
   SocialProfileResponseDto,
+  SocialSettingsResponseDto,
   SyncResultResponseDto,
 } from '@domains/social/dtos/social-response.dto';
-import { JwtAuthGuard } from '@shared/cross-cutting/authorization';
-import { CurrentUser } from '@shared/cross-cutting/authorization';
-import { Docs as SocialDocs } from '@documents/social/social.document';
+import { SocialSearchDto } from '@domains/social/dtos/social-search.dto';
+import { SocialSettingsDto } from '@domains/social/dtos/social-settings.dto';
+import { SocialAccountService } from '@domains/social/services/social-account.service';
+import { SocialAuthService } from '@domains/social/services/social-auth.service';
+import { CurrentUser, JwtAuthGuard } from '@shared/cross-cutting/authorization';
 
 @ApiTags('Social Accounts')
 @Controller('social-accounts')
 export class SocialAccountController {
   constructor(
     private readonly socialAccountService: SocialAccountService,
-    private readonly socialAuthService: SocialAuthService,
+    private readonly socialAuthService: SocialAuthService
   ) {}
 
   @Get()
@@ -60,7 +60,7 @@ export class SocialAccountController {
   @ApiResponse(SocialDocs.linkSocialAccount.responses.error[0])
   async linkSocialAccount(
     @CurrentUser() user: any,
-    @Body() linkDto: LinkSocialAccountDto,
+    @Body() linkDto: LinkSocialAccountDto
   ) {
     return this.socialAccountService.linkSocialAccount(user.id, linkDto);
   }
@@ -132,7 +132,7 @@ export class SocialAccountController {
   @ApiResponse(SocialDocs.updateSocialSettings.responses.success[0])
   async updateSocialSettings(
     @CurrentUser() user: any,
-    @Body() settingsDto: SocialSettingsDto,
+    @Body() settingsDto: SocialSettingsDto
   ) {
     return this.socialAccountService.updateSocialSettings(user.id, settingsDto);
   }
@@ -185,7 +185,7 @@ export class SocialAuthController {
   @ApiResponse(SocialDocs.authenticateWithSocial.responses.error[0])
   async authenticateWithSocial(
     @Param('provider') provider: string,
-    @Body() authDto: SocialAuthDto,
+    @Body() authDto: SocialAuthDto
   ) {
     return this.socialAuthService.authenticateWithSocial(provider, authDto);
   }

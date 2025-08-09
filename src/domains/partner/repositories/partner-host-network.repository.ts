@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {
-  PartnerHostNetwork,
-  NetworkType,
-} from '@domains/partner/entities/partner-host-network.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+
+import type { NetworkType } from '@domains/partner/entities/partner-host-network.entity';
+import { PartnerHostNetwork } from '@domains/partner/entities/partner-host-network.entity';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class PartnerHostNetworkRepository
@@ -13,7 +12,7 @@ export class PartnerHostNetworkRepository
 {
   constructor(
     @InjectRepository(PartnerHostNetwork)
-    private readonly repository: Repository<PartnerHostNetwork>,
+    private readonly repository: Repository<PartnerHostNetwork>
   ) {}
 
   async findById(id: string): Promise<PartnerHostNetwork | null> {
@@ -36,7 +35,7 @@ export class PartnerHostNetworkRepository
 
   async update(
     id: string,
-    data: Partial<PartnerHostNetwork>,
+    data: Partial<PartnerHostNetwork>
   ): Promise<PartnerHostNetwork> {
     await this.repository.update(id, data);
     return this.findById(id);
@@ -55,7 +54,7 @@ export class PartnerHostNetworkRepository
   }
 
   async findByPartnerHostId(
-    partnerHostId: string,
+    partnerHostId: string
   ): Promise<PartnerHostNetwork[]> {
     return this.repository.find({
       where: { partnerHostId },
@@ -64,7 +63,7 @@ export class PartnerHostNetworkRepository
   }
 
   async findByPartnerHost(
-    partnerHostId: string,
+    partnerHostId: string
   ): Promise<PartnerHostNetwork[]> {
     return this.repository.find({
       where: { partnerHostId },
@@ -74,7 +73,7 @@ export class PartnerHostNetworkRepository
 
   async findByNetwork(
     partnerHostId: string,
-    network: NetworkType,
+    network: NetworkType
   ): Promise<PartnerHostNetwork | null> {
     return this.repository.findOne({
       where: { partnerHostId, network },
@@ -82,7 +81,7 @@ export class PartnerHostNetworkRepository
   }
 
   async findDefaultNetwork(
-    partnerHostId: string,
+    partnerHostId: string
   ): Promise<PartnerHostNetwork | null> {
     return this.repository.findOne({
       where: { partnerHostId, default: true },
@@ -91,7 +90,7 @@ export class PartnerHostNetworkRepository
 
   async setDefaultNetwork(
     partnerHostId: string,
-    networkId: string,
+    networkId: string
   ): Promise<void> {
     // First, unset all default networks for this partner host
     await this.repository.update({ partnerHostId }, { default: false });
@@ -107,7 +106,7 @@ export class PartnerHostNetworkRepository
       .addSelect('COUNT(*)', 'count')
       .addSelect(
         'COUNT(CASE WHEN network.default = true THEN 1 END)',
-        'defaultCount',
+        'defaultCount'
       )
       .groupBy('network.network')
       .getRawMany();

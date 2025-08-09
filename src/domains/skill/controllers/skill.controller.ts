@@ -1,13 +1,12 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { SkillService } from '@skill/services/skill.service';
-import { Skill } from '@skill/entities/skill.entity';
-import {
-  SkillResponseDto,
-  SkillListResponseDto,
-} from '@skill/dtos/skill-response.dto';
-import { ResponseHandler } from '@shared/utils/response-handler';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+
 import { Docs } from '@documents/skill/skill.document';
+import { ResponseHandler } from '@shared/utils/response-handler';
+import type { SkillResponseDto } from '@skill/dtos/skill-response.dto';
+import { SkillListResponseDto } from '@skill/dtos/skill-response.dto';
+import type { Skill } from '@skill/entities/skill.entity';
+import { SkillService } from '@skill/services/skill.service';
 
 @ApiTags('skills')
 @Controller('skills')
@@ -21,7 +20,7 @@ export class SkillController {
     const skills = await this.skillService.findAll();
     return ResponseHandler.success({
       data: {
-        skills: skills.map(skill => this.mapToResponseDto(skill)),
+        skills: skills.map((skill) => this.mapToResponseDto(skill)),
         total: skills.length,
         page: 1,
         limit: skills.length,
@@ -57,7 +56,7 @@ export class SkillController {
     const skills = await this.skillService.findByRoleId(roleId);
     return ResponseHandler.success({
       data: {
-        skills: skills.map(skill => this.mapToResponseDto(skill)),
+        skills: skills.map((skill) => this.mapToResponseDto(skill)),
         total: skills.length,
         page: 1,
         limit: skills.length,

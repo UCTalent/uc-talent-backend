@@ -3,6 +3,7 @@
 ## ✅ Đã hoàn thành
 
 ### 1. Sử dụng alias imports cho toàn bộ source code
+
 - ✅ Job domain: `@job/*`
 - ✅ User domain: `@user/*`
 - ✅ Talent domain: `@talent/*`
@@ -15,6 +16,7 @@
 - ✅ Notification domain: `@notification/*`
 
 ### 2. Implement đầy đủ repository pattern
+
 - ✅ JobRepository: `src/domains/job/repositories/job.repository.ts`
 - ✅ UserRepository: `src/domains/user/repositories/user.repository.ts`
 - ✅ TalentRepository: `src/domains/talent/repositories/talent.repository.ts`
@@ -33,6 +35,7 @@
 - ✅ NoteRepository: `src/domains/notification/repositories/note.repository.ts`
 
 ### 3. Tạo response DTOs để tránh return entity trực tiếp
+
 - ✅ JobResponseDto: `src/domains/job/dtos/job-response.dto.ts`
 - ✅ UserResponseDto: `src/domains/user/dtos/user-response.dto.ts`
 - ✅ TalentResponseDto: `src/domains/talent/dtos/talent-response.dto.ts`
@@ -43,6 +46,7 @@
 - ✅ SocialResponseDto: `src/domains/social/dtos/social-response.dto.ts`
 
 ### 4. Cập nhật controllers để sử dụng response DTOs
+
 - ✅ JobController: Sử dụng `JobResponseDto` và `JobListResponseDto`
 - ✅ UserController: Sử dụng `UserResponseDto` và `UserListResponseDto`
 - ✅ TalentController: Sử dụng `TalentResponseDto` và `TalentListResponseDto`
@@ -55,6 +59,7 @@
 - ✅ SocialAccountController: Sử dụng `SocialAccountResponseDto`
 
 ### 5. Cập nhật services để sử dụng repository pattern
+
 - ✅ JobService: Inject `JobRepository` thay vì `Repository<Job>`
 - ✅ UserService: Đã có sẵn `UserRepository`
 - ✅ TalentService: Inject `TalentRepository` thay vì `Repository<Talent>`
@@ -123,4 +128,4 @@ Tất cả yêu cầu refactoring đã được hoàn thành thành công:
 3. ✅ **Response DTOs** - Type safety và API consistency
 4. ✅ **Clean Architecture** - Controller -> Service -> Repository -> Entity
 
-Codebase hiện tại đã tuân thủ đầy đủ các nguyên tắc clean code và DDD architecture! 
+Codebase hiện tại đã tuân thủ đầy đủ các nguyên tắc clean code và DDD architecture!

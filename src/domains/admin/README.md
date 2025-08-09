@@ -1,14 +1,17 @@
 # Admin Domain
 
 ## Overview
+
 The Admin domain handles all administrative operations including user management, job moderation, system settings, and audit logging.
 
 ## Architecture Changes
 
 ### Repository Pattern Implementation
+
 The admin domain has been refactored to follow proper DDD (Domain-Driven Design) principles by using custom repository classes instead of directly injecting TypeORM repositories.
 
 #### Before (Anti-pattern):
+
 ```typescript
 @Injectable()
 export class AdminService {
@@ -16,20 +19,21 @@ export class AdminService {
     @InjectRepository(Admin)
     private adminRepository: Repository<Admin>,
     @InjectRepository(AuditLog)
-    private auditLogRepository: Repository<AuditLog>,
+    private auditLogRepository: Repository<AuditLog>
     // ... other direct TypeORM repositories
   ) {}
 }
 ```
 
 #### After (Proper DDD):
+
 ```typescript
 @Injectable()
 export class AdminService {
   constructor(
     private adminRepo: AdminRepository,
     private auditLogRepo: AuditLogRepository,
-    private systemSettingRepo: SystemSettingRepository,
+    private systemSettingRepo: SystemSettingRepository
   ) {}
 }
 ```
@@ -45,6 +49,7 @@ export class AdminService {
 ### Custom Repository Methods
 
 #### AdminRepository
+
 - `findById(id: string)`: Find admin by ID with permissions
 - `findAll()`: Get all admins with permissions
 - `findByEmail(email: string)`: Find admin by email
@@ -56,6 +61,7 @@ export class AdminService {
 - `findRecentAdmins(limit: number)`: Get recent admins
 
 #### AuditLogRepository
+
 - `findById(id: string)`: Find audit log by ID
 - `findAll()`: Get all audit logs
 - `findByAdmin(adminId: string, options)`: Find logs by admin
@@ -64,6 +70,7 @@ export class AdminService {
 - `log(data)`: Create new audit log entry
 
 #### SystemSettingRepository
+
 - `findAll()`: Get all system settings
 - `setValue(key: string, value: any)`: Set system setting value
 - Standard CRUD operations
@@ -74,7 +81,8 @@ The `AdminService` now uses only custom repository methods:
 
 ```typescript
 // Before: Direct query builder usage
-const queryBuilder = this.adminRepository.createQueryBuilder('user')
+const queryBuilder = this.adminRepository
+  .createQueryBuilder('user')
   .leftJoinAndSelect('user.talent', 'talent');
 
 // After: Using custom repository method
@@ -85,7 +93,7 @@ const { data: users, total } = await this.adminRepo.findWithFilters({
   sortBy,
   sortOrder,
   skip,
-  take: limit
+  take: limit,
 });
 ```
 
@@ -122,4 +130,4 @@ The `JobRepository` has been extended with admin-specific methods:
 2. Implement caching strategies in custom repositories
 3. Consider implementing repository interfaces for better testability
 4. Add real-time dashboard updates
-5. Implement job analytics and reporting features 
+5. Implement job analytics and reporting features

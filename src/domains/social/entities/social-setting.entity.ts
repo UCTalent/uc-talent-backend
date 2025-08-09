@@ -1,6 +1,7 @@
-import { Entity, Column, OneToOne, JoinColumn } from 'typeorm';
-import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+
 import { User } from '@domains/user/entities/user.entity';
+import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 
 @Entity('social_settings')
 export class SocialSetting extends BaseEntity {

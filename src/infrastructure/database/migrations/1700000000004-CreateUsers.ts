@@ -1,10 +1,5 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableIndex,
-  TableForeignKey,
-} from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+import { Table, TableForeignKey, TableIndex } from 'typeorm';
 
 export class CreateUsers1700000000004 implements MigrationInterface {
   name = 'CreateUsers1700000000004';
@@ -181,7 +176,7 @@ export class CreateUsers1700000000004 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createForeignKey(
@@ -191,7 +186,7 @@ export class CreateUsers1700000000004 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'cities',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -199,7 +194,7 @@ export class CreateUsers1700000000004 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_USERS_EMAIL',
         columnNames: ['email'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -207,7 +202,7 @@ export class CreateUsers1700000000004 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_USERS_FIREBASE_UID',
         columnNames: ['firebase_uid'],
-      }),
+      })
     );
   }
 
@@ -217,13 +212,13 @@ export class CreateUsers1700000000004 implements MigrationInterface {
 
     const table = await queryRunner.getTable('users');
     const foreignKey = table.foreignKeys.find(
-      fk => fk.columnNames.indexOf('location_city_id') !== -1,
+      (fk) => fk.columnNames.indexOf('location_city_id') !== -1
     );
     if (foreignKey) {
       await queryRunner.dropForeignKey('users', foreignKey);
     }
 
     await queryRunner.dropTable('users');
-    await queryRunner.query(`DROP TYPE "public"."user_status_enum"`);
+    await queryRunner.query('DROP TYPE "public"."user_status_enum"');
   }
 }

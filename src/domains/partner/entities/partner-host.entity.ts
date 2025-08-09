@@ -1,15 +1,17 @@
 import {
-  Entity,
   Column,
+  Entity,
+  Index,
+  JoinColumn,
   ManyToOne,
   OneToMany,
-  JoinColumn,
-  Index,
 } from 'typeorm';
+
+import { Job } from '@domains/job/entities/job.entity';
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
 import { Partner } from './partner.entity';
 import { PartnerHostNetwork } from './partner-host-network.entity';
-import { Job } from '@domains/job/entities/job.entity';
 
 @Entity('partner_hosts')
 export class PartnerHost extends BaseEntity {
@@ -33,14 +35,14 @@ export class PartnerHost extends BaseEntity {
   partnerId: string;
 
   // Relationships
-  @ManyToOne(() => Partner, partner => partner.partnerHosts)
+  @ManyToOne(() => Partner, (partner) => partner.partnerHosts)
   @JoinColumn({ name: 'partner_id' })
   partner: Partner;
 
-  @OneToMany(() => PartnerHostNetwork, network => network.partnerHost)
+  @OneToMany(() => PartnerHostNetwork, (network) => network.partnerHost)
   networks: PartnerHostNetwork[];
 
-  @OneToMany(() => Job, job => job.partnerHost)
+  @OneToMany(() => Job, (job) => job.partnerHost)
   jobs: Job[];
 
   // Virtual fields for computed properties

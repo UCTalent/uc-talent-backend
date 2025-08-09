@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module';
-import { EnvService } from './shared/infrastructure/env';
 import * as dotenv from 'dotenv';
+
+import { EnvService } from './shared/infrastructure/env';
+import { AppModule } from './app.module';
 
 dotenv.config();
 

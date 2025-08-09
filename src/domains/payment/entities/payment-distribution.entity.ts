@@ -1,7 +1,8 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+
+import { Job } from '@job/entities/job.entity';
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 import { User } from '@user/entities/user.entity';
-import { Job } from '@job/entities/job.entity';
 
 export enum PaymentStatus {
   PENDING = 'pending',
@@ -49,11 +50,13 @@ export class PaymentDistribution extends BaseEntity {
   jobId: string;
 
   // Relationships
-  @ManyToOne(() => Job, job => job.paymentDistributions)
+  @ManyToOne(() => Job, (job) => job.paymentDistributions)
   @JoinColumn({ name: 'job_id' })
   job: Job;
 
-  @ManyToOne(() => User, user => user.paymentDistributions, { nullable: true })
+  @ManyToOne(() => User, (user) => user.paymentDistributions, {
+    nullable: true,
+  })
   @JoinColumn({ name: 'recipient_id' })
   recipient: User;
 }

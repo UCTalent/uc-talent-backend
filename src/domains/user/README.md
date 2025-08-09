@@ -1,6 +1,7 @@
 # User Domain
 
 ## Overview
+
 The User domain handles user management, authentication, and profile operations. It has been refactored to follow proper DDD (Domain-Driven Design) principles by using custom repository classes instead of directly injecting TypeORM repositories.
 
 ## Architecture Changes
@@ -8,24 +9,24 @@ The User domain handles user management, authentication, and profile operations.
 ### Repository Pattern Implementation
 
 #### Before (Anti-pattern):
+
 ```typescript
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly userRepo: UserRepository,
+    private readonly userRepo: UserRepository
   ) {}
 }
 ```
 
 #### After (Proper DDD):
+
 ```typescript
 @Injectable()
 export class UserService {
-  constructor(
-    private readonly userRepo: UserRepository,
-  ) {}
+  constructor(private readonly userRepo: UserRepository) {}
 }
 ```
 
@@ -40,6 +41,7 @@ export class UserService {
 ### Custom Repository Methods
 
 #### UserRepository
+
 - `findById(id: string)`: Find user by ID
 - `findAll()`: Get all users
 - `create(data: Partial<User>)`: Create new user
@@ -83,6 +85,7 @@ return this.userRepo.create(data);
 The user domain uses value objects for better domain modeling:
 
 #### Email Value Object
+
 ```typescript
 export class Email {
   constructor(private readonly value: string) {
@@ -92,6 +95,7 @@ export class Email {
 ```
 
 #### Password Value Object
+
 ```typescript
 export class Password {
   constructor(private readonly value: string) {
@@ -113,29 +117,33 @@ The user service provides comprehensive authentication features:
 ### Usage Examples
 
 #### Create User
+
 ```typescript
 const user = await userService.create({
   email: 'user@example.com',
   password: 'securepassword',
   firstName: 'John',
-  lastName: 'Doe'
+  lastName: 'Doe',
 });
 ```
 
 #### Update User
+
 ```typescript
 const updatedUser = await userService.update(userId, {
   firstName: 'Jane',
-  lastName: 'Smith'
+  lastName: 'Smith',
 });
 ```
 
 #### Password Verification
+
 ```typescript
 const isValid = await userService.verifyPassword(user, 'password');
 ```
 
 #### Account Confirmation
+
 ```typescript
 await userService.confirmUser(userId);
 ```

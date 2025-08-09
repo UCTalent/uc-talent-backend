@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID, IsObject, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsObject, IsUUID, ValidateNested } from 'class-validator';
 
 export class ClaimPaymentDataDto {
   @ApiProperty({

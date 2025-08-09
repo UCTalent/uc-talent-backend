@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
+
 import { ValidationPipe } from './validation.interceptor';
 
 @Module({

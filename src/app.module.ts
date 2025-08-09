@@ -1,39 +1,37 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 // import { TypeOrmModule } from '@nestjs/typeorm';
 // import { GraphQLModule } from '@nestjs/graphql';
 // import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { BullModule } from '@nestjs/bull';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 
-// Domain modules
-import { UserModule } from '@user/user.module';
-import { TalentModule } from '@talent/talent.module';
-import { JobModule } from '@job/job.module';
-import { OrganizationModule } from '@organization/organization.module';
-import { LocationModule } from '@location/location.module';
-import { SkillModule } from '@skill/skill.module';
-import { PaymentModule } from '@payment/payment.module';
+import { HttpExceptionModule } from '@/shared/cross-cutting/exception/exception.module';
 import { AdminModule } from '@admin/admin.module';
-import { SocialModule } from '@social/social.module';
-import { PartnerModule } from '@partner/partner.module';
-import { NotificationModule } from '@notification/notification.module';
 import { AuthModule } from '@auth/auth.module';
-
-// Infrastructure modules
-import { DatabaseModule } from '@infrastructure/database/database.module';
 import { AuthenticationModule } from '@infrastructure/authentication/authentication.module';
 import { BackgroundJobsModule } from '@infrastructure/background-jobs/background-jobs.module';
+// Infrastructure modules
+import { DatabaseModule } from '@infrastructure/database/database.module';
 import { EmailModule } from '@infrastructure/email/email.module';
-
+import { JobModule } from '@job/job.module';
+import { LocationModule } from '@location/location.module';
+import { NotificationModule } from '@notification/notification.module';
+import { OrganizationModule } from '@organization/organization.module';
+import { PartnerModule } from '@partner/partner.module';
+import { PaymentModule } from '@payment/payment.module';
+import { AuthorizationModule } from '@shared/cross-cutting/authorization';
+import { CachingModule } from '@shared/cross-cutting/caching/caching.module';
+import { LoggingModule } from '@shared/cross-cutting/logging/logging.module';
+import { TransformerModule } from '@shared/cross-cutting/transformer/transformer.module';
+import { ValidationModule } from '@shared/cross-cutting/validation/validation.module';
 // Shared cross-cutting modules
 import { EnvModule } from '@shared/infrastructure/env/env.module';
-import { ValidationModule } from '@shared/cross-cutting/validation/validation.module';
-import { AuthorizationModule } from '@shared/cross-cutting/authorization';
-import { LoggingModule } from '@shared/cross-cutting/logging/logging.module';
-import { CachingModule } from '@shared/cross-cutting/caching/caching.module';
-import { HttpExceptionModule } from '@/shared/cross-cutting/exception/exception.module';
-import { TransformerModule } from '@shared/cross-cutting/transformer/transformer.module';
+import { SkillModule } from '@skill/skill.module';
+import { SocialModule } from '@social/social.module';
+import { TalentModule } from '@talent/talent.module';
+// Domain modules
+import { UserModule } from '@user/user.module';
 
 import { env } from './shared/infrastructure/env';
 

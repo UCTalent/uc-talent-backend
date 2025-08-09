@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { In, Repository } from 'typeorm';
+
 import { Job, JobStatus } from '@job/entities/job.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class JobRepository implements IBaseRepository<Job> {
   constructor(
     @InjectRepository(Job)
-    private readonly repository: Repository<Job>,
+    private readonly repository: Repository<Job>
   ) {}
 
   async findById(id: string): Promise<Job | null> {
@@ -119,7 +120,7 @@ export class JobRepository implements IBaseRepository<Job> {
     if (options.sortBy) {
       queryBuilder.orderBy(
         `job.${options.sortBy}`,
-        options.sortOrder || 'DESC',
+        options.sortOrder || 'DESC'
       );
     } else {
       queryBuilder.orderBy('job.createdAt', 'DESC');
@@ -147,7 +148,7 @@ export class JobRepository implements IBaseRepository<Job> {
   async bulkUpdateStatus(ids: string[], status: JobStatus): Promise<void> {
     await this.repository.update(
       { id: In(ids) },
-      { status, updatedAt: new Date() },
+      { status, updatedAt: new Date() }
     );
   }
 
@@ -202,7 +203,7 @@ export class JobRepository implements IBaseRepository<Job> {
     if (filters.query) {
       queryBuilder.andWhere(
         '(job.title ILIKE :query OR job.about ILIKE :query OR organization.name ILIKE :query)',
-        { query: `%${filters.query}%` },
+        { query: `%${filters.query}%` }
       );
     }
 
@@ -254,7 +255,7 @@ export class JobRepository implements IBaseRepository<Job> {
         {
           minSalary: filters.salary_range.min * 100,
           maxSalary: filters.salary_range.max * 100,
-        },
+        }
       );
     }
 
@@ -300,7 +301,7 @@ export class JobRepository implements IBaseRepository<Job> {
   }
 
   async generateJobNumber(): Promise<number> {
-    return await this.repository.manager.transaction(async manager => {
+    return this.repository.manager.transaction(async (manager) => {
       const lastJob = await manager
         .createQueryBuilder(this.repository.target, 'job')
         .setLock('pessimistic_write')

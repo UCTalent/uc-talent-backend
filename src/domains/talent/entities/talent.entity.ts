@@ -1,24 +1,26 @@
-import {
-  Entity,
-  Column,
-  Index,
-  OneToMany,
-  ManyToMany,
-  JoinTable,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
-import { User } from '@user/entities/user.entity';
-import { Experience } from './experience.entity';
-import { Education } from './education.entity';
-import { ExternalLink } from './external-link.entity';
-import { UploadedResume } from './uploaded-resume.entity';
-import { RecommendationJob } from './recommendation-job.entity';
-import { Speciality } from '@skill/entities/speciality.entity';
-import { Skill } from '@skill/entities/skill.entity';
 import { Role } from '@skill/entities/role.entity';
+import { Skill } from '@skill/entities/skill.entity';
+import { Speciality } from '@skill/entities/speciality.entity';
+import { User } from '@user/entities/user.entity';
+
+import { Education } from './education.entity';
+import { Experience } from './experience.entity';
+import { ExternalLink } from './external-link.entity';
+import { RecommendationJob } from './recommendation-job.entity';
+import { UploadedResume } from './uploaded-resume.entity';
 
 export enum EmploymentStatus {
   AVAILABLE_NOW = 'available_now',
@@ -126,23 +128,23 @@ export class Talent extends BaseEntity {
   headline: string;
 
   // Relationships
-  @ManyToOne(() => User, user => user.talents)
+  @ManyToOne(() => User, (user) => user.talents)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToMany(() => Experience, experience => experience.talent)
+  @OneToMany(() => Experience, (experience) => experience.talent)
   experiences: Experience[];
 
-  @OneToMany(() => Education, education => education.talent)
+  @OneToMany(() => Education, (education) => education.talent)
   educations: Education[];
 
-  @OneToMany(() => ExternalLink, link => link.talent)
+  @OneToMany(() => ExternalLink, (link) => link.talent)
   externalLinks: ExternalLink[];
 
-  @OneToMany(() => UploadedResume, resume => resume.talent)
+  @OneToMany(() => UploadedResume, (resume) => resume.talent)
   uploadedResumes: UploadedResume[];
 
-  @OneToMany(() => RecommendationJob, recommendation => recommendation.talent)
+  @OneToMany(() => RecommendationJob, (recommendation) => recommendation.talent)
   recommendationJobs: RecommendationJob[];
 
   @ManyToMany(() => Speciality)

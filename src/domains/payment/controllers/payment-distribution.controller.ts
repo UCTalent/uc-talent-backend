@@ -1,34 +1,34 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  Put,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
   ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { PaymentService } from '@payment/services/payment.service';
-import { PaymentDistribution } from '@payment/entities/payment-distribution.entity';
-import {
-  PaymentDistributionResponseDto,
-  PaymentDistributionListResponseDto,
-} from '@payment/dtos/payment-response.dto';
-import { ClaimPaymentDto } from '@payment/dtos/claim-payment.dto';
-import { UpdateBlockchainStatusDto } from '@payment/dtos/update-blockchain-status.dto';
-import { JwtAuthGuard } from '@shared/cross-cutting/authorization';
-import { CurrentUser } from '@shared/cross-cutting/authorization';
+
 import { Docs } from '@documents/payment/payment.document';
+import { ClaimPaymentDto } from '@payment/dtos/claim-payment.dto';
+import type {
+  PaymentDistributionListResponseDto,
+  PaymentDistributionResponseDto,
+} from '@payment/dtos/payment-response.dto';
+import { UpdateBlockchainStatusDto } from '@payment/dtos/update-blockchain-status.dto';
+import type { PaymentDistribution } from '@payment/entities/payment-distribution.entity';
+import { PaymentService } from '@payment/services/payment.service';
+import { CurrentUser, JwtAuthGuard } from '@shared/cross-cutting/authorization';
 import { User } from '@user/entities/user.entity';
 
 @ApiTags('payment-distributions')
@@ -42,7 +42,7 @@ export class PaymentDistributionController {
   @ApiResponse(Docs.getPaymentDistributionById.responses.success[0])
   @ApiResponse(Docs.getPaymentDistributionById.responses.error[0])
   async findById(
-    @Param('id') id: string,
+    @Param('id') id: string
   ): Promise<PaymentDistributionResponseDto> {
     const paymentDistribution =
       await this.paymentService.findPaymentDistributionById(id);
@@ -54,15 +54,15 @@ export class PaymentDistributionController {
   @ApiParam(Docs.getByRecipient.param)
   @ApiResponse(Docs.getByRecipient.responses.success[0])
   async findByRecipient(
-    @Param('recipientId') recipientId: string,
+    @Param('recipientId') recipientId: string
   ): Promise<PaymentDistributionListResponseDto> {
     const paymentDistributions =
       await this.paymentService.findPaymentDistributionsByRecipient(
-        recipientId,
+        recipientId
       );
     return {
-      paymentDistributions: paymentDistributions.map(pd =>
-        this.mapToResponseDto(pd),
+      paymentDistributions: paymentDistributions.map((pd) =>
+        this.mapToResponseDto(pd)
       ),
       total: paymentDistributions.length,
       page: 1,
@@ -77,7 +77,7 @@ export class PaymentDistributionController {
   @ApiResponse(Docs.claimPaymentById.responses.success[0])
   @ApiResponse(Docs.claimPaymentById.responses.error[0])
   async claimPaymentById(
-    @Param('id') id: string,
+    @Param('id') id: string
   ): Promise<PaymentDistributionResponseDto> {
     const paymentDistribution = await this.paymentService.claimPaymentById(id);
     return this.mapToResponseDto(paymentDistribution);
@@ -90,7 +90,7 @@ export class PaymentDistributionController {
   @ApiResponse(Docs.markAsPaid.responses.success[0])
   @ApiResponse(Docs.markAsPaid.responses.error[0])
   async markAsPaid(
-    @Param('id') id: string,
+    @Param('id') id: string
   ): Promise<PaymentDistributionResponseDto> {
     const paymentDistribution = await this.paymentService.markAsPaid(id);
     return this.mapToResponseDto(paymentDistribution);
@@ -105,7 +105,7 @@ export class PaymentDistributionController {
   @ApiResponse(Docs.claimPayment.responses.error[0])
   async claimPayment(
     @Body() claimDto: ClaimPaymentDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: User
   ) {
     return this.paymentService.claimPayment(claimDto, user.id);
   }
@@ -120,7 +120,7 @@ export class PaymentDistributionController {
   }
 
   private mapToResponseDto(
-    paymentDistribution: PaymentDistribution,
+    paymentDistribution: PaymentDistribution
   ): PaymentDistributionResponseDto {
     return {
       id: paymentDistribution.id,

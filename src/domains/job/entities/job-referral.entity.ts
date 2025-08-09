@@ -1,7 +1,9 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
-import { Job } from './job.entity';
 import { User } from '@user/entities/user.entity';
+
+import { Job } from './job.entity';
 
 export enum JobReferralStatus {
   PENDING = 'pending',
@@ -45,7 +47,7 @@ export class JobReferral extends BaseEntity {
   personalSign: string;
 
   // Relationships
-  @ManyToOne(() => Job, job => job.jobReferrals)
+  @ManyToOne(() => Job, (job) => job.jobReferrals)
   @JoinColumn({ name: 'job_id' })
   job: Job;
 

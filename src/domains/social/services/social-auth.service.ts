@@ -1,11 +1,13 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { SocialAccountService } from './social-account.service';
-import { OAuthService } from './oauth.service';
-import { SocialAuthDto } from '@domains/social/dtos/social-auth.dto';
+
+import type { SocialAuthDto } from '@domains/social/dtos/social-auth.dto';
 import { SocialProvider } from '@domains/social/entities/social-account.entity';
-import { User } from '@domains/user/entities/user.entity';
+import type { User } from '@domains/user/entities/user.entity';
 import { UserRepository } from '@domains/user/repositories/user.repository';
+
+import { OAuthService } from './oauth.service';
+import { SocialAccountService } from './social-account.service';
 
 @Injectable()
 export class SocialAuthService {
@@ -13,7 +15,7 @@ export class SocialAuthService {
     private readonly socialAccountService: SocialAccountService,
     private readonly oauthService: OAuthService,
     private readonly jwtService: JwtService,
-    private readonly userRepo: UserRepository,
+    private readonly userRepo: UserRepository
   ) {}
 
   async authenticateWithSocial(provider: string, authDto: SocialAuthDto) {
@@ -21,13 +23,13 @@ export class SocialAuthService {
     const tokenData = await this.oauthService.exchangeCodeForToken(
       provider,
       authDto.code,
-      authDto.redirectUri,
+      authDto.redirectUri
     );
 
     // Fetch user profile from provider
     const profileData = await this.oauthService.fetchProfileData(
       provider,
-      tokenData.accessToken,
+      tokenData.accessToken
     );
 
     // Find or create user
@@ -73,12 +75,12 @@ export class SocialAuthService {
 
   private async findUserBySocialAccount(
     provider: string,
-    uid: string,
+    uid: string
   ): Promise<User | null> {
     const socialAccount =
       await this.socialAccountService.findSocialAccountByProviderAndUid(
         provider,
-        uid,
+        uid
       );
 
     if (socialAccount) {

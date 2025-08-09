@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { WalletAddress } from '@payment/entities/wallet-address.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class WalletAddressRepository implements IBaseRepository<WalletAddress> {
   constructor(
     @InjectRepository(WalletAddress)
-    private readonly repository: Repository<WalletAddress>,
+    private readonly repository: Repository<WalletAddress>
   ) {}
 
   async findById(id: string): Promise<WalletAddress | null> {
@@ -31,7 +32,7 @@ export class WalletAddressRepository implements IBaseRepository<WalletAddress> {
 
   async update(
     id: string,
-    data: Partial<WalletAddress>,
+    data: Partial<WalletAddress>
   ): Promise<WalletAddress> {
     await this.repository.update(id, data);
     return this.findById(id);

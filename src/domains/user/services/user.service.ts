@@ -1,11 +1,12 @@
 import {
-  Injectable,
   ConflictException,
+  Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from '@user/entities/user.entity';
-import { CreateUserDto } from '@user/dtos/create-user.dto';
-import { UpdateUserDto } from '@user/dtos/update-user.dto';
+
+import type { CreateUserDto } from '@user/dtos/create-user.dto';
+import type { UpdateUserDto } from '@user/dtos/update-user.dto';
+import type { User } from '@user/entities/user.entity';
 import { UserRepository } from '@user/repositories/user.repository';
 import { Email } from '@user/value-objects/email.value-object';
 import { Password } from '@user/value-objects/password.value-object';

@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  JobReferral,
-  JobReferralStatus,
-} from '../../../domains/job/entities/job-referral.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import { Repository } from 'typeorm';
+
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+
+import type { JobReferralStatus } from '../../../domains/job/entities/job-referral.entity';
+import { JobReferral } from '../../../domains/job/entities/job-referral.entity';
 
 @Injectable()
 export class JobReferralRepository implements IBaseRepository<JobReferral> {
   constructor(
     @InjectRepository(JobReferral)
-    private readonly repository: Repository<JobReferral>,
+    private readonly repository: Repository<JobReferral>
   ) {}
 
   async findById(id: string): Promise<JobReferral | null> {

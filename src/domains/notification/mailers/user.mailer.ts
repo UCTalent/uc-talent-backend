@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { MailerService } from '@infrastructure/email/services/mailer.service';
+
 import { env } from '@/shared/infrastructure/env';
+import { MailerService } from '@infrastructure/email/services/mailer.service';
 
 @Injectable()
 export class UserMailer {
@@ -44,7 +45,7 @@ export class UserMailer {
 
   async sendEmailConfirmation(
     to: string,
-    confirmationToken: string,
+    confirmationToken: string
   ): Promise<void> {
     const subject = 'Confirm Your Email Address';
     const confirmUrl = `${env.FRONTEND_URL}/confirm-email?token=${confirmationToken}`;

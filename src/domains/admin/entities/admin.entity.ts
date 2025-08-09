@@ -1,8 +1,10 @@
-import { Entity, Column, Index, OneToMany } from 'typeorm';
+import { Column, Entity, Index, OneToMany } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
-import { AuditLog } from './audit-log.entity';
-import { AdminSession } from './admin-session.entity';
+
 import { AdminPermission } from './admin-permission.entity';
+import { AdminSession } from './admin-session.entity';
+import { AuditLog } from './audit-log.entity';
 
 @Entity('admins')
 export class Admin extends BaseEntity {
@@ -35,12 +37,12 @@ export class Admin extends BaseEntity {
   lockedUntil: Date;
 
   // Relationships
-  @OneToMany(() => AuditLog, auditLog => auditLog.admin)
+  @OneToMany(() => AuditLog, (auditLog) => auditLog.admin)
   auditLogs: AuditLog[];
 
-  @OneToMany(() => AdminSession, session => session.admin)
+  @OneToMany(() => AdminSession, (session) => session.admin)
   sessions: AdminSession[];
 
-  @OneToMany(() => AdminPermission, permission => permission.admins)
+  @OneToMany(() => AdminPermission, (permission) => permission.admins)
   permissions: AdminPermission[];
 }

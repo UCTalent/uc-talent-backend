@@ -1,13 +1,14 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+
+import type { User } from '@user/entities/user.entity';
 import { UserService } from '@user/services/user.service';
-import { User } from '@user/entities/user.entity';
 
 @Injectable()
 export class AuthenticationService {
   constructor(
     private readonly userService: UserService,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -37,7 +38,7 @@ export class AuthenticationService {
 
   async createUserFromFirebase(
     firebaseUid: string,
-    userData: any,
+    userData: any
   ): Promise<User> {
     return this.userService.create({
       email: userData.email,

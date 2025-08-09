@@ -1,33 +1,32 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
   Body,
-  Param,
+  Controller,
+  Delete,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
   Patch,
+  Post,
+  Put,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
   ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { UserService } from '@user/services/user.service';
-import { CreateUserDto } from '@user/dtos/create-user.dto';
-import { UpdateUserDto } from '@user/dtos/update-user.dto';
-import {
-  UserResponseDto,
-  UserListResponseDto,
-} from '@user/dtos/user-response.dto';
-import { User } from '@user/entities/user.entity';
+
+import { Docs } from '@documents/user/user.document';
 import { Public } from '@shared/cross-cutting/authorization/decorators/public.decorator';
 import { ResponseHandler } from '@shared/utils/response-handler';
-import { Docs } from '@documents/user/user.document';
+import { CreateUserDto } from '@user/dtos/create-user.dto';
+import { UpdateUserDto } from '@user/dtos/update-user.dto';
+import type { UserResponseDto } from '@user/dtos/user-response.dto';
+import { UserListResponseDto } from '@user/dtos/user-response.dto';
+import type { User } from '@user/entities/user.entity';
+import { UserService } from '@user/services/user.service';
 
 @ApiTags('users')
 @Controller('users')
@@ -58,7 +57,7 @@ export class UserController {
     const users = await this.userService.findAll();
     return ResponseHandler.success({
       data: {
-        users: users.map(user => this.mapToResponseDto(user)),
+        users: users.map((user) => this.mapToResponseDto(user)),
         total: users.length,
         page: 1,
         limit: users.length,

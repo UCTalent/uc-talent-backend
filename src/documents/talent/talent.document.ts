@@ -1,14 +1,14 @@
-import { Document } from '@documents/interface';
-import { CreateTalentDto } from '@talent/dtos/create-talent.dto';
-import { UpdateTalentDto } from '@talent/dtos/update-talent.dto';
-import { TalentIndexQueryDto } from '@talent/dtos/talent-index-query.dto';
-import { CreateExperienceDto } from '@talent/dtos/create-experience.dto';
+import type { Document } from '@documents/interface';
 import { CreateEducationDto } from '@talent/dtos/create-education.dto';
+import { CreateExperienceDto } from '@talent/dtos/create-experience.dto';
 import { CreateExternalLinkDto } from '@talent/dtos/create-external-link.dto';
+import { CreateTalentDto } from '@talent/dtos/create-talent.dto';
+import { TalentIndexQueryDto } from '@talent/dtos/talent-index-query.dto';
 import {
-  TalentResponseDto,
   TalentListResponseDto,
+  TalentResponseDto,
 } from '@talent/dtos/talent-response.dto';
+import { UpdateTalentDto } from '@talent/dtos/update-talent.dto';
 
 const createTalent: Document = {
   operation: { summary: 'Create a new talent' },

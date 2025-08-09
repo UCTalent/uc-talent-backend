@@ -1,33 +1,34 @@
 import {
+  Body,
   Controller,
   Get,
-  Post,
-  Patch,
-  Body,
-  Query,
   Param,
+  Patch,
+  Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiQuery,
-  ApiParam,
   ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { AdminService } from '@admin/services/admin.service';
-import { AdminUserQueryDto } from '@admin/dtos/admin-user-query.dto';
-import { UpdateUserStatusDto } from '@admin/dtos/update-user-status.dto';
+
 import { AdminJobQueryDto } from '@admin/dtos/admin-job-query.dto';
-import { UpdateJobStatusDto } from '@admin/dtos/update-job-status.dto';
+import { AdminUserQueryDto } from '@admin/dtos/admin-user-query.dto';
 import { BulkJobActionDto } from '@admin/dtos/bulk-job-action.dto';
+import { UpdateJobStatusDto } from '@admin/dtos/update-job-status.dto';
+import { UpdateUserStatusDto } from '@admin/dtos/update-user-status.dto';
+import { AdminService } from '@admin/services/admin.service';
+import { Docs } from '@documents/admin/admin.document';
 import {
   AdminGuard,
   AdminUser,
   CurrentAdmin,
 } from '@shared/cross-cutting/authorization';
-import { Docs } from '@documents/admin/admin.document';
 
 @ApiTags('admin')
 @Controller('api/admin')
@@ -49,7 +50,7 @@ export class AdminController {
   @ApiResponse(Docs.getUsers.responses.success[0])
   async getUsers(
     @Query() query: AdminUserQueryDto,
-    @CurrentAdmin() admin: AdminUser,
+    @CurrentAdmin() admin: AdminUser
   ) {
     return this.adminService.getUsers(query);
   }
@@ -63,7 +64,7 @@ export class AdminController {
   async updateUserStatus(
     @Param('id') id: string,
     @Body() body: UpdateUserStatusDto,
-    @CurrentAdmin() admin: AdminUser,
+    @CurrentAdmin() admin: AdminUser
   ) {
     return this.adminService.updateUserStatus(id, body);
   }
@@ -75,7 +76,7 @@ export class AdminController {
   @ApiResponse(Docs.getJobs.responses.success[0])
   async getJobs(
     @Query() query: AdminJobQueryDto,
-    @CurrentAdmin() admin: AdminUser,
+    @CurrentAdmin() admin: AdminUser
   ) {
     return this.adminService.getJobs(query);
   }
@@ -89,7 +90,7 @@ export class AdminController {
   async updateJobStatus(
     @Param('id') id: string,
     @Body() body: UpdateJobStatusDto,
-    @CurrentAdmin() admin: AdminUser,
+    @CurrentAdmin() admin: AdminUser
   ) {
     return this.adminService.updateJobStatus(id, body);
   }
@@ -101,7 +102,7 @@ export class AdminController {
   @ApiResponse(Docs.bulkJobActions.responses.success[0])
   async bulkJobActions(
     @Body() body: BulkJobActionDto,
-    @CurrentAdmin() admin: AdminUser,
+    @CurrentAdmin() admin: AdminUser
   ) {
     return this.adminService.executeBulkJobAction(body);
   }
@@ -136,7 +137,7 @@ export class AdminController {
   async reviewTalent(
     @Param('id') id: string,
     @Body() body: any,
-    @CurrentAdmin() admin: AdminUser,
+    @CurrentAdmin() admin: AdminUser
   ) {
     // TODO: Implement talent review
     return {
@@ -156,7 +157,7 @@ export class AdminController {
   @ApiResponse(Docs.getPaymentDistributions.responses.success[0])
   async getPaymentDistributions(
     @Query() query: any,
-    @CurrentAdmin() admin: AdminUser,
+    @CurrentAdmin() admin: AdminUser
   ) {
     // TODO: Implement payment management
     return {
@@ -182,7 +183,7 @@ export class AdminController {
   async approvePayment(
     @Param('id') id: string,
     @Body() body: any,
-    @CurrentAdmin() admin: AdminUser,
+    @CurrentAdmin() admin: AdminUser
   ) {
     // TODO: Implement payment approval
     return {
@@ -210,7 +211,7 @@ export class AdminController {
   @ApiResponse(Docs.updateSystemSettings.responses.success[0])
   async updateSystemSettings(
     @Body() settings: Record<string, any>,
-    @CurrentAdmin() admin: AdminUser,
+    @CurrentAdmin() admin: AdminUser
   ) {
     return this.adminService.updateSystemSettings(settings);
   }

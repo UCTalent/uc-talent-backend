@@ -1,4 +1,4 @@
-import { Document } from '@documents/interface';
+import type { Document } from '@documents/interface';
 import {
   SkillListResponseDto,
   SkillResponseDto,

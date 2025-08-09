@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Note } from '@notification/entities/note.entity';
+
+import type { Note } from '@notification/entities/note.entity';
 import { NoteRepository } from '@notification/repositories/note.repository';
 import { EmailService } from '@notification/services/email.service';
 
@@ -7,7 +8,7 @@ import { EmailService } from '@notification/services/email.service';
 export class NotificationService {
   constructor(
     private readonly noteRepository: NoteRepository,
-    private readonly emailService: EmailService,
+    private readonly emailService: EmailService
   ) {}
 
   async createNote(data: Partial<Note>): Promise<Note> {
@@ -29,7 +30,7 @@ export class NotificationService {
   async sendNotification(
     userId: string,
     title: string,
-    content: string,
+    content: string
   ): Promise<Note> {
     return this.createNote({
       userId,
@@ -41,7 +42,7 @@ export class NotificationService {
   async sendEmailNotification(
     to: string,
     subject: string,
-    html: string,
+    html: string
   ): Promise<void> {
     await this.emailService.sendEmail(to, subject, html);
   }

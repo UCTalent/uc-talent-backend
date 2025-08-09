@@ -1,4 +1,5 @@
-import { IsOptional, IsString, IsEnum, IsNumber } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+
 import {
   EmploymentStatus,
   EnglishProficiency,

@@ -1,5 +1,5 @@
-import { IsString, IsOptional, IsDateString, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateEducationDto {
   @ApiProperty({ description: 'Degree name' })

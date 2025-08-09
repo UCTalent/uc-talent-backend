@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsString,
+  IsDateString,
   IsIn,
   IsNotEmpty,
-  IsOptional,
-  IsDateString,
   IsObject,
+  IsOptional,
+  IsString,
 } from 'class-validator';
 
 export class LinkSocialAccountDto {

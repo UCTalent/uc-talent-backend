@@ -1,21 +1,21 @@
-import { Document } from '@documents/interface';
+import type { Document } from '@documents/interface';
 import { CreatePartnerDto } from '@domains/partner/dtos/create-partner.dto';
-import { UpdatePartnerDto } from '@domains/partner/dtos/update-partner.dto';
-import {
-  PartnerQueryDto,
-  PartnerHostQueryDto,
-} from '@domains/partner/dtos/partner-query.dto';
 import { CreatePartnerHostDto } from '@domains/partner/dtos/create-partner-host.dto';
-import { UpdatePartnerHostDto } from '@domains/partner/dtos/update-partner-host.dto';
 import {
   CreatePartnerNetworkDto,
   UpdatePartnerNetworkDto,
 } from '@domains/partner/dtos/partner-network.dto';
 import {
-  PartnerResponseDto,
+  PartnerHostQueryDto,
+  PartnerQueryDto,
+} from '@domains/partner/dtos/partner-query.dto';
+import {
   PartnerHostResponseDto,
   PartnerNetworkResponseDto,
+  PartnerResponseDto,
 } from '@domains/partner/dtos/partner-response.dto';
+import { UpdatePartnerDto } from '@domains/partner/dtos/update-partner.dto';
+import { UpdatePartnerHostDto } from '@domains/partner/dtos/update-partner-host.dto';
 
 // Partners
 const getPartners: Document = {

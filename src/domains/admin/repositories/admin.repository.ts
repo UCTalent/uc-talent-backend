@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
+
 import { Admin } from '@admin/entities/admin.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class AdminRepository implements IBaseRepository<Admin> {
   constructor(
     @InjectRepository(Admin)
-    private readonly repository: Repository<Admin>,
+    private readonly repository: Repository<Admin>
   ) {}
 
   async findById(id: string): Promise<Admin | null> {
@@ -85,7 +86,7 @@ export class AdminRepository implements IBaseRepository<Admin> {
     if (options.search) {
       queryBuilder.where(
         'admin.email ILIKE :search OR admin.firstName ILIKE :search OR admin.lastName ILIKE :search',
-        { search: `%${options.search}%` },
+        { search: `%${options.search}%` }
       );
     }
 
@@ -102,7 +103,7 @@ export class AdminRepository implements IBaseRepository<Admin> {
     if (options.sortBy) {
       queryBuilder.orderBy(
         `admin.${options.sortBy}`,
-        options.sortOrder || 'DESC',
+        options.sortOrder || 'DESC'
       );
     } else {
       queryBuilder.orderBy('admin.createdAt', 'DESC');

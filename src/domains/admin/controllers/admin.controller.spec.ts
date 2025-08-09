@@ -1,11 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AdminController } from './admin.controller';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+
+import type { AdminJobQueryDto } from '../dtos/admin-job-query.dto';
+import type { AdminUserQueryDto } from '../dtos/admin-user-query.dto';
+import type { BulkJobActionDto } from '../dtos/bulk-job-action.dto';
+import type { UpdateJobStatusDto } from '../dtos/update-job-status.dto';
+import type { UpdateUserStatusDto } from '../dtos/update-user-status.dto';
 import { AdminService } from '../services/admin.service';
-import { AdminUserQueryDto } from '../dtos/admin-user-query.dto';
-import { UpdateUserStatusDto } from '../dtos/update-user-status.dto';
-import { AdminJobQueryDto } from '../dtos/admin-job-query.dto';
-import { UpdateJobStatusDto } from '../dtos/update-job-status.dto';
-import { BulkJobActionDto } from '../dtos/bulk-job-action.dto';
+
+import { AdminController } from './admin.controller';
 
 describe('AdminController', () => {
   let controller: AdminController;

@@ -1,20 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { SpecialityService } from '@skill/services/speciality.service';
-import { Speciality } from '@skill/entities/speciality.entity';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+
 import { Docs } from '@documents/skill/speciality.document';
-import {
-  SpecialityResponseDto,
+import type {
   SpecialityListResponseDto,
+  SpecialityResponseDto,
 } from '@skill/dtos/skill-response.dto';
+import type { Speciality } from '@skill/entities/speciality.entity';
+import { SpecialityService } from '@skill/services/speciality.service';
 
 @ApiTags('specialities')
 @Controller('specialities')
@@ -27,8 +28,8 @@ export class SpecialityController {
   async findAll(): Promise<SpecialityListResponseDto> {
     const specialities = await this.specialityService.findAll();
     return {
-      specialities: specialities.map(speciality =>
-        this.mapToResponseDto(speciality),
+      specialities: specialities.map((speciality) =>
+        this.mapToResponseDto(speciality)
       ),
       total: specialities.length,
       page: 1,
@@ -42,7 +43,7 @@ export class SpecialityController {
   @ApiResponse(Docs.getSpecialityById.responses.success[0])
   @ApiResponse(Docs.getSpecialityById.responses.error[0])
   async findById(
-    @Param('id') id: string,
+    @Param('id') id: string
   ): Promise<SpecialityResponseDto | null> {
     const speciality = await this.specialityService.findById(id);
     return speciality ? this.mapToResponseDto(speciality) : null;

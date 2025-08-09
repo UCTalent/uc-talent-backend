@@ -1,10 +1,11 @@
 import {
+  IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
-  IsEnum,
-  IsNumber,
 } from 'class-validator';
+
 import {
   EmploymentStatus,
   EnglishProficiency,

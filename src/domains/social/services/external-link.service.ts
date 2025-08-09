@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ExternalLink } from '../entities/external-link.entity';
+
+import type { ExternalLink } from '../entities/external-link.entity';
 import { ExternalLinkRepository } from '../repositories/external-link.repository';
 
 @Injectable()
@@ -26,7 +27,7 @@ export class ExternalLinkService {
 
   async updateExternalLink(
     id: string,
-    data: Partial<ExternalLink>,
+    data: Partial<ExternalLink>
   ): Promise<ExternalLink> {
     return this.externalLinkRepo.update(id, data);
   }

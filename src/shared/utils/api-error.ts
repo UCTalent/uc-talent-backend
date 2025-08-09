@@ -4,14 +4,14 @@ export class APIError extends HttpException {
   constructor(
     message: string,
     statusCode: number = HttpStatus.INTERNAL_SERVER_ERROR,
-    name?: string,
+    name?: string
   ) {
     super(
       {
         statusCode,
         message,
       },
-      statusCode,
+      statusCode
     );
 
     this.name = name;

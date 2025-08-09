@@ -1,31 +1,32 @@
 import {
-  Controller,
-  Post,
   Body,
-  Put,
+  Controller,
   Get,
-  Query,
   HttpCode,
   HttpStatus,
+  Post,
+  Put,
+  Query,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
   ApiBody,
+  ApiOperation,
   ApiQuery,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { AuthService } from '@domains/auth/services/auth.service';
+
+import { Docs } from '@documents/auth/auth.document';
+import { FirebaseAuthDto } from '@domains/auth/dtos/firebase-auth.dto';
+import { ForgotPasswordDto } from '@domains/auth/dtos/forgot-password.dto';
 import { LoginDto } from '@domains/auth/dtos/login.dto';
 import { RegisterDto } from '@domains/auth/dtos/register.dto';
-import { FirebaseAuthDto } from '@domains/auth/dtos/firebase-auth.dto';
-import { Web3AuthDto } from '@domains/auth/dtos/web3-auth.dto';
-import { ForgotPasswordDto } from '@domains/auth/dtos/forgot-password.dto';
 import { ResetPasswordDto } from '@domains/auth/dtos/reset-password.dto';
+import { Web3AuthDto } from '@domains/auth/dtos/web3-auth.dto';
+import { AuthService } from '@domains/auth/services/auth.service';
 import { ClientIP } from '@shared/cross-cutting/authorization/decorators/current-user.decorator';
 import { Public } from '@shared/cross-cutting/authorization/decorators/public.decorator';
 import { ResponseHandler } from '@shared/utils/response-handler';
-import { Docs } from '@documents/auth/auth.document';
 
 @ApiTags('auth')
 @Controller('auth')

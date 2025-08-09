@@ -1,21 +1,24 @@
 import {
-  Injectable,
-  UnauthorizedException,
   BadRequestException,
   ConflictException,
+  Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+
+import { EmailService } from '@infrastructure/email/services/email.service';
 import { UserService } from '@user/services/user.service';
+
+import type { FirebaseAuthDto } from '../dtos/firebase-auth.dto';
+import type { ForgotPasswordDto } from '../dtos/forgot-password.dto';
+import type { LoginDto } from '../dtos/login.dto';
+import type { RegisterDto } from '../dtos/register.dto';
+import type { ResetPasswordDto } from '../dtos/reset-password.dto';
+import type { Web3AuthDto } from '../dtos/web3-auth.dto';
+
 import { FirebaseAuthService } from './firebase-auth.service';
 import { Web3AuthService } from './web3-auth.service';
-import { EmailService } from '@infrastructure/email/services/email.service';
-import { LoginDto } from '../dtos/login.dto';
-import { RegisterDto } from '../dtos/register.dto';
-import { FirebaseAuthDto } from '../dtos/firebase-auth.dto';
-import { Web3AuthDto } from '../dtos/web3-auth.dto';
-import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
-import { ResetPasswordDto } from '../dtos/reset-password.dto';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +27,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly firebaseAuthService: FirebaseAuthService,
     private readonly web3AuthService: Web3AuthService,
-    private readonly emailService: EmailService,
+    private readonly emailService: EmailService
   ) {}
 
   async login(loginDto: LoginDto, clientIP: string) {
@@ -37,7 +40,7 @@ export class AuthService {
     // 2. Verify password
     const isPasswordValid = await this.verifyPassword(
       loginDto.password,
-      user.encryptedPassword,
+      user.encryptedPassword
     );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid email or password');
@@ -51,7 +54,7 @@ export class AuthService {
     // 4. Check if user is locked
     if (user.lockedAt) {
       throw new UnauthorizedException(
-        'Account is locked. Please contact support.',
+        'Account is locked. Please contact support.'
       );
     }
 
@@ -135,14 +138,14 @@ export class AuthService {
       // Check if user is confirmed
       if (!user.confirmedAt) {
         throw new BadRequestException(
-          'Please confirm your email first before requesting password reset',
+          'Please confirm your email first before requesting password reset'
         );
       }
 
       // Check if user is locked
       if (user.lockedAt) {
         throw new BadRequestException(
-          'Account is locked. Please contact support.',
+          'Account is locked. Please contact support.'
         );
       }
 
@@ -154,7 +157,7 @@ export class AuthService {
       await this.emailService.sendPasswordResetEmail(
         user.email,
         user.name,
-        resetToken,
+        resetToken
       );
     }
 
@@ -167,7 +170,7 @@ export class AuthService {
 
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
     const user = await this.userService.findByResetPasswordToken(
-      resetPasswordDto.token,
+      resetPasswordDto.token
     );
     if (!user) {
       throw new BadRequestException('Invalid or expired reset password token');
@@ -182,7 +185,7 @@ export class AuthService {
         // Clear expired token
         await this.userService.clearResetToken(user.id);
         throw new BadRequestException(
-          'Reset password token has expired. Please request a new one.',
+          'Reset password token has expired. Please request a new one.'
         );
       }
     }
@@ -190,14 +193,14 @@ export class AuthService {
     // Check if user is locked
     if (user.lockedAt) {
       throw new BadRequestException(
-        'Account is locked. Please contact support.',
+        'Account is locked. Please contact support.'
       );
     }
 
     // Validate password strength
     if (resetPasswordDto.password.length < 8) {
       throw new BadRequestException(
-        'Password must be at least 8 characters long',
+        'Password must be at least 8 characters long'
       );
     }
 
@@ -253,7 +256,7 @@ export class AuthService {
 
   private async verifyPassword(
     password: string,
-    hash: string,
+    hash: string
   ): Promise<boolean> {
     return bcrypt.compare(password, hash);
   }
