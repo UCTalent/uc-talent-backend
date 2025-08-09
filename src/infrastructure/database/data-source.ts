@@ -1,34 +1,30 @@
 import { DataSource } from 'typeorm';
-import { ConfigService } from '@nestjs/config';
-import * as dotenv from 'dotenv';
-
-// Load environment variables from .env file
-dotenv.config();
+import { env, EnvService } from '@/shared/infrastructure/env';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.DATABASE_HOST || 'localhost',
-  port: parseInt(process.env.DATABASE_PORT) || 5432,
-  username: process.env.DATABASE_USERNAME || 'postgres',
-  password: process.env.DATABASE_PASSWORD || 'password',
-  database: process.env.DATABASE_NAME || 'uc_talent',
+  host: env.DATABASE_HOST,
+  port: env.DATABASE_PORT,
+  username: env.DATABASE_USERNAME,
+  password: env.DATABASE_PASSWORD,
+  database: env.DATABASE_NAME,
   synchronize: false,
-  logging: process.env.NODE_ENV === 'development',
+  logging: env.NODE_ENV !== 'production',
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['dist/infrastructure/database/migrations/*{.ts,.js}'],
   subscribers: ['dist/**/*.subscriber{.ts,.js}'],
 });
 
-export const createDataSource = (configService: ConfigService) => {
+export const createDataSource = (envService: EnvService) => {
   return new DataSource({
     type: 'postgres',
-    host: configService.get('DATABASE_HOST'),
-    port: configService.get('DATABASE_PORT'),
-    username: configService.get('DATABASE_USERNAME'),
-    password: configService.get('DATABASE_PASSWORD'),
-    database: configService.get('DATABASE_NAME'),
+    host: envService.get('DATABASE_HOST'),
+    port: envService.get('DATABASE_PORT'),
+    username: envService.get('DATABASE_USERNAME'),
+    password: envService.get('DATABASE_PASSWORD'),
+    database: envService.get('DATABASE_NAME'),
     synchronize: false,
-    logging: configService.get('NODE_ENV') === 'development',
+    logging: envService.get('NODE_ENV') !== 'production',
     entities: ['dist/**/*.entity{.ts,.js}'],
     migrations: ['dist/infrastructure/database/migrations/*{.ts,.js}'],
     subscribers: ['dist/**/*.subscriber{.ts,.js}'],

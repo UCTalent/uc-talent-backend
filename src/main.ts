@@ -1,19 +1,22 @@
 import { NestFactory } from '@nestjs/core';
-import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { EnvService } from './shared/infrastructure/env';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const configService = app.get(ConfigService);
+  const envService = app.get(EnvService);
 
   // Global prefix
   app.setGlobalPrefix('api/v1');
 
   // CORS
   app.enableCors({
-    origin: configService.get('FRONTEND_URL', 'http://localhost:3000'),
+    origin: envService.get('FRONTEND_URL'),
     credentials: true,
   });
 
@@ -43,7 +46,7 @@ async function bootstrap() {
     },
   });
 
-  const port = configService.get('PORT', 3001);
+  const port = envService.get('PORT');
   await app.listen(port);
 
   console.log(`🚀 Application is running on: http://localhost:${port}`);
