@@ -31,6 +31,8 @@ import { ValidationModule } from '@shared/cross-cutting/validation/validation.mo
 import { AuthorizationModule } from '@shared/cross-cutting/authorization';
 import { LoggingModule } from '@shared/cross-cutting/logging/logging.module';
 import { CachingModule } from '@shared/cross-cutting/caching/caching.module';
+import { HttpExceptionModule } from '@/shared/cross-cutting/exception/exception.module';
+import { TransformerModule } from '@shared/cross-cutting/transformer/transformer.module';
 
 @Module({
   imports: [
@@ -91,6 +93,8 @@ import { CachingModule } from '@shared/cross-cutting/caching/caching.module';
     AuthorizationModule,
     LoggingModule,
     CachingModule,
+    HttpExceptionModule,
+    TransformerModule,
   ],
 })
 export class AppModule {}

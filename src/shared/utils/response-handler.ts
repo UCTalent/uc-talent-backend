@@ -1,18 +1,17 @@
 import { HttpStatus } from '@nestjs/common';
-
 import {
-  type ErrorResponse,
-  type SuccessResponse,
-} from '@shared/schemas/response';
+  ErrorResponseDto,
+  SuccessResponseDto,
+} from '@shared/dtos/response.dto';
 
 export class ResponseHandler {
   static success({
     data,
     statusCode = HttpStatus.OK,
     message = 'success',
-  }: SuccessResponse) {
+  }: SuccessResponseDto) {
     return {
-      status_code: statusCode,
+      statusCode,
       message,
       data,
     };
@@ -23,17 +22,21 @@ export class ResponseHandler {
     statusCode = HttpStatus.BAD_REQUEST,
     message = 'error',
     stack,
-  }: ErrorResponse) {
+  }: ErrorResponseDto) {
     return {
-      status_code: statusCode,
+      statusCode,
       message,
       errors,
-      stack: stack
-        ? stack
-            .split('\n')
-            .slice(1)
-            .map(line => line.trim())
-        : undefined,
+      stack: this.formatStack(stack),
     };
+  }
+
+  private static formatStack(stack?: string) {
+    return stack
+      ? stack
+          .split('\n')
+          .slice(1)
+          .map(line => line.trim())
+      : undefined;
   }
 }

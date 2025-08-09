@@ -10,7 +10,7 @@ import {
 import { ResponseHandler } from '@shared/utils/response-handler';
 
 @Catch()
-export class AllExceptionsFilter implements ExceptionFilter {
+export class GlobalHttpExceptionFilter implements ExceptionFilter {
   catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();

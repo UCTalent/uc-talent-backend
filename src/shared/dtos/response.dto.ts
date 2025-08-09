@@ -1,102 +1,27 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { HttpStatus } from '@nestjs/common';
 
-export class SuccessResponseDto {
-  @ApiProperty({
-    description: 'Success status',
-    example: true,
-  })
-  success: boolean;
+export class SuccessResponseDto<TypeData = any> {
+  @ApiProperty()
+  data: TypeData;
 
-  @ApiProperty({
-    description: 'Response message',
-    example: 'Operation completed successfully',
-  })
-  message: string;
+  @ApiProperty({ required: false, enum: HttpStatus })
+  statusCode?: HttpStatus;
 
-  @ApiProperty({
-    description: 'Response data',
-  })
-  data?: any;
+  @ApiProperty({ required: false })
+  message?: string;
 }
 
-export class ErrorResponseDto {
-  @ApiProperty({
-    description: 'Success status',
-    example: false,
-  })
-  success: boolean;
+export class ErrorResponseDto<TypeData = any> {
+  @ApiProperty({ required: false })
+  errors?: TypeData;
 
-  @ApiProperty({
-    description: 'Error message',
-    example: 'Something went wrong',
-  })
-  message: string;
+  @ApiProperty({ required: false, enum: HttpStatus })
+  statusCode?: HttpStatus;
 
-  @ApiProperty({
-    description: 'Error code',
-    example: 'VALIDATION_ERROR',
-  })
-  errorCode?: string;
+  @ApiProperty({ required: false })
+  message?: string;
 
-  @ApiProperty({
-    description: 'Error details',
-    example: ['email is required'],
-  })
-  errors?: string[];
-}
-
-export class PaginatedResponseDto<T> {
-  @ApiProperty({
-    description: 'Array of items',
-  })
-  data: T[];
-
-  @ApiProperty({
-    description: 'Total number of items',
-    example: 100,
-  })
-  total: number;
-
-  @ApiProperty({
-    description: 'Current page',
-    example: 1,
-  })
-  page: number;
-
-  @ApiProperty({
-    description: 'Items per page',
-    example: 10,
-  })
-  limit: number;
-
-  @ApiProperty({
-    description: 'Total number of pages',
-    example: 10,
-  })
-  totalPages: number;
-
-  @ApiProperty({
-    description: 'Has next page',
-    example: true,
-  })
-  hasNext: boolean;
-
-  @ApiProperty({
-    description: 'Has previous page',
-    example: false,
-  })
-  hasPrev: boolean;
-}
-
-export class ListResponseDto<T> {
-  @ApiProperty({
-    description: 'Array of items',
-  })
-  data: T[];
-
-  @ApiProperty({
-    description: 'Total number of items',
-    example: 100,
-  })
-  total: number;
+  @ApiProperty({ required: false })
+  stack?: string;
 }
