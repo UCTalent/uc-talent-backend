@@ -10,6 +10,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { RoleService } from '@skill/services/role.service';
 import { Role } from '@skill/entities/role.entity';
+import { Docs } from '@documents/skill/role.document';
 import {
   RoleResponseDto,
   RoleListResponseDto,
@@ -21,12 +22,8 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all roles' })
-  @ApiResponse({
-    status: 200,
-    description: 'Roles retrieved successfully',
-    type: RoleListResponseDto,
-  })
+  @ApiOperation(Docs.getRoles.operation)
+  @ApiResponse(Docs.getRoles.responses.success[0])
   async findAll(): Promise<RoleListResponseDto> {
     const roles = await this.roleService.findAll();
     return {
@@ -38,21 +35,10 @@ export class RoleController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get role by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'Role ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Role found successfully',
-    type: RoleResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Role not found',
-  })
+  @ApiOperation(Docs.getRoleById.operation)
+  @ApiParam(Docs.getRoleById.param)
+  @ApiResponse(Docs.getRoleById.responses.success[0])
+  @ApiResponse(Docs.getRoleById.responses.error[0])
   async findById(@Param('id') id: string): Promise<RoleResponseDto | null> {
     const role = await this.roleService.findById(id);
     return role ? this.mapToResponseDto(role) : null;

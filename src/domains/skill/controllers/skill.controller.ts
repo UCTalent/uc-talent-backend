@@ -7,6 +7,7 @@ import {
   SkillListResponseDto,
 } from '@skill/dtos/skill-response.dto';
 import { ResponseHandler } from '@shared/utils/response-handler';
+import { Docs } from '@documents/skill/skill.document';
 
 @ApiTags('skills')
 @Controller('skills')
@@ -14,12 +15,8 @@ export class SkillController {
   constructor(private readonly skillService: SkillService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all skills' })
-  @ApiResponse({
-    status: 200,
-    description: 'Skills retrieved successfully',
-    type: SkillListResponseDto,
-  })
+  @ApiOperation(Docs.getSkills.operation)
+  @ApiResponse(Docs.getSkills.responses.success[0])
   async findAll() {
     const skills = await this.skillService.findAll();
     return ResponseHandler.success({
@@ -34,21 +31,10 @@ export class SkillController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get skill by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'Skill ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Skill found successfully',
-    type: SkillResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Skill not found',
-  })
+  @ApiOperation(Docs.getSkillById.operation)
+  @ApiParam(Docs.getSkillById.param)
+  @ApiResponse(Docs.getSkillById.responses.success[0])
+  @ApiResponse(Docs.getSkillById.responses.error[0])
   async findById(@Param('id') id: string) {
     const skill = await this.skillService.findById(id);
     if (!skill) {
@@ -64,17 +50,9 @@ export class SkillController {
   }
 
   @Get('role/:roleId')
-  @ApiOperation({ summary: 'Get skills by role ID' })
-  @ApiParam({
-    name: 'roleId',
-    description: 'Role ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Skills found successfully',
-    type: SkillListResponseDto,
-  })
+  @ApiOperation(Docs.getSkillsByRole.operation)
+  @ApiParam(Docs.getSkillsByRole.param)
+  @ApiResponse(Docs.getSkillsByRole.responses.success[0])
   async findByRoleId(@Param('roleId') roleId: string) {
     const skills = await this.skillService.findByRoleId(roleId);
     return ResponseHandler.success({

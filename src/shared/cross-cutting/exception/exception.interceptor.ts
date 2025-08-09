@@ -1,3 +1,4 @@
+import { env } from '@/shared/infrastructure/env';
 import {
   ArgumentsHost,
   BadRequestException,
@@ -19,7 +20,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
-    const isDev = process.env.NODE_ENV === 'development';
+    const isLocal = env.NODE_ENV === 'local';
 
     if (exception instanceof BadRequestException) {
       return response.status(status).json(exception.getResponse());
@@ -36,7 +37,7 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
           ? [exception.name, httpStatusName]
           : [httpStatusName],
         message: exception.message,
-        stack: isDev ? exception.stack : undefined,
+        stack: isLocal ? exception.stack : undefined,
       }),
     );
   }
