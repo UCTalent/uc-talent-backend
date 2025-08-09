@@ -1,19 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { RoleService } from '@skill/services/role.service';
-import { Role } from '@skill/entities/role.entity';
-import {
-  RoleResponseDto,
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+
+import { Docs } from '@documents/skill/role.document';
+import type {
   RoleListResponseDto,
+  RoleResponseDto,
 } from '@skill/dtos/skill-response.dto';
+import type { Role } from '@skill/entities/role.entity';
+import { RoleService } from '@skill/services/role.service';
 
 @ApiTags('roles')
 @Controller('roles')
@@ -21,16 +23,12 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all roles' })
-  @ApiResponse({
-    status: 200,
-    description: 'Roles retrieved successfully',
-    type: RoleListResponseDto,
-  })
+  @ApiOperation(Docs.getRoles.operation)
+  @ApiResponse(Docs.getRoles.responses.success[0])
   async findAll(): Promise<RoleListResponseDto> {
     const roles = await this.roleService.findAll();
     return {
-      roles: roles.map(role => this.mapToResponseDto(role)),
+      roles: roles.map((role) => this.mapToResponseDto(role)),
       total: roles.length,
       page: 1,
       limit: roles.length,
@@ -38,21 +36,10 @@ export class RoleController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get role by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'Role ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Role found successfully',
-    type: RoleResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Role not found',
-  })
+  @ApiOperation(Docs.getRoleById.operation)
+  @ApiParam(Docs.getRoleById.param)
+  @ApiResponse(Docs.getRoleById.responses.success[0])
+  @ApiResponse(Docs.getRoleById.responses.error[0])
   async findById(@Param('id') id: string): Promise<RoleResponseDto | null> {
     const role = await this.roleService.findById(id);
     return role ? this.mapToResponseDto(role) : null;

@@ -1,12 +1,13 @@
 import {
+  IsDate,
+  IsDateString,
+  IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
-  IsEnum,
-  IsNumber,
-  IsDateString,
-  IsDate,
 } from 'class-validator';
+
 import { JobStatus, LocationType } from '../entities/job.entity';
 
 export class CreateJobDto {

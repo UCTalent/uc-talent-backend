@@ -1,9 +1,5 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableForeignKey,
-} from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+import { Table, TableForeignKey } from 'typeorm';
 
 export class CreateSocialAndNotificationEntities1700000000012
   implements MigrationInterface
@@ -47,7 +43,7 @@ export class CreateSocialAndNotificationEntities1700000000012
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create social_accounts table
@@ -101,7 +97,7 @@ export class CreateSocialAndNotificationEntities1700000000012
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create social_settings table
@@ -140,7 +136,7 @@ export class CreateSocialAndNotificationEntities1700000000012
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create external_links table (social domain)
@@ -179,7 +175,7 @@ export class CreateSocialAndNotificationEntities1700000000012
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create foreign keys for notes
@@ -190,7 +186,7 @@ export class CreateSocialAndNotificationEntities1700000000012
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for social_accounts
@@ -201,7 +197,7 @@ export class CreateSocialAndNotificationEntities1700000000012
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for social_settings
@@ -212,7 +208,7 @@ export class CreateSocialAndNotificationEntities1700000000012
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for social_external_links
@@ -223,54 +219,54 @@ export class CreateSocialAndNotificationEntities1700000000012
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'CASCADE',
-      }),
+      })
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop foreign keys for social_external_links
     const socialExternalLinksTable = await queryRunner.getTable(
-      'social_external_links',
+      'social_external_links'
     );
     const socialExternalLinksForeignKey =
       socialExternalLinksTable.foreignKeys.find(
-        fk => fk.columnNames.indexOf('user_id') !== -1,
+        (fk) => fk.columnNames.indexOf('user_id') !== -1
       );
     if (socialExternalLinksForeignKey) {
       await queryRunner.dropForeignKey(
         'social_external_links',
-        socialExternalLinksForeignKey,
+        socialExternalLinksForeignKey
       );
     }
 
     // Drop foreign keys for social_settings
     const socialSettingsTable = await queryRunner.getTable('social_settings');
     const socialSettingsForeignKey = socialSettingsTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('user_id') !== -1,
+      (fk) => fk.columnNames.indexOf('user_id') !== -1
     );
     if (socialSettingsForeignKey) {
       await queryRunner.dropForeignKey(
         'social_settings',
-        socialSettingsForeignKey,
+        socialSettingsForeignKey
       );
     }
 
     // Drop foreign keys for social_accounts
     const socialAccountsTable = await queryRunner.getTable('social_accounts');
     const socialAccountsForeignKey = socialAccountsTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('user_id') !== -1,
+      (fk) => fk.columnNames.indexOf('user_id') !== -1
     );
     if (socialAccountsForeignKey) {
       await queryRunner.dropForeignKey(
         'social_accounts',
-        socialAccountsForeignKey,
+        socialAccountsForeignKey
       );
     }
 
     // Drop foreign keys for notes
     const notesTable = await queryRunner.getTable('notes');
     const notesForeignKey = notesTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('user_id') !== -1,
+      (fk) => fk.columnNames.indexOf('user_id') !== -1
     );
     if (notesForeignKey) {
       await queryRunner.dropForeignKey('notes', notesForeignKey);

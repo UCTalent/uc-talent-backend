@@ -1,34 +1,32 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 // Note: HttpModule will be added when @nestjs/axios is installed
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-// Entities
-import { SocialAccount } from './entities/social-account.entity';
-import { SocialSetting } from './entities/social-setting.entity';
-import { SocialSyncLog } from './entities/social-sync-log.entity';
-import { ExternalLink } from './entities/external-link.entity';
 import { User } from '@domains/user/entities/user.entity';
 import { UserModule } from '@domains/user/user.module';
-
-// Services
-import { SocialAccountService } from './services/social-account.service';
-import { SocialAuthService } from './services/social-auth.service';
-import { OAuthService } from './services/oauth.service';
-import { ExternalLinkService } from './services/external-link.service';
-
-// Repositories
-import { SocialAccountRepository } from './repositories/social-account.repository';
-import { SocialSettingRepository } from './repositories/social-setting.repository';
-import { SocialSyncLogRepository } from './repositories/social-sync-log.repository';
-import { ExternalLinkRepository } from './repositories/external-link.repository';
 
 // Controllers
 import {
   SocialAccountController,
   SocialAuthController,
 } from './controllers/social-account.controller';
+import { ExternalLink } from './entities/external-link.entity';
+// Entities
+import { SocialAccount } from './entities/social-account.entity';
+import { SocialSetting } from './entities/social-setting.entity';
+import { SocialSyncLog } from './entities/social-sync-log.entity';
+import { ExternalLinkRepository } from './repositories/external-link.repository';
+// Repositories
+import { SocialAccountRepository } from './repositories/social-account.repository';
+import { SocialSettingRepository } from './repositories/social-setting.repository';
+import { SocialSyncLogRepository } from './repositories/social-sync-log.repository';
+import { ExternalLinkService } from './services/external-link.service';
+import { OAuthService } from './services/oauth.service';
+// Services
+import { SocialAccountService } from './services/social-account.service';
+import { SocialAuthService } from './services/social-auth.service';
 
 @Module({
   imports: [

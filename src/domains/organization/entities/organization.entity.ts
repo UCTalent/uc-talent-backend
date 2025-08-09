@@ -1,16 +1,18 @@
 import {
-  Entity,
   Column,
+  Entity,
   Index,
+  JoinColumn,
   ManyToOne,
   OneToMany,
-  JoinColumn,
 } from 'typeorm';
-import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
+import { Job } from '@job/entities/job.entity';
 import { City } from '@location/entities/city.entity';
 import { Country } from '@location/entities/country.entity';
+import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
 import { Industry } from './industry.entity';
-import { Job } from '@job/entities/job.entity';
 
 @Entity('organizations')
 export class Organization extends BaseEntity {
@@ -78,23 +80,23 @@ export class Organization extends BaseEntity {
   industryId: string;
 
   // Relationships
-  @ManyToOne(() => City, city => city.organizations, { nullable: true })
+  @ManyToOne(() => City, (city) => city.organizations, { nullable: true })
   @JoinColumn({ name: 'city_id' })
   city: City;
 
-  @ManyToOne(() => Country, country => country.organizations, {
+  @ManyToOne(() => Country, (country) => country.organizations, {
     nullable: true,
   })
   @JoinColumn({ name: 'country_id' })
   country: Country;
 
-  @ManyToOne(() => Industry, industry => industry.organizations, {
+  @ManyToOne(() => Industry, (industry) => industry.organizations, {
     nullable: true,
   })
   @JoinColumn({ name: 'industry_id' })
   industry: Industry;
 
-  @OneToMany(() => Job, job => job.organization)
+  @OneToMany(() => Job, (job) => job.organization)
   jobs: Job[];
 
   // Virtual fields for computed properties

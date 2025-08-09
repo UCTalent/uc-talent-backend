@@ -7,6 +7,7 @@ Document này mô tả chi tiết các endpoint và business logic liên quan đ
 ## 🏗️ Talent Domain Architecture
 
 ### Core Entities
+
 - **Talent**: Profile chính của talent
 - **Experience**: Kinh nghiệm làm việc
 - **Education**: Học vấn
@@ -15,6 +16,7 @@ Document này mô tả chi tiết các endpoint và business logic liên quan đ
 - **RecommendationJob**: Job recommendations
 
 ### Supporting Entities
+
 - **User**: User account liên kết
 - **Speciality**: Chuyên môn
 - **Skill**: Kỹ năng
@@ -31,6 +33,7 @@ Document này mô tả chi tiết các endpoint và business logic liên quan đ
 #### Endpoint: `GET /api/v1/talents`
 
 #### Response Success (200)
+
 ```json
 {
   "talents": [
@@ -96,6 +99,7 @@ async getTalents() {
 #### Endpoint: `GET /api/v1/talents/me`
 
 #### Response Success (200)
+
 ```json
 {
   "talent": {
@@ -193,6 +197,7 @@ async getTalents() {
 ```
 
 #### Response Error (404)
+
 ```json
 {
   "error": "You have not yet created a talent profile. Please create one."
@@ -241,6 +246,7 @@ async getMyTalent(userId: string) {
 #### Endpoint: `POST /api/v1/talents`
 
 #### Request Body
+
 ```json
 {
   "talent": {
@@ -298,6 +304,7 @@ async getMyTalent(userId: string) {
 ```
 
 #### Response Success (201)
+
 ```json
 {
   "talent": {
@@ -314,6 +321,7 @@ async getMyTalent(userId: string) {
 ```
 
 #### Response Error (422)
+
 ```json
 {
   "error": "Validation failed"
@@ -564,6 +572,7 @@ private async updateExternalLinks(talentId: string, links: any[]) {
 #### Endpoint: `PATCH /api/v1/talents/me/submit`
 
 #### Response Success (200)
+
 ```json
 {
   "message": "Profile submitted for review successfully"
@@ -606,6 +615,7 @@ async submitTalent(userId: string) {
 #### Endpoint: `GET /api/v1/talents/me/upload_resumes`
 
 #### Response Success (200)
+
 ```json
 {
   "upload_resumes": [
@@ -620,6 +630,7 @@ async submitTalent(userId: string) {
 ```
 
 #### Response Error (404)
+
 ```json
 {
   "error": "No active resumes found."
@@ -669,6 +680,7 @@ async getMyResumes(userId: string) {
 #### Endpoint: `DELETE /api/v1/experiences/:id`
 
 #### Response Success (200)
+
 ```json
 {
   "message": "Experience deleted successfully"
@@ -714,6 +726,7 @@ async deleteExperience(experienceId: string, userId: string) {
 #### Endpoint: `DELETE /api/v1/educations/:id`
 
 #### Response Success (200)
+
 ```json
 {
   "message": "Education deleted successfully"
@@ -1033,10 +1046,10 @@ describe('TalentController', () => {
             getMyTalent: jest.fn(),
             createOrUpdateTalent: jest.fn(),
             submitTalent: jest.fn(),
-            getMyResumes: jest.fn()
-          }
-        }
-      ]
+            getMyResumes: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<TalentController>(TalentController);
@@ -1060,12 +1073,17 @@ describe('TalentController', () => {
     const user = { id: 'user-uuid' };
     const expectedResult = { talent: { id: 'talent-uuid' } };
 
-    jest.spyOn(service, 'createOrUpdateTalent').mockResolvedValue(expectedResult);
+    jest
+      .spyOn(service, 'createOrUpdateTalent')
+      .mockResolvedValue(expectedResult);
 
     const result = await controller.createTalent(createTalentDto, user);
 
     expect(result).toBe(expectedResult);
-    expect(service.createOrUpdateTalent).toHaveBeenCalledWith(createTalentDto, user.id);
+    expect(service.createOrUpdateTalent).toHaveBeenCalledWith(
+      createTalentDto,
+      user.id
+    );
   });
 });
 ```
@@ -1090,4 +1108,4 @@ describe('TalentController', () => {
 
 ---
 
-**🎉 Ready for implementation!** 
+**🎉 Ready for implementation!**

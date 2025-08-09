@@ -1,4 +1,5 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+import { Table } from 'typeorm';
 
 export class CreateRegions1700000000002 implements MigrationInterface {
   name = 'CreateRegions1700000000002';
@@ -36,7 +37,7 @@ export class CreateRegions1700000000002 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
   }
 

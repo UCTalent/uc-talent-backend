@@ -1,28 +1,30 @@
 import {
-  Entity,
   Column,
+  Entity,
   Index,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
-  JoinColumn,
-  ManyToMany,
-  JoinTable,
 } from 'typeorm';
-import { BaseEntity } from '@shared/infrastructure/database/base.entity';
-import { Organization } from '@organization/entities/organization.entity';
-import { Speciality } from '@skill/entities/speciality.entity';
+
 import { City } from '@location/entities/city.entity';
 import { Country } from '@location/entities/country.entity';
 import { Region } from '@location/entities/region.entity';
+import { Organization } from '@organization/entities/organization.entity';
 import { PartnerHost } from '@partner/entities/partner-host.entity';
-import { JobApply } from './job-apply.entity';
-import { JobReferral } from './job-referral.entity';
-import { JobClosureReason } from './job-closure-reason.entity';
-import { Web3Event } from './web3-event.entity';
-import { Skill } from '@skill/entities/skill.entity';
-import { ChoiceOption } from './choice-option.entity';
-import { ReferralLink } from './referral-link.entity';
 import { PaymentDistribution } from '@payment/entities/payment-distribution.entity';
+import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+import { Skill } from '@skill/entities/skill.entity';
+import { Speciality } from '@skill/entities/speciality.entity';
+
+import { ChoiceOption } from './choice-option.entity';
+import { JobApply } from './job-apply.entity';
+import { JobClosureReason } from './job-closure-reason.entity';
+import { JobReferral } from './job-referral.entity';
+import { ReferralLink } from './referral-link.entity';
+import { Web3Event } from './web3-event.entity';
 
 export enum JobStatus {
   PENDING_TO_REVIEW = 'pending_to_review',
@@ -82,7 +84,12 @@ export class Job extends BaseEntity {
   @Column({ name: 'direct_manager_logo', nullable: true })
   directManagerLogo: string;
 
-  @Column({ name: 'location_type', type: 'enum', enum: LocationType, default: LocationType.ON_SITE })
+  @Column({
+    name: 'location_type',
+    type: 'enum',
+    enum: LocationType,
+    default: LocationType.ON_SITE,
+  })
   locationType: LocationType;
 
   @Column({ name: 'location_value', nullable: true })
@@ -124,7 +131,11 @@ export class Job extends BaseEntity {
   @Column({ name: 'english_level', nullable: true })
   englishLevel: string;
 
-  @Column({ type: 'enum', enum: JobStatus, default: JobStatus.PENDING_TO_REVIEW })
+  @Column({
+    type: 'enum',
+    enum: JobStatus,
+    default: JobStatus.PENDING_TO_REVIEW,
+  })
   status: JobStatus;
 
   @Column({ nullable: true })
@@ -200,19 +211,19 @@ export class Job extends BaseEntity {
   @JoinColumn({ name: 'partner_host_id' })
   partnerHost: PartnerHost;
 
-  @OneToMany(() => JobApply, apply => apply.job)
+  @OneToMany(() => JobApply, (apply) => apply.job)
   jobApplies: JobApply[];
 
-  @OneToMany(() => JobReferral, referral => referral.job)
+  @OneToMany(() => JobReferral, (referral) => referral.job)
   jobReferrals: JobReferral[];
 
-  @OneToMany(() => JobClosureReason, reason => reason.job)
+  @OneToMany(() => JobClosureReason, (reason) => reason.job)
   jobClosureReasons: JobClosureReason[];
 
-  @OneToMany(() => Web3Event, event => event.job)
+  @OneToMany(() => Web3Event, (event) => event.job)
   web3Events: Web3Event[];
 
-  @OneToMany(() => ReferralLink, referralLink => referralLink.job)
+  @OneToMany(() => ReferralLink, (referralLink) => referralLink.job)
   referralLinks: ReferralLink[];
 
   @ManyToMany(() => Skill)
@@ -233,7 +244,7 @@ export class Job extends BaseEntity {
 
   @OneToMany(
     () => PaymentDistribution,
-    paymentDistribution => paymentDistribution.job,
+    (paymentDistribution) => paymentDistribution.job
   )
   paymentDistributions: PaymentDistribution[];
 

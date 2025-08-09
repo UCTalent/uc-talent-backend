@@ -7,6 +7,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 ## 🏗️ Partner Domain Architecture
 
 ### Core Features
+
 - **Partner Management**: Partner registration, profile management
 - **Partner Host Management**: Host configuration, token management
 - **Partner Network Management**: Blockchain network configuration
@@ -23,6 +24,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 #### Endpoint: `GET /api/v1/partners`
 
 #### Query Parameters
+
 ```typescript
 {
   page?: number;        // Default: 1
@@ -35,6 +37,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -67,6 +70,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 #### Endpoint: `GET /api/v1/partners/:id`
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -110,6 +114,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 #### Endpoint: `POST /api/v1/partners`
 
 #### Request Body
+
 ```json
 {
   "name": "New Tech Partner",
@@ -119,6 +124,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 ```
 
 #### Response Success (201)
+
 ```json
 {
   "success": true,
@@ -142,6 +148,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 #### Endpoint: `GET /api/v1/partner-hosts`
 
 #### Query Parameters
+
 ```typescript
 {
   page?: number;        // Default: 1
@@ -155,6 +162,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -197,6 +205,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 #### Endpoint: `GET /api/v1/partner-hosts/:id`
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -247,6 +256,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 #### Endpoint: `POST /api/v1/partner-hosts`
 
 #### Request Body
+
 ```json
 {
   "host": "api.newpartner.com",
@@ -267,6 +277,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 ```
 
 #### Response Success (201)
+
 ```json
 {
   "success": true,
@@ -300,6 +311,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 #### Endpoint: `POST /api/v1/partner-hosts/:id/regenerate-token`
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -320,6 +332,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 #### Endpoint: `GET /api/v1/partner-hosts/:hostId/networks`
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -347,6 +360,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 #### Endpoint: `POST /api/v1/partner-hosts/:hostId/networks`
 
 #### Request Body
+
 ```json
 {
   "network": "bnb",
@@ -355,6 +369,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 ```
 
 #### Response Success (201)
+
 ```json
 {
   "success": true,
@@ -373,6 +388,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 #### Endpoint: `PATCH /api/v1/partner-hosts/:hostId/networks/:networkId`
 
 #### Request Body
+
 ```json
 {
   "default": true
@@ -388,6 +404,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 #### Endpoint: `POST /api/v1/partner-auth/validate`
 
 #### Request Headers
+
 ```typescript
 {
   'X-Partner-Token': 'partner-access-token',
@@ -396,6 +413,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -421,6 +439,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 ```
 
 #### Response Error (401)
+
 ```json
 {
   "success": false,
@@ -437,6 +456,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Partner d
 #### Endpoint: `GET /api/v1/partners/:id/stats`
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -482,7 +502,9 @@ export class CreatePartnerDto {
 
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[a-z0-9-]+$/, { message: 'Slug must contain only lowercase letters, numbers, and hyphens' })
+  @Matches(/^[a-z0-9-]+$/, {
+    message: 'Slug must contain only lowercase letters, numbers, and hyphens',
+  })
   slug: string;
 
   @IsOptional()
@@ -502,7 +524,9 @@ export class CreatePartnerHostDto {
 
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[a-z0-9-]+$/, { message: 'Slug must contain only lowercase letters, numbers, and hyphens' })
+  @Matches(/^[a-z0-9-]+$/, {
+    message: 'Slug must contain only lowercase letters, numbers, and hyphens',
+  })
   slug: string;
 
   @IsUUID()
@@ -581,14 +605,24 @@ export class PartnerService {
   ) {}
 
   async getPartners(query: PartnerQueryDto) {
-    const { page = 1, limit = 20, search, isUcTalent, sortBy = 'createdAt', sortOrder = 'DESC' } = query;
+    const {
+      page = 1,
+      limit = 20,
+      search,
+      isUcTalent,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = query;
     const skip = (page - 1) * limit;
 
-    const queryBuilder = this.partnerRepository.createQueryBuilder('partner')
+    const queryBuilder = this.partnerRepository
+      .createQueryBuilder('partner')
       .leftJoinAndSelect('partner.partnerHosts', 'hosts');
 
     if (search) {
-      queryBuilder.where('partner.name ILIKE :search', { search: `%${search}%` });
+      queryBuilder.where('partner.name ILIKE :search', {
+        search: `%${search}%`,
+      });
     }
 
     if (isUcTalent !== undefined) {
@@ -606,16 +640,20 @@ export class PartnerService {
     const partnersWithStats = await Promise.all(
       partners.map(async (partner) => {
         const [hostsCount, networksCount, jobsCount] = await Promise.all([
-          this.partnerHostRepository.count({ where: { partnerId: partner.id } }),
+          this.partnerHostRepository.count({
+            where: { partnerId: partner.id },
+          }),
           this.getPartnerNetworksCount(partner.id),
-          this.jobRepository.count({ where: { partnerHost: { partnerId: partner.id } } })
+          this.jobRepository.count({
+            where: { partnerHost: { partnerId: partner.id } },
+          }),
         ]);
 
         return {
           ...partner,
           hostsCount,
           networksCount,
-          jobsCount
+          jobsCount,
         };
       })
     );
@@ -628,16 +666,16 @@ export class PartnerService {
           page,
           limit,
           total,
-          totalPages: Math.ceil(total / limit)
-        }
-      }
+          totalPages: Math.ceil(total / limit),
+        },
+      },
     };
   }
 
   async getPartnerById(id: string) {
     const partner = await this.partnerRepository.findOne({
       where: { id },
-      relations: ['partnerHosts', 'partnerHosts.networks', 'partnerHosts.jobs']
+      relations: ['partnerHosts', 'partnerHosts.networks', 'partnerHosts.jobs'],
     });
 
     if (!partner) {
@@ -646,14 +684,14 @@ export class PartnerService {
 
     return {
       success: true,
-      data: partner
+      data: partner,
     };
   }
 
   async createPartner(createDto: CreatePartnerDto) {
     // Check if slug already exists
     const existingPartner = await this.partnerRepository.findOne({
-      where: { slug: createDto.slug }
+      where: { slug: createDto.slug },
     });
 
     if (existingPartner) {
@@ -665,7 +703,7 @@ export class PartnerService {
 
     return {
       success: true,
-      data: savedPartner
+      data: savedPartner,
     };
   }
 
@@ -697,10 +735,19 @@ export class PartnerHostService {
   ) {}
 
   async getPartnerHosts(query: PartnerHostQueryDto) {
-    const { page = 1, limit = 20, partnerId, host, isUcTalent, sortBy = 'createdAt', sortOrder = 'DESC' } = query;
+    const {
+      page = 1,
+      limit = 20,
+      partnerId,
+      host,
+      isUcTalent,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = query;
     const skip = (page - 1) * limit;
 
-    const queryBuilder = this.partnerHostRepository.createQueryBuilder('host')
+    const queryBuilder = this.partnerHostRepository
+      .createQueryBuilder('host')
       .leftJoinAndSelect('host.partner', 'partner')
       .leftJoinAndSelect('host.networks', 'networks');
 
@@ -726,10 +773,12 @@ export class PartnerHostService {
     // Get jobs count for each host
     const hostsWithStats = await Promise.all(
       partnerHosts.map(async (host) => {
-        const jobsCount = await this.jobRepository.count({ where: { partnerHostId: host.id } });
+        const jobsCount = await this.jobRepository.count({
+          where: { partnerHostId: host.id },
+        });
         return {
           ...host,
-          jobsCount
+          jobsCount,
         };
       })
     );
@@ -742,20 +791,22 @@ export class PartnerHostService {
           page,
           limit,
           total,
-          totalPages: Math.ceil(total / limit)
-        }
-      }
+          totalPages: Math.ceil(total / limit),
+        },
+      },
     };
   }
 
   async createPartnerHost(createDto: CreatePartnerHostDto) {
     // Check if host already exists
     const existingHost = await this.partnerHostRepository.findOne({
-      where: { host: createDto.host }
+      where: { host: createDto.host },
     });
 
     if (existingHost) {
-      throw new BadRequestException('Partner host with this host already exists');
+      throw new BadRequestException(
+        'Partner host with this host already exists'
+      );
     }
 
     // Generate access token
@@ -763,16 +814,16 @@ export class PartnerHostService {
 
     const partnerHost = this.partnerHostRepository.create({
       ...createDto,
-      accessToken
+      accessToken,
     });
 
     const savedPartnerHost = await this.partnerHostRepository.save(partnerHost);
 
     // Create networks if provided
     if (createDto.networks && createDto.networks.length > 0) {
-      const networks = createDto.networks.map(network => ({
+      const networks = createDto.networks.map((network) => ({
         ...network,
-        partnerHostId: savedPartnerHost.id
+        partnerHostId: savedPartnerHost.id,
       }));
 
       await this.partnerHostNetworkRepository.save(networks);
@@ -780,12 +831,14 @@ export class PartnerHostService {
 
     return {
       success: true,
-      data: savedPartnerHost
+      data: savedPartnerHost,
     };
   }
 
   async regenerateAccessToken(id: string) {
-    const partnerHost = await this.partnerHostRepository.findOne({ where: { id } });
+    const partnerHost = await this.partnerHostRepository.findOne({
+      where: { id },
+    });
     if (!partnerHost) {
       throw new NotFoundException('Partner host not found');
     }
@@ -801,8 +854,8 @@ export class PartnerHostService {
       data: {
         id: partnerHost.id,
         accessToken: newAccessToken,
-        updatedAt: partnerHost.updatedAt
-      }
+        updatedAt: partnerHost.updatedAt,
+      },
     };
   }
 
@@ -826,7 +879,7 @@ export class PartnerAuthService {
   async validatePartnerToken(token: string, host: string): Promise<any> {
     const partnerHost = await this.partnerHostRepository.findOne({
       where: { accessToken: token, host },
-      relations: ['partner', 'networks']
+      relations: ['partner', 'networks'],
     });
 
     if (!partnerHost) {
@@ -840,19 +893,19 @@ export class PartnerAuthService {
           id: partnerHost.id,
           host: partnerHost.host,
           slug: partnerHost.slug,
-          isUcTalent: partnerHost.isUcTalent
+          isUcTalent: partnerHost.isUcTalent,
         },
         partner: {
           id: partnerHost.partner.id,
           name: partnerHost.partner.name,
-          slug: partnerHost.partner.slug
+          slug: partnerHost.partner.slug,
         },
         permissions: {
           canPostJobs: true,
           canReadJobs: true,
-          canUpdateJobs: true
-        }
-      }
+          canUpdateJobs: true,
+        },
+      },
     };
   }
 }
@@ -876,4 +929,4 @@ export class PartnerAuthService {
 
 ---
 
-**🎉 Ready for implementation!** 
+**🎉 Ready for implementation!**

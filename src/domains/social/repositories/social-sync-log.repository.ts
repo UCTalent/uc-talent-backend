@@ -1,17 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {
-  SocialSyncLog,
-  SyncStatus,
-} from '@domains/social/entities/social-sync-log.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+
+import type { SyncStatus } from '@domains/social/entities/social-sync-log.entity';
+import { SocialSyncLog } from '@domains/social/entities/social-sync-log.entity';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class SocialSyncLogRepository implements IBaseRepository<SocialSyncLog> {
   constructor(
     @InjectRepository(SocialSyncLog)
-    private readonly repository: Repository<SocialSyncLog>,
+    private readonly repository: Repository<SocialSyncLog>
   ) {}
 
   async findById(id: string): Promise<SocialSyncLog | null> {
@@ -34,7 +33,7 @@ export class SocialSyncLogRepository implements IBaseRepository<SocialSyncLog> {
 
   async update(
     id: string,
-    data: Partial<SocialSyncLog>,
+    data: Partial<SocialSyncLog>
   ): Promise<SocialSyncLog> {
     await this.repository.update(id, data);
     return this.findById(id);
@@ -54,7 +53,7 @@ export class SocialSyncLogRepository implements IBaseRepository<SocialSyncLog> {
 
   async findBySocialAccount(
     socialAccountId: string,
-    options?: { limit?: number },
+    options?: { limit?: number }
   ): Promise<SocialSyncLog[]> {
     const { limit = 10 } = options || {};
 

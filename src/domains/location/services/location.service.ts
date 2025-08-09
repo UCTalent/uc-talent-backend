@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { City } from '@location/entities/city.entity';
-import { Country } from '@location/entities/country.entity';
-import { Region } from '@location/entities/region.entity';
+
+import type { City } from '@location/entities/city.entity';
+import type { Country } from '@location/entities/country.entity';
+import type { Region } from '@location/entities/region.entity';
 import { CityRepository } from '@location/repositories/city.repository';
 import { CountryRepository } from '@location/repositories/country.repository';
 import { RegionRepository } from '@location/repositories/region.repository';
@@ -11,7 +12,7 @@ export class LocationService {
   constructor(
     private readonly cityRepository: CityRepository,
     private readonly countryRepository: CountryRepository,
-    private readonly regionRepository: RegionRepository,
+    private readonly regionRepository: RegionRepository
   ) {}
 
   async findAllCities(): Promise<City[]> {

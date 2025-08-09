@@ -1,9 +1,11 @@
-import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
-import { BaseEntity } from '@shared/infrastructure/database/base.entity';
-import { Country } from './country.entity';
-import { User } from '@user/entities/user.entity';
-import { Organization } from '@organization/entities/organization.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+
 import { Job } from '@job/entities/job.entity';
+import { Organization } from '@organization/entities/organization.entity';
+import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+import { User } from '@user/entities/user.entity';
+
+import { Country } from './country.entity';
 
 @Entity('cities')
 export class City extends BaseEntity {
@@ -21,12 +23,12 @@ export class City extends BaseEntity {
   @JoinColumn({ name: 'country_id' })
   country: Country;
 
-  @OneToMany(() => User, user => user.locationCity)
+  @OneToMany(() => User, (user) => user.locationCity)
   users: User[];
 
-  @OneToMany(() => Organization, organization => organization.city)
+  @OneToMany(() => Organization, (organization) => organization.city)
   organizations: Organization[];
 
-  @OneToMany(() => Job, job => job.city)
+  @OneToMany(() => Job, (job) => job.city)
   jobs: Job[];
 }

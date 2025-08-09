@@ -7,9 +7,13 @@ Document này mô tả chi tiết các authentication endpoints từ Rails proje
 ## 🔐 Authentication Types
 
 ### 1. Firebase Authentication
+
 ### 2. Web3 Authentication (Thirdweb)
+
 ### 3. Traditional Email/Password Authentication
+
 ### 4. OAuth2 Authentication
+
 ### 5. Social Authentication
 
 ---
@@ -19,6 +23,7 @@ Document này mô tả chi tiết các authentication endpoints từ Rails proje
 ### Endpoint: `POST /api/v1/auth/firebase`
 
 #### Request Body
+
 ```json
 {
   "firebase_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -26,6 +31,7 @@ Document này mô tả chi tiết các authentication endpoints từ Rails proje
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "user": {
@@ -43,6 +49,7 @@ Document này mô tả chi tiết các authentication endpoints từ Rails proje
 ```
 
 #### Response Error (401)
+
 ```json
 {
   "error": "Invalid Firebase token"
@@ -62,10 +69,10 @@ async firebaseAuth(@Body() body: { firebase_token: string }) {
 async firebaseAuth(token: string) {
   // 1. Verify Firebase token
   const decodedToken = await this.firebaseAdmin.auth().verifyIdToken(token);
-  
+
   // 2. Get user data from Firebase
   const userRecord = await this.firebaseAdmin.auth().getUser(decodedToken.uid);
-  
+
   // 3. Find or create user
   const user = await this.findOrCreateUser({
     email: userRecord.email || `${userRecord.displayName}@uctalent.com`,
@@ -73,13 +80,13 @@ async firebaseAuth(token: string) {
     name: userRecord.displayName || 'User',
     firebaseProvider: decodedToken.firebase?.sign_in_provider
   });
-  
+
   // 4. Generate OAuth2 token
   const accessToken = await this.oauthService.createAccessToken(user.id);
-  
+
   // 5. Check if user has talent profile
   const hasProfile = await this.talentService.hasProfile(user.id);
-  
+
   return {
     user: {
       name: user.name,
@@ -103,6 +110,7 @@ async firebaseAuth(token: string) {
 ### Endpoint: `POST /api/v1/auth/web3`
 
 #### Request Body
+
 ```json
 {
   "jwt_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -110,6 +118,7 @@ async firebaseAuth(token: string) {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "access_token": "oauth_access_token_here",
@@ -122,6 +131,7 @@ async firebaseAuth(token: string) {
 ```
 
 #### Response Error (401)
+
 ```json
 {
   "error": "Invalid JWT token"
@@ -142,20 +152,20 @@ async web3Auth(jwtToken: string) {
   try {
     // 1. Verify JWT token with Thirdweb
     const decodedToken = await this.thirdwebService.verifyToken(jwtToken);
-    
+
     // 2. Extract user data from JWT
     const userData = {
       address: decodedToken.sub, // wallet address
       email: decodedToken.email,
       name: decodedToken.name
     };
-    
+
     // 3. Find or create user
     const user = await this.findOrCreateWeb3User(userData);
-    
+
     // 4. Generate OAuth2 token
     const accessToken = await this.oauthService.createAccessToken(user.id);
-    
+
     return {
       access_token: accessToken.token,
       token_type: 'Bearer',
@@ -179,6 +189,7 @@ async web3Auth(jwtToken: string) {
 #### Endpoint: `POST /api/v1/auth/register`
 
 #### Request Body
+
 ```json
 {
   "name": "John Doe",
@@ -190,6 +201,7 @@ async web3Auth(jwtToken: string) {
 ```
 
 #### Response Success (201)
+
 ```json
 {
   "user": {
@@ -215,7 +227,7 @@ async register(@Body() registerDto: RegisterDto) {
 async register(registerDto: RegisterDto) {
   // 1. Validate input
   await this.validateRegistration(registerDto);
-  
+
   // 2. Create user
   const user = await this.userService.create({
     name: registerDto.name,
@@ -224,10 +236,10 @@ async register(registerDto: RegisterDto) {
     locationCityId: registerDto.location_city_id,
     refCode: registerDto.ref_code
   });
-  
+
   // 3. Send confirmation email
   await this.emailService.sendConfirmationEmail(user.email, user.confirmationToken);
-  
+
   return {
     user: {
       id: user.id,
@@ -245,6 +257,7 @@ async register(registerDto: RegisterDto) {
 #### Endpoint: `POST /api/v1/auth/login`
 
 #### Request Body
+
 ```json
 {
   "email": "john@example.com",
@@ -253,6 +266,7 @@ async register(registerDto: RegisterDto) {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "user": {
@@ -268,6 +282,7 @@ async register(registerDto: RegisterDto) {
 ```
 
 #### Response Error (401)
+
 ```json
 {
   "error": "Invalid email or password"
@@ -290,27 +305,27 @@ async login(loginDto: LoginDto) {
   if (!user) {
     throw new UnauthorizedException('Invalid email or password');
   }
-  
+
   // 2. Verify password
   const isPasswordValid = await this.verifyPassword(loginDto.password, user.password);
   if (!isPasswordValid) {
     throw new UnauthorizedException('Invalid email or password');
   }
-  
+
   // 3. Check if user is confirmed
   if (!user.confirmedAt) {
     throw new UnauthorizedException('Please confirm your email first');
   }
-  
+
   // 4. Generate JWT token
   const token = this.jwtService.sign({
     sub: user.id,
     email: user.email
   });
-  
+
   // 5. Check if user has talent profile
   const hasProfile = await this.talentService.hasProfile(user.id);
-  
+
   return {
     user: {
       id: user.id,
@@ -330,6 +345,7 @@ async login(loginDto: LoginDto) {
 #### Endpoint: `POST /api/v1/auth/forgot-password`
 
 #### Request Body
+
 ```json
 {
   "email": "john@example.com"
@@ -337,6 +353,7 @@ async login(loginDto: LoginDto) {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "message": "Reset password email sent"
@@ -359,11 +376,11 @@ async forgotPassword(email: string) {
     // Generate reset token
     const resetToken = this.generateResetToken();
     await this.userService.updateResetToken(user.id, resetToken);
-    
+
     // Send reset email
     await this.emailService.sendPasswordResetEmail(user.email, resetToken);
   }
-  
+
   return { message: 'Reset password email sent' };
 }
 ```
@@ -371,6 +388,7 @@ async forgotPassword(email: string) {
 #### Endpoint: `PUT /api/v1/auth/reset-password`
 
 #### Request Body
+
 ```json
 {
   "token": "reset_token_here",
@@ -379,6 +397,7 @@ async forgotPassword(email: string) {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "message": "Password updated successfully"
@@ -390,11 +409,13 @@ async forgotPassword(email: string) {
 #### Endpoint: `GET /api/v1/auth/confirm-email`
 
 #### Request Query
+
 ```
 ?confirmation_token=token_here
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "message": "Email confirmed successfully"
@@ -410,11 +431,13 @@ async forgotPassword(email: string) {
 #### Endpoint: `GET /api/v1/oauth/authorize`
 
 #### Request Query
+
 ```
 ?client_id=client_id&redirect_uri=redirect_uri&response_type=code&scope=read write
 ```
 
 #### Response Success (200)
+
 ```html
 <!-- OAuth authorization page -->
 ```
@@ -424,6 +447,7 @@ async forgotPassword(email: string) {
 #### Endpoint: `POST /api/v1/oauth/token`
 
 #### Request Body
+
 ```json
 {
   "grant_type": "authorization_code",
@@ -435,6 +459,7 @@ async forgotPassword(email: string) {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "access_token": "token_here",
@@ -450,11 +475,13 @@ async forgotPassword(email: string) {
 #### Endpoint: `GET /api/v1/oauth/token/info`
 
 #### Request Headers
+
 ```
 Authorization: Bearer access_token_here
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "resource_owner_id": "user_id",
@@ -473,6 +500,7 @@ Authorization: Bearer access_token_here
 ### Endpoint: `POST /api/v1/auth/social/callback`
 
 #### Request Body
+
 ```json
 {
   "provider": "google",
@@ -483,6 +511,7 @@ Authorization: Bearer access_token_here
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "user": {
@@ -674,7 +703,10 @@ export class AuthService {
     return bcrypt.hash(password, 12);
   }
 
-  private async verifyPassword(password: string, hash: string): Promise<boolean> {
+  private async verifyPassword(
+    password: string,
+    hash: string
+  ): Promise<boolean> {
     return bcrypt.compare(password, hash);
   }
 }
@@ -695,15 +727,15 @@ export class OAuthService {
     const accessToken = this.accessTokenRepository.create({
       userId,
       expiresAt: new Date(Date.now() + 7200 * 1000), // 2 hours
-      scopes: ['read', 'write']
+      scopes: ['read', 'write'],
     });
-    
+
     return this.accessTokenRepository.save(accessToken);
   }
 
   async validateAccessToken(token: string): Promise<AccessToken | null> {
     return this.accessTokenRepository.findOne({
-      where: { token, expiresAt: MoreThan(new Date()) }
+      where: { token, expiresAt: MoreThan(new Date()) },
     });
   }
 }
@@ -729,10 +761,10 @@ describe('AuthService', () => {
           provide: UserService,
           useValue: {
             findByEmail: jest.fn(),
-            create: jest.fn()
-          }
-        }
-      ]
+            create: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
@@ -742,12 +774,12 @@ describe('AuthService', () => {
   it('should login user with valid credentials', async () => {
     const loginDto = { email: 'test@example.com', password: 'password' };
     const user = { id: '1', email: 'test@example.com', password: 'hashed' };
-    
+
     jest.spyOn(userService, 'findByEmail').mockResolvedValue(user);
     jest.spyOn(service, 'verifyPassword').mockResolvedValue(true);
-    
+
     const result = await service.login(loginDto);
-    
+
     expect(result.user.email).toBe('test@example.com');
     expect(result.access_token).toBeDefined();
   });
@@ -817,23 +849,27 @@ API_BASE_URL=http://localhost:3000
 ## 🚀 Quick Start
 
 1. **Install Dependencies**
+
 ```bash
 npm install @nestjs/jwt @nestjs/passport passport passport-jwt bcrypt
 npm install firebase-admin @thirdweb-dev/sdk
 ```
 
 2. **Setup Environment**
+
 ```bash
 cp .env.example .env
 # Update environment variables
 ```
 
 3. **Implement Controllers & Services**
+
 ```bash
 # Follow the implementation examples above
 ```
 
 4. **Test Endpoints**
+
 ```bash
 npm run test:e2e
 ```
@@ -859,4 +895,4 @@ npm run test:e2e
 
 ---
 
-**🎉 Happy Implementing!** 
+**🎉 Happy Implementing!**

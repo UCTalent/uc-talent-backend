@@ -1,8 +1,10 @@
-import { Entity, Column, OneToMany } from 'typeorm';
-import { BaseEntity } from '@shared/infrastructure/database/base.entity';
-import { City } from './city.entity';
-import { Organization } from '@organization/entities/organization.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
+
 import { Job } from '@job/entities/job.entity';
+import { Organization } from '@organization/entities/organization.entity';
+import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
+import { City } from './city.entity';
 
 @Entity('countries')
 export class Country extends BaseEntity {
@@ -13,12 +15,12 @@ export class Country extends BaseEntity {
   code: string;
 
   // Relationships
-  @OneToMany(() => City, city => city.country)
+  @OneToMany(() => City, (city) => city.country)
   cities: City[];
 
-  @OneToMany(() => Organization, organization => organization.country)
+  @OneToMany(() => Organization, (organization) => organization.country)
   organizations: Organization[];
 
-  @OneToMany(() => Job, job => job.country)
+  @OneToMany(() => Job, (job) => job.country)
   jobs: Job[];
 }

@@ -1,39 +1,40 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, MoreThanOrEqual, LessThan } from 'typeorm';
-import { Partner } from '@domains/partner/entities/partner.entity';
-import { PartnerHost } from '@domains/partner/entities/partner-host.entity';
-import {
-  PartnerHostNetwork,
-  NetworkType,
-} from '@domains/partner/entities/partner-host-network.entity';
+import { LessThan, MoreThanOrEqual, Repository } from 'typeorm';
+
 import { Job } from '@domains/job/entities/job.entity';
-import { PartnerRepository } from '@domains/partner/repositories/partner.repository';
-import { PartnerHostRepository } from '@domains/partner/repositories/partner-host.repository';
-import { PartnerHostNetworkRepository } from '@domains/partner/repositories/partner-host-network.repository';
-import { CreatePartnerDto } from '@domains/partner/dtos/create-partner.dto';
-import { UpdatePartnerDto } from '@domains/partner/dtos/update-partner.dto';
-import { CreatePartnerHostDto } from '@domains/partner/dtos/create-partner-host.dto';
-import { UpdatePartnerHostDto } from '@domains/partner/dtos/update-partner-host.dto';
-import {
-  PartnerQueryDto,
-  PartnerHostQueryDto,
-} from '@domains/partner/dtos/partner-query.dto';
-import {
+import type { CreatePartnerDto } from '@domains/partner/dtos/create-partner.dto';
+import type { CreatePartnerHostDto } from '@domains/partner/dtos/create-partner-host.dto';
+import type {
   CreatePartnerNetworkDto,
   UpdatePartnerNetworkDto,
 } from '@domains/partner/dtos/partner-network.dto';
+import type {
+  PartnerHostQueryDto,
+  PartnerQueryDto,
+} from '@domains/partner/dtos/partner-query.dto';
+import type { UpdatePartnerDto } from '@domains/partner/dtos/update-partner.dto';
+import { UpdatePartnerHostDto } from '@domains/partner/dtos/update-partner-host.dto';
+import type { Partner } from '@domains/partner/entities/partner.entity';
+import type { PartnerHost } from '@domains/partner/entities/partner-host.entity';
+import type {
+  NetworkType,
+  PartnerHostNetwork,
+} from '@domains/partner/entities/partner-host-network.entity';
+import { PartnerRepository } from '@domains/partner/repositories/partner.repository';
+import { PartnerHostRepository } from '@domains/partner/repositories/partner-host.repository';
+import { PartnerHostNetworkRepository } from '@domains/partner/repositories/partner-host-network.repository';
 
 @Injectable()
 export class PartnerService {
   constructor(
     private readonly partnerRepository: PartnerRepository,
     private readonly partnerHostRepository: PartnerHostRepository,
-    private readonly partnerHostNetworkRepository: PartnerHostNetworkRepository,
+    private readonly partnerHostNetworkRepository: PartnerHostNetworkRepository
   ) {}
 
   // Partner Management
@@ -87,7 +88,7 @@ export class PartnerService {
 
   async createPartner(createDto: CreatePartnerDto) {
     const existingPartner = await this.partnerRepository.findBySlug(
-      createDto.slug,
+      createDto.slug
     );
     if (existingPartner) {
       throw new BadRequestException('Partner with this slug already exists');
@@ -108,7 +109,7 @@ export class PartnerService {
 
     if (updateDto.slug && updateDto.slug !== partner.slug) {
       const existingPartner = await this.partnerRepository.findBySlug(
-        updateDto.slug,
+        updateDto.slug
       );
       if (existingPartner) {
         throw new BadRequestException('Partner with this slug already exists');
@@ -188,20 +189,20 @@ export class PartnerService {
 
   async createPartnerHost(createDto: CreatePartnerHostDto) {
     const existingHost = await this.partnerHostRepository.findByHost(
-      createDto.host,
+      createDto.host
     );
     if (existingHost) {
       throw new BadRequestException(
-        'Partner host with this host already exists',
+        'Partner host with this host already exists'
       );
     }
 
     const existingSlug = await this.partnerHostRepository.findBySlug(
-      createDto.slug,
+      createDto.slug
     );
     if (existingSlug) {
       throw new BadRequestException(
-        'Partner host with this slug already exists',
+        'Partner host with this slug already exists'
       );
     }
 
@@ -215,16 +216,16 @@ export class PartnerService {
     });
 
     if (networks && networks.length > 0) {
-      const networkEntities = networks.map(network => ({
+      const networkEntities = networks.map((network) => ({
         network: network.network as NetworkType,
         default: network.default || false,
         partnerHostId: partnerHost.id,
       }));
 
       await Promise.all(
-        networkEntities.map(network =>
-          this.partnerHostNetworkRepository.create(network),
-        ),
+        networkEntities.map((network) =>
+          this.partnerHostNetworkRepository.create(network)
+        )
       );
     }
 
@@ -270,7 +271,7 @@ export class PartnerService {
 
   async addNetworkToPartnerHost(
     partnerHostId: string,
-    createDto: CreatePartnerNetworkDto,
+    createDto: CreatePartnerNetworkDto
   ) {
     const partnerHost =
       await this.partnerHostRepository.findById(partnerHostId);
@@ -281,18 +282,18 @@ export class PartnerService {
     const existingNetwork =
       await this.partnerHostNetworkRepository.findByNetwork(
         partnerHostId,
-        createDto.network as NetworkType,
+        createDto.network as NetworkType
       );
     if (existingNetwork) {
       throw new BadRequestException(
-        'Network already exists for this partner host',
+        'Network already exists for this partner host'
       );
     }
 
     if (createDto.default) {
       await this.partnerHostNetworkRepository.setDefaultNetwork(
         partnerHostId,
-        '',
+        ''
       );
     }
 
@@ -311,7 +312,7 @@ export class PartnerService {
   async updatePartnerNetwork(
     partnerHostId: string,
     networkId: string,
-    updateDto: UpdatePartnerNetworkDto,
+    updateDto: UpdatePartnerNetworkDto
   ) {
     const network = await this.partnerHostNetworkRepository.findById(networkId);
     if (!network || network.partnerHostId !== partnerHostId) {
@@ -321,13 +322,13 @@ export class PartnerService {
     if (updateDto.default) {
       await this.partnerHostNetworkRepository.setDefaultNetwork(
         partnerHostId,
-        networkId,
+        networkId
       );
     }
 
     const updatedNetwork = await this.partnerHostNetworkRepository.update(
       networkId,
-      updateDto,
+      updateDto
     );
     return {
       success: true,
@@ -393,7 +394,7 @@ export class PartnerService {
   }
 
   async findPartnerHostNetworksByHostId(
-    partnerHostId: string,
+    partnerHostId: string
   ): Promise<PartnerHostNetwork[]> {
     return this.partnerHostNetworkRepository.findByPartnerHostId(partnerHostId);
   }

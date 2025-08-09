@@ -1,5 +1,5 @@
-import { IsString, IsOptional, IsUrl } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateExternalLinkDto {
   @ApiProperty({ description: 'Link type (linkedin, github, portfolio, etc.)' })

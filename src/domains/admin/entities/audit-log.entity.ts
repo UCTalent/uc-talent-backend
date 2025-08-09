@@ -1,5 +1,7 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
 import { Admin } from './admin.entity';
 
 @Entity('audit_logs')
@@ -26,7 +28,7 @@ export class AuditLog extends BaseEntity {
   userAgent: string;
 
   // Relationships
-  @ManyToOne(() => Admin, admin => admin.auditLogs)
+  @ManyToOne(() => Admin, (admin) => admin.auditLogs)
   @JoinColumn({ name: 'admin_id' })
   admin: Admin;
 }

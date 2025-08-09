@@ -1,6 +1,7 @@
 import { Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job as BullJob } from 'bull';
+
 import { JobMailer } from '@notification/mailers/job.mailer';
 
 @Processor('job-apply')
@@ -20,7 +21,7 @@ export class JobApplyProcessor {
         to,
         jobTitle,
         companyName,
-        candidateName,
+        candidateName
       );
 
       this.logger.debug('Application confirmation email sent successfully');
@@ -39,7 +40,7 @@ export class JobApplyProcessor {
     try {
       // Update application status logic here
       this.logger.debug(
-        `Application ${applicationId} status updated to ${newStatus}`,
+        `Application ${applicationId} status updated to ${newStatus}`
       );
     } catch (error) {
       this.logger.error('Failed to update application status', error);

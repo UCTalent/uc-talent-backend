@@ -1,12 +1,13 @@
-import {
-  IsOptional,
-  IsString,
-  IsNumber,
-  IsArray,
-  IsEnum,
-} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
+import {
+  IsArray,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+
 import {
   EmploymentStatus,
   EnglishProficiency,
@@ -51,7 +52,7 @@ export class TalentIndexQueryDto {
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
-  @Transform(({ value }) => value.map(v => parseInt(v)))
+  @Transform(({ value }) => value.map((v) => parseInt(v)))
   experience_levels?: number[];
 
   @ApiProperty({
@@ -62,7 +63,7 @@ export class TalentIndexQueryDto {
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
-  @Transform(({ value }) => value.map(v => parseInt(v)))
+  @Transform(({ value }) => value.map((v) => parseInt(v)))
   management_levels?: number[];
 
   @ApiProperty({

@@ -1,8 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { PaymentDistributionController } from './payment-distribution.controller';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+
+import type { ClaimPaymentDto } from '../dtos/claim-payment.dto';
+import type { UpdateBlockchainStatusDto } from '../dtos/update-blockchain-status.dto';
 import { PaymentService } from '../services/payment.service';
-import { ClaimPaymentDto } from '../dtos/claim-payment.dto';
-import { UpdateBlockchainStatusDto } from '../dtos/update-blockchain-status.dto';
+
+import { PaymentDistributionController } from './payment-distribution.controller';
 
 describe('PaymentDistributionController', () => {
   let controller: PaymentDistributionController;
@@ -26,7 +29,7 @@ describe('PaymentDistributionController', () => {
     }).compile();
 
     controller = module.get<PaymentDistributionController>(
-      PaymentDistributionController,
+      PaymentDistributionController
     );
     service = module.get<PaymentService>(PaymentService);
   });

@@ -1,10 +1,5 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableIndex,
-  TableForeignKey,
-} from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+import { Table, TableForeignKey, TableIndex } from 'typeorm';
 
 export class CreateAdminEntities1700000000014 implements MigrationInterface {
   name = 'CreateAdminEntities1700000000014';
@@ -58,7 +53,7 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create admin_sessions table
@@ -108,7 +103,7 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create admin_permissions table
@@ -147,7 +142,7 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create audit_logs table
@@ -202,7 +197,7 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create system_settings table
@@ -243,7 +238,7 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create indexes for admins
@@ -252,7 +247,7 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_ADMINS_EMAIL',
         columnNames: ['email'],
-      }),
+      })
     );
 
     // Create indexes for admin_sessions
@@ -261,7 +256,7 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_ADMIN_SESSIONS_TOKEN',
         columnNames: ['token'],
-      }),
+      })
     );
 
     // Create indexes for audit_logs
@@ -270,7 +265,7 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_AUDIT_LOGS_ADMIN_ID',
         columnNames: ['admin_id'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -278,7 +273,7 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_AUDIT_LOGS_ACTION',
         columnNames: ['action'],
-      }),
+      })
     );
 
     // Create foreign keys for admin_sessions
@@ -289,7 +284,7 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'admins',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for admin_permissions
@@ -300,7 +295,7 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'admins',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for audit_logs
@@ -311,7 +306,7 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'admins',
         onDelete: 'SET NULL',
-      }),
+      })
     );
   }
 
@@ -329,7 +324,7 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
     // Drop foreign keys for audit_logs
     const auditLogsTable = await queryRunner.getTable('audit_logs');
     const auditLogsForeignKey = auditLogsTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('admin_id') !== -1,
+      (fk) => fk.columnNames.indexOf('admin_id') !== -1
     );
     if (auditLogsForeignKey) {
       await queryRunner.dropForeignKey('audit_logs', auditLogsForeignKey);
@@ -339,24 +334,24 @@ export class CreateAdminEntities1700000000014 implements MigrationInterface {
     const adminPermissionsTable =
       await queryRunner.getTable('admin_permissions');
     const adminPermissionsForeignKey = adminPermissionsTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('admin_id') !== -1,
+      (fk) => fk.columnNames.indexOf('admin_id') !== -1
     );
     if (adminPermissionsForeignKey) {
       await queryRunner.dropForeignKey(
         'admin_permissions',
-        adminPermissionsForeignKey,
+        adminPermissionsForeignKey
       );
     }
 
     // Drop foreign keys for admin_sessions
     const adminSessionsTable = await queryRunner.getTable('admin_sessions');
     const adminSessionsForeignKey = adminSessionsTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('admin_id') !== -1,
+      (fk) => fk.columnNames.indexOf('admin_id') !== -1
     );
     if (adminSessionsForeignKey) {
       await queryRunner.dropForeignKey(
         'admin_sessions',
-        adminSessionsForeignKey,
+        adminSessionsForeignKey
       );
     }
 

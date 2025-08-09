@@ -10,7 +10,16 @@ Document này mô tả các entities và database schema cần thiết cho Organ
 
 ```typescript
 // organization.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { City } from '@/modules/location/entities/city.entity';
 import { Country } from '@/modules/location/entities/country.entity';
@@ -85,25 +94,29 @@ export class Organization extends BaseEntity {
   industryId: string;
 
   // Relationships
-  @ManyToOne(() => City, city => city.organizations, { nullable: true })
+  @ManyToOne(() => City, (city) => city.organizations, { nullable: true })
   @JoinColumn({ name: 'city_id' })
   city: City;
 
-  @ManyToOne(() => Country, country => country.organizations, { nullable: true })
+  @ManyToOne(() => Country, (country) => country.organizations, {
+    nullable: true,
+  })
   @JoinColumn({ name: 'country_id' })
   country: Country;
 
-  @ManyToOne(() => Industry, industry => industry.organizations, { nullable: true })
+  @ManyToOne(() => Industry, (industry) => industry.organizations, {
+    nullable: true,
+  })
   @JoinColumn({ name: 'industry_id' })
   industry: Industry;
 
-  @OneToMany(() => Job, job => job.organization)
+  @OneToMany(() => Job, (job) => job.organization)
   jobs: Job[];
 
-  @OneToMany(() => Experience, experience => experience.organization)
+  @OneToMany(() => Experience, (experience) => experience.organization)
   experiences: Experience[];
 
-  @OneToMany(() => Education, education => education.organization)
+  @OneToMany(() => Education, (education) => education.organization)
   educations: Education[];
 
   // Virtual fields for computed properties
@@ -119,7 +132,15 @@ export class Organization extends BaseEntity {
 
 ```typescript
 // organization-logo.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { Organization } from './organization.entity';
 
@@ -156,7 +177,7 @@ export class OrganizationLogo extends BaseEntity {
   isActive: boolean;
 
   // Relationships
-  @OneToOne(() => Organization, organization => organization.logo)
+  @OneToOne(() => Organization, (organization) => organization.logo)
   @JoinColumn({ name: 'organization_id' })
   organization: Organization;
 }
@@ -166,7 +187,15 @@ export class OrganizationLogo extends BaseEntity {
 
 ```typescript
 // organization-social-link.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { Organization } from './organization.entity';
 
@@ -185,7 +214,7 @@ export class OrganizationSocialLink extends BaseEntity {
   isActive: boolean;
 
   // Relationships
-  @ManyToOne(() => Organization, organization => organization.socialLinks)
+  @ManyToOne(() => Organization, (organization) => organization.socialLinks)
   @JoinColumn({ name: 'organization_id' })
   organization: Organization;
 }
@@ -197,7 +226,13 @@ export class OrganizationSocialLink extends BaseEntity {
 
 ```typescript
 // 1700000000016-CreateOrganizations.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateOrganizations1700000000016 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -205,7 +240,13 @@ export class CreateOrganizations1700000000016 implements MigrationInterface {
       new Table({
         name: 'organizations',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'name', type: 'varchar' },
           { name: 'about', type: 'text', isNullable: true },
           { name: 'address', type: 'varchar', isNullable: true },
@@ -226,11 +267,19 @@ export class CreateOrganizations1700000000016 implements MigrationInterface {
           { name: 'city_id', type: 'uuid', isNullable: true },
           { name: 'country_id', type: 'uuid', isNullable: true },
           { name: 'industry_id', type: 'uuid', isNullable: true },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createForeignKey(
@@ -240,7 +289,7 @@ export class CreateOrganizations1700000000016 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'cities',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -250,7 +299,7 @@ export class CreateOrganizations1700000000016 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'countries',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -260,7 +309,7 @@ export class CreateOrganizations1700000000016 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'industries',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -268,35 +317,35 @@ export class CreateOrganizations1700000000016 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_ORGANIZATIONS_NAME',
         columnNames: ['name'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'organizations',
       new TableIndex({
         name: 'IDX_ORGANIZATIONS_STATUS',
         columnNames: ['status'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'organizations',
       new TableIndex({
         name: 'IDX_ORGANIZATIONS_CITY_ID',
         columnNames: ['city_id'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'organizations',
       new TableIndex({
         name: 'IDX_ORGANIZATIONS_COUNTRY_ID',
         columnNames: ['country_id'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'organizations',
       new TableIndex({
         name: 'IDX_ORGANIZATIONS_INDUSTRY_ID',
         columnNames: ['industry_id'],
-      }),
+      })
     );
   }
 
@@ -310,15 +359,29 @@ export class CreateOrganizations1700000000016 implements MigrationInterface {
 
 ```typescript
 // 1700000000017-CreateOrganizationLogos.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
-export class CreateOrganizationLogos1700000000017 implements MigrationInterface {
+export class CreateOrganizationLogos1700000000017
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
         name: 'organization_logos',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'organization_id', type: 'uuid' },
           { name: 'filename', type: 'varchar' },
           { name: 'original_name', type: 'varchar' },
@@ -329,11 +392,19 @@ export class CreateOrganizationLogos1700000000017 implements MigrationInterface 
           { name: 'width', type: 'integer', isNullable: true },
           { name: 'height', type: 'integer', isNullable: true },
           { name: 'is_active', type: 'boolean', default: true },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createForeignKey(
@@ -343,7 +414,7 @@ export class CreateOrganizationLogos1700000000017 implements MigrationInterface 
         referencedColumnNames: ['id'],
         referencedTableName: 'organizations',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -351,7 +422,7 @@ export class CreateOrganizationLogos1700000000017 implements MigrationInterface 
       new TableIndex({
         name: 'IDX_ORGANIZATION_LOGOS_ORG_ID',
         columnNames: ['organization_id'],
-      }),
+      })
     );
   }
 
@@ -365,24 +436,46 @@ export class CreateOrganizationLogos1700000000017 implements MigrationInterface 
 
 ```typescript
 // 1700000000018-CreateOrganizationSocialLinks.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
-export class CreateOrganizationSocialLinks1700000000018 implements MigrationInterface {
+export class CreateOrganizationSocialLinks1700000000018
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
         name: 'organization_social_links',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'organization_id', type: 'uuid' },
           { name: 'platform', type: 'varchar' },
           { name: 'url', type: 'varchar' },
           { name: 'is_active', type: 'boolean', default: true },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createForeignKey(
@@ -392,7 +485,7 @@ export class CreateOrganizationSocialLinks1700000000018 implements MigrationInte
         referencedColumnNames: ['id'],
         referencedTableName: 'organizations',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -400,14 +493,14 @@ export class CreateOrganizationSocialLinks1700000000018 implements MigrationInte
       new TableIndex({
         name: 'IDX_ORG_SOCIAL_LINKS_ORG_ID',
         columnNames: ['organization_id'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'organization_social_links',
       new TableIndex({
         name: 'IDX_ORG_SOCIAL_LINKS_PLATFORM',
         columnNames: ['platform'],
-      }),
+      })
     );
   }
 
@@ -433,7 +526,7 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class OrganizationRepository extends BaseRepository<Organization> {
   constructor(
     @InjectRepository(Organization)
-    private readonly organizationRepository: Repository<Organization>,
+    private readonly organizationRepository: Repository<Organization>
   ) {
     super(organizationRepository);
   }
@@ -445,12 +538,16 @@ export class OrganizationRepository extends BaseRepository<Organization> {
   async findByIndustry(industryId: string): Promise<Organization[]> {
     return this.organizationRepository.find({
       where: { industryId },
-      relations: ['industry', 'city', 'country']
+      relations: ['industry', 'city', 'country'],
     });
   }
 
-  async findByLocation(cityId?: string, countryId?: string): Promise<Organization[]> {
-    const queryBuilder = this.organizationRepository.createQueryBuilder('org')
+  async findByLocation(
+    cityId?: string,
+    countryId?: string
+  ): Promise<Organization[]> {
+    const queryBuilder = this.organizationRepository
+      .createQueryBuilder('org')
       .leftJoinAndSelect('org.industry', 'industry')
       .leftJoinAndSelect('org.city', 'city')
       .leftJoinAndSelect('org.country', 'country');
@@ -472,7 +569,9 @@ export class OrganizationRepository extends BaseRepository<Organization> {
       .leftJoinAndSelect('org.industry', 'industry')
       .leftJoinAndSelect('org.city', 'city')
       .leftJoinAndSelect('org.country', 'country')
-      .where('org.name ILIKE :query OR org.about ILIKE :query', { query: `%${query}%` })
+      .where('org.name ILIKE :query OR org.about ILIKE :query', {
+        query: `%${query}%`,
+      })
       .orderBy('org.name', 'ASC')
       .getMany();
   }
@@ -484,7 +583,10 @@ export class OrganizationRepository extends BaseRepository<Organization> {
       .leftJoinAndSelect('org.city', 'city')
       .leftJoinAndSelect('org.country', 'country')
       .addSelect('COUNT(jobs.id)', 'jobsCount')
-      .addSelect('COUNT(CASE WHEN jobs.status = :activeStatus THEN 1 END)', 'activeJobsCount')
+      .addSelect(
+        'COUNT(CASE WHEN jobs.status = :activeStatus THEN 1 END)',
+        'activeJobsCount'
+      )
       .leftJoin('org.jobs', 'jobs')
       .groupBy('org.id')
       .addGroupBy('industry.id')
@@ -497,7 +599,7 @@ export class OrganizationRepository extends BaseRepository<Organization> {
   async findActiveOrganizations(): Promise<Organization[]> {
     return this.organizationRepository.find({
       where: { status: 'active' },
-      relations: ['industry', 'city', 'country']
+      relations: ['industry', 'city', 'country'],
     });
   }
 }
@@ -517,14 +619,16 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class OrganizationLogoRepository extends BaseRepository<OrganizationLogo> {
   constructor(
     @InjectRepository(OrganizationLogo)
-    private readonly organizationLogoRepository: Repository<OrganizationLogo>,
+    private readonly organizationLogoRepository: Repository<OrganizationLogo>
   ) {
     super(organizationLogoRepository);
   }
 
-  async findByOrganization(organizationId: string): Promise<OrganizationLogo | null> {
+  async findByOrganization(
+    organizationId: string
+  ): Promise<OrganizationLogo | null> {
     return this.organizationLogoRepository.findOne({
-      where: { organizationId, isActive: true }
+      where: { organizationId, isActive: true },
     });
   }
 
@@ -551,20 +655,25 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class OrganizationSocialLinkRepository extends BaseRepository<OrganizationSocialLink> {
   constructor(
     @InjectRepository(OrganizationSocialLink)
-    private readonly organizationSocialLinkRepository: Repository<OrganizationSocialLink>,
+    private readonly organizationSocialLinkRepository: Repository<OrganizationSocialLink>
   ) {
     super(organizationSocialLinkRepository);
   }
 
-  async findByOrganization(organizationId: string): Promise<OrganizationSocialLink[]> {
+  async findByOrganization(
+    organizationId: string
+  ): Promise<OrganizationSocialLink[]> {
     return this.organizationSocialLinkRepository.find({
-      where: { organizationId, isActive: true }
+      where: { organizationId, isActive: true },
     });
   }
 
-  async findByPlatform(organizationId: string, platform: string): Promise<OrganizationSocialLink | null> {
+  async findByPlatform(
+    organizationId: string,
+    platform: string
+  ): Promise<OrganizationSocialLink | null> {
     return this.organizationSocialLinkRepository.findOne({
-      where: { organizationId, platform, isActive: true }
+      where: { organizationId, platform, isActive: true },
     });
   }
 }
@@ -583,7 +692,10 @@ export class OrganizationSearchService {
     private organizationRepository: Repository<Organization>
   ) {}
 
-  async searchOrganizations(query: string, filters?: any): Promise<Organization[]> {
+  async searchOrganizations(
+    query: string,
+    filters?: any
+  ): Promise<Organization[]> {
     const queryBuilder = this.organizationRepository
       .createQueryBuilder('org')
       .leftJoinAndSelect('org.industry', 'industry')
@@ -607,10 +719,14 @@ export class OrganizationSearchService {
     // Apply filters
     if (filters) {
       if (filters.industry) {
-        queryBuilder.andWhere('industry.id = :industry', { industry: filters.industry });
+        queryBuilder.andWhere('industry.id = :industry', {
+          industry: filters.industry,
+        });
       }
       if (filters.country) {
-        queryBuilder.andWhere('country.id = :country', { country: filters.country });
+        queryBuilder.andWhere('country.id = :country', {
+          country: filters.country,
+        });
       }
       if (filters.city) {
         queryBuilder.andWhere('city.id = :city', { city: filters.city });
@@ -619,16 +735,18 @@ export class OrganizationSearchService {
         queryBuilder.andWhere('org.size = :size', { size: filters.size });
       }
       if (filters.orgType) {
-        queryBuilder.andWhere('org.orgType = :orgType', { orgType: filters.orgType });
+        queryBuilder.andWhere('org.orgType = :orgType', {
+          orgType: filters.orgType,
+        });
       }
       if (filters.status) {
-        queryBuilder.andWhere('org.status = :status', { status: filters.status });
+        queryBuilder.andWhere('org.status = :status', {
+          status: filters.status,
+        });
       }
     }
 
-    return queryBuilder
-      .orderBy('org.name', 'ASC')
-      .getMany();
+    return queryBuilder.orderBy('org.name', 'ASC').getMany();
   }
 }
 ```
@@ -650,4 +768,4 @@ export class OrganizationSearchService {
 
 ---
 
-**🎉 Ready for implementation!** 
+**🎉 Ready for implementation!**

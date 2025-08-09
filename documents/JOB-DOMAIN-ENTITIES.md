@@ -10,7 +10,18 @@ Document này mô tả các entities và database schema cần thiết cho Job d
 
 ```typescript
 // job.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, OneToMany, JoinTable, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  ManyToMany,
+  OneToMany,
+  JoinTable,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { Organization } from '@/modules/organization/entities/organization.entity';
 import { Speciality } from '@/modules/skill/entities/speciality.entity';
@@ -144,51 +155,51 @@ export class Job extends BaseEntity {
   partnerHostId: string;
 
   // Relationships
-  @ManyToOne(() => Organization, organization => organization.jobs)
+  @ManyToOne(() => Organization, (organization) => organization.jobs)
   @JoinColumn({ name: 'organization_id' })
   organization: Organization;
 
-  @ManyToOne(() => Speciality, speciality => speciality.jobs)
+  @ManyToOne(() => Speciality, (speciality) => speciality.jobs)
   @JoinColumn({ name: 'speciality_id' })
   speciality: Speciality;
 
-  @ManyToOne(() => City, city => city.jobs)
+  @ManyToOne(() => City, (city) => city.jobs)
   @JoinColumn({ name: 'city_id' })
   city: City;
 
-  @ManyToOne(() => Country, country => country.jobs)
+  @ManyToOne(() => Country, (country) => country.jobs)
   @JoinColumn({ name: 'country_id' })
   country: Country;
 
-  @ManyToOne(() => Region, region => region.jobs)
+  @ManyToOne(() => Region, (region) => region.jobs)
   @JoinColumn({ name: 'region_id' })
   region: Region;
 
-  @ManyToOne(() => PartnerHost, partnerHost => partnerHost.jobs)
+  @ManyToOne(() => PartnerHost, (partnerHost) => partnerHost.jobs)
   @JoinColumn({ name: 'partner_host_id' })
   partnerHost: PartnerHost;
 
-  @ManyToMany(() => Skill, skill => skill.jobs)
+  @ManyToMany(() => Skill, (skill) => skill.jobs)
   @JoinTable({
     name: 'jobs_skills',
     joinColumn: { name: 'job_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'skill_id', referencedColumnName: 'id' }
+    inverseJoinColumn: { name: 'skill_id', referencedColumnName: 'id' },
   })
   skills: Skill[];
 
-  @OneToMany(() => JobApply, jobApply => jobApply.job)
+  @OneToMany(() => JobApply, (jobApply) => jobApply.job)
   jobApplies: JobApply[];
 
-  @OneToMany(() => JobReferral, jobReferral => jobReferral.job)
+  @OneToMany(() => JobReferral, (jobReferral) => jobReferral.job)
   jobReferrals: JobReferral[];
 
-  @OneToMany(() => ReferralLink, referralLink => referralLink.job)
+  @OneToMany(() => ReferralLink, (referralLink) => referralLink.job)
   referralLinks: ReferralLink[];
 
-  @OneToMany(() => JobClosureReason, closureReason => closureReason.job)
+  @OneToMany(() => JobClosureReason, (closureReason) => closureReason.job)
   closureReasons: JobClosureReason[];
 
-  @OneToMany(() => Web3Event, web3Event => web3Event.job)
+  @OneToMany(() => Web3Event, (web3Event) => web3Event.job)
   web3Events: Web3Event[];
 
   // Static properties
@@ -200,7 +211,15 @@ export class Job extends BaseEntity {
 
 ```typescript
 // job-apply.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { Job } from './job.entity';
 import { Talent } from '@/modules/talent/entities/talent.entity';
@@ -241,19 +260,19 @@ export class JobApply extends BaseEntity {
   uploadedResumeId: string;
 
   // Relationships
-  @ManyToOne(() => Job, job => job.jobApplies)
+  @ManyToOne(() => Job, (job) => job.jobApplies)
   @JoinColumn({ name: 'job_id' })
   job: Job;
 
-  @ManyToOne(() => Talent, talent => talent.jobApplies)
+  @ManyToOne(() => Talent, (talent) => talent.jobApplies)
   @JoinColumn({ name: 'talent_id' })
   talent: Talent;
 
-  @ManyToOne(() => Organization, organization => organization.jobApplies)
+  @ManyToOne(() => Organization, (organization) => organization.jobApplies)
   @JoinColumn({ name: 'organization_id' })
   organization: Organization;
 
-  @ManyToOne(() => UploadedResume, resume => resume.jobApplies)
+  @ManyToOne(() => UploadedResume, (resume) => resume.jobApplies)
   @JoinColumn({ name: 'uploaded_resume_id' })
   uploadedResume: UploadedResume;
 }
@@ -263,7 +282,15 @@ export class JobApply extends BaseEntity {
 
 ```typescript
 // job-referral.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { Job } from './job.entity';
 import { User } from '@/modules/user/entities/user.entity';
@@ -311,11 +338,11 @@ export class JobReferral extends BaseEntity {
   referrerId: string;
 
   // Relationships
-  @ManyToOne(() => Job, job => job.jobReferrals)
+  @ManyToOne(() => Job, (job) => job.jobReferrals)
   @JoinColumn({ name: 'job_id' })
   job: Job;
 
-  @ManyToOne(() => User, user => user.jobReferrals)
+  @ManyToOne(() => User, (user) => user.jobReferrals)
   @JoinColumn({ name: 'referrer_id' })
   referrer: User;
 }
@@ -325,7 +352,15 @@ export class JobReferral extends BaseEntity {
 
 ```typescript
 // referral-link.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { Job } from './job.entity';
 import { User } from '@/modules/user/entities/user.entity';
@@ -340,11 +375,11 @@ export class ReferralLink extends BaseEntity {
   referrerId: string;
 
   // Relationships
-  @ManyToOne(() => Job, job => job.referralLinks)
+  @ManyToOne(() => Job, (job) => job.referralLinks)
   @JoinColumn({ name: 'job_id' })
   job: Job;
 
-  @ManyToOne(() => User, user => user.referralLinks)
+  @ManyToOne(() => User, (user) => user.referralLinks)
   @JoinColumn({ name: 'referrer_id' })
   referrer: User;
 }
@@ -354,7 +389,15 @@ export class ReferralLink extends BaseEntity {
 
 ```typescript
 // job-closure-reason.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { Job } from './job.entity';
 
@@ -371,7 +414,7 @@ export class JobClosureReason extends BaseEntity {
   jobId: string;
 
   // Relationships
-  @ManyToOne(() => Job, job => job.closureReasons)
+  @ManyToOne(() => Job, (job) => job.closureReasons)
   @JoinColumn({ name: 'job_id' })
   job: Job;
 }
@@ -383,7 +426,13 @@ export class JobClosureReason extends BaseEntity {
 
 ```typescript
 // 1700000000002-CreateJobs.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateJobs1700000000002 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -572,7 +621,7 @@ export class CreateJobs1700000000002 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create foreign keys
@@ -583,7 +632,7 @@ export class CreateJobs1700000000002 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'organizations',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -593,7 +642,7 @@ export class CreateJobs1700000000002 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'specialities',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -603,7 +652,7 @@ export class CreateJobs1700000000002 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'cities',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -613,7 +662,7 @@ export class CreateJobs1700000000002 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'countries',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -623,7 +672,7 @@ export class CreateJobs1700000000002 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'regions',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -633,7 +682,7 @@ export class CreateJobs1700000000002 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'partner_hosts',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     // Create indexes
@@ -642,7 +691,7 @@ export class CreateJobs1700000000002 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_JOBS_JOB_NUMBER',
         columnNames: ['job_number'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -650,7 +699,7 @@ export class CreateJobs1700000000002 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_JOBS_STATUS',
         columnNames: ['status'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -658,7 +707,7 @@ export class CreateJobs1700000000002 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_JOBS_POSTED_DATE',
         columnNames: ['posted_date'],
-      }),
+      })
     );
   }
 
@@ -672,7 +721,13 @@ export class CreateJobs1700000000002 implements MigrationInterface {
 
 ```typescript
 // 1700000000003-CreateJobApplies.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateJobApplies1700000000003 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -745,7 +800,7 @@ export class CreateJobApplies1700000000003 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create foreign keys
@@ -756,7 +811,7 @@ export class CreateJobApplies1700000000003 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'jobs',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -766,7 +821,7 @@ export class CreateJobApplies1700000000003 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'talents',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -776,7 +831,7 @@ export class CreateJobApplies1700000000003 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'organizations',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -786,7 +841,7 @@ export class CreateJobApplies1700000000003 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'uploaded_resumes',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     // Create indexes
@@ -795,7 +850,7 @@ export class CreateJobApplies1700000000003 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_JOB_APPLIES_JOB_TALENT',
         columnNames: ['job_id', 'talent_id'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -803,7 +858,7 @@ export class CreateJobApplies1700000000003 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_JOB_APPLIES_STATUS',
         columnNames: ['status'],
-      }),
+      })
     );
   }
 
@@ -829,7 +884,7 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class JobRepository extends BaseRepository<Job> {
   constructor(
     @InjectRepository(Job)
-    private readonly jobRepository: Repository<Job>,
+    private readonly jobRepository: Repository<Job>
   ) {
     super(jobRepository);
   }
@@ -837,26 +892,27 @@ export class JobRepository extends BaseRepository<Job> {
   async findByStatus(status: string): Promise<Job[]> {
     return this.jobRepository.find({
       where: { status },
-      relations: ['organization', 'speciality', 'skills']
+      relations: ['organization', 'speciality', 'skills'],
     });
   }
 
   async findByOrganization(organizationId: string): Promise<Job[]> {
     return this.jobRepository.find({
       where: { organizationId },
-      relations: ['speciality', 'skills']
+      relations: ['speciality', 'skills'],
     });
   }
 
   async findByPartnerHost(partnerHostId: string): Promise<Job[]> {
     return this.jobRepository.find({
       where: { partnerHostId },
-      relations: ['organization', 'speciality']
+      relations: ['organization', 'speciality'],
     });
   }
 
   async findWithFilters(filters: any): Promise<[Job[], number]> {
-    const queryBuilder = this.jobRepository.createQueryBuilder('job')
+    const queryBuilder = this.jobRepository
+      .createQueryBuilder('job')
       .leftJoinAndSelect('job.organization', 'organization')
       .leftJoinAndSelect('job.speciality', 'speciality')
       .leftJoinAndSelect('job.skills', 'skills');
@@ -867,15 +923,21 @@ export class JobRepository extends BaseRepository<Job> {
     }
 
     if (filters.organizationId) {
-      queryBuilder.andWhere('job.organizationId = :organizationId', { organizationId: filters.organizationId });
+      queryBuilder.andWhere('job.organizationId = :organizationId', {
+        organizationId: filters.organizationId,
+      });
     }
 
     if (filters.experienceLevel) {
-      queryBuilder.andWhere('job.experienceLevel = :experienceLevel', { experienceLevel: filters.experienceLevel });
+      queryBuilder.andWhere('job.experienceLevel = :experienceLevel', {
+        experienceLevel: filters.experienceLevel,
+      });
     }
 
     if (filters.jobType) {
-      queryBuilder.andWhere('job.jobType = :jobType', { jobType: filters.jobType });
+      queryBuilder.andWhere('job.jobType = :jobType', {
+        jobType: filters.jobType,
+      });
     }
 
     return queryBuilder.getManyAndCount();
@@ -884,7 +946,7 @@ export class JobRepository extends BaseRepository<Job> {
   async findSimilarJobs(jobId: string, limit: number = 10): Promise<Job[]> {
     const job = await this.jobRepository.findOne({
       where: { id: jobId },
-      relations: ['speciality', 'skills']
+      relations: ['speciality', 'skills'],
     });
 
     if (!job) return [];
@@ -895,7 +957,9 @@ export class JobRepository extends BaseRepository<Job> {
       .leftJoinAndSelect('job.speciality', 'speciality')
       .where('job.id != :jobId', { jobId })
       .andWhere('job.status = :status', { status: 'published' })
-      .andWhere('job.specialityId = :specialityId', { specialityId: job.specialityId })
+      .andWhere('job.specialityId = :specialityId', {
+        specialityId: job.specialityId,
+      })
       .orderBy('job.postedDate', 'DESC')
       .limit(limit)
       .getMany();
@@ -917,36 +981,39 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class JobApplyRepository extends BaseRepository<JobApply> {
   constructor(
     @InjectRepository(JobApply)
-    private readonly jobApplyRepository: Repository<JobApply>,
+    private readonly jobApplyRepository: Repository<JobApply>
   ) {
     super(jobApplyRepository);
   }
 
-  async findByJobAndTalent(jobId: string, talentId: string): Promise<JobApply | null> {
+  async findByJobAndTalent(
+    jobId: string,
+    talentId: string
+  ): Promise<JobApply | null> {
     return this.jobApplyRepository.findOne({
       where: { jobId, talentId },
-      relations: ['job', 'talent', 'uploadedResume']
+      relations: ['job', 'talent', 'uploadedResume'],
     });
   }
 
   async findByTalent(talentId: string): Promise<JobApply[]> {
     return this.jobApplyRepository.find({
       where: { talentId },
-      relations: ['job', 'job.organization']
+      relations: ['job', 'job.organization'],
     });
   }
 
   async findByJob(jobId: string): Promise<JobApply[]> {
     return this.jobApplyRepository.find({
       where: { jobId },
-      relations: ['talent', 'uploadedResume']
+      relations: ['talent', 'uploadedResume'],
     });
   }
 
   async findByStatus(status: string): Promise<JobApply[]> {
     return this.jobApplyRepository.find({
       where: { status },
-      relations: ['job', 'talent']
+      relations: ['job', 'talent'],
     });
   }
 }
@@ -970,4 +1037,4 @@ export class JobApplyRepository extends BaseRepository<JobApply> {
 
 ---
 
-**🎉 Ready for implementation!** 
+**🎉 Ready for implementation!**

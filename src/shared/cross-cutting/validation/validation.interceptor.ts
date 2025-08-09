@@ -15,7 +15,7 @@ export class ValidationPipe extends DefaultValidationPipe {
       forbidNonWhitelisted: true,
       exceptionFactory: (errors: ValidationError[]) => {
         const formatErrors = (errs: ValidationError[]) => {
-          return errs.map(error => ({
+          return errs.map((error) => ({
             [error.property]: error.children?.length
               ? formatErrors(error.children)
               : error.constraints
@@ -29,7 +29,7 @@ export class ValidationPipe extends DefaultValidationPipe {
             statusCode: HttpStatus.BAD_REQUEST,
             message: 'Validation failed',
             errors: formatErrors(errors),
-          }),
+          })
         );
       },
     });

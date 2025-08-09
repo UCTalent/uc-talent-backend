@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID, IsString, IsIn } from 'class-validator';
+import { IsIn, IsString, IsUUID } from 'class-validator';
 
 export class UpdateBlockchainStatusDto {
   @ApiProperty({

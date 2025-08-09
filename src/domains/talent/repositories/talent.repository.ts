@@ -1,19 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import type { EmploymentStatus } from '@talent/entities/talent.entity';
 import {
+  EnglishProficiency,
   Talent,
   TalentStatus,
-  EmploymentStatus,
-  EnglishProficiency,
 } from '@talent/entities/talent.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class TalentRepository implements IBaseRepository<Talent> {
   constructor(
     @InjectRepository(Talent)
-    private readonly repository: Repository<Talent>,
+    private readonly repository: Repository<Talent>
   ) {}
 
   async findById(id: string): Promise<Talent | null> {
@@ -58,7 +59,7 @@ export class TalentRepository implements IBaseRepository<Talent> {
   }
 
   async findByEmploymentStatus(
-    employmentStatus: EmploymentStatus,
+    employmentStatus: EmploymentStatus
   ): Promise<Talent[]> {
     return this.repository.find({
       where: { employmentStatus },
@@ -80,7 +81,7 @@ export class TalentRepository implements IBaseRepository<Talent> {
     if (filters.query) {
       queryBuilder.andWhere(
         '(talent.headline ILIKE :query OR talent.about ILIKE :query OR user.name ILIKE :query)',
-        { query: `%${filters.query}%` },
+        { query: `%${filters.query}%` }
       );
     }
 
@@ -148,7 +149,7 @@ export class TalentRepository implements IBaseRepository<Talent> {
 
   async findSimilarTalents(
     talentId: string,
-    limit: number = 10,
+    limit: number = 10
   ): Promise<Talent[]> {
     const talent = await this.repository.findOne({
       where: { id: talentId },
@@ -173,7 +174,7 @@ export class TalentRepository implements IBaseRepository<Talent> {
   }
 
   async getProfileCompletion(
-    talentId: string,
+    talentId: string
   ): Promise<{ step: number; completed: boolean }> {
     const talent = await this.repository.findOne({
       where: { id: talentId },

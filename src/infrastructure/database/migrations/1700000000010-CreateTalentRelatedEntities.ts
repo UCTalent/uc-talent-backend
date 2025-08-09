@@ -1,9 +1,5 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableForeignKey,
-} from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+import { Table, TableForeignKey } from 'typeorm';
 
 export class CreateTalentRelatedEntities1700000000010
   implements MigrationInterface
@@ -76,7 +72,7 @@ export class CreateTalentRelatedEntities1700000000010
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create educations table
@@ -141,7 +137,7 @@ export class CreateTalentRelatedEntities1700000000010
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create external_links table
@@ -180,7 +176,7 @@ export class CreateTalentRelatedEntities1700000000010
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create uploaded_resumes table
@@ -235,7 +231,7 @@ export class CreateTalentRelatedEntities1700000000010
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create recommendation_jobs table
@@ -277,7 +273,7 @@ export class CreateTalentRelatedEntities1700000000010
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create foreign keys for experiences
@@ -288,7 +284,7 @@ export class CreateTalentRelatedEntities1700000000010
         referencedColumnNames: ['id'],
         referencedTableName: 'talents',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for educations
@@ -299,7 +295,7 @@ export class CreateTalentRelatedEntities1700000000010
         referencedColumnNames: ['id'],
         referencedTableName: 'talents',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for external_links
@@ -310,7 +306,7 @@ export class CreateTalentRelatedEntities1700000000010
         referencedColumnNames: ['id'],
         referencedTableName: 'talents',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for uploaded_resumes
@@ -321,7 +317,7 @@ export class CreateTalentRelatedEntities1700000000010
         referencedColumnNames: ['id'],
         referencedTableName: 'talents',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for recommendation_jobs
@@ -332,7 +328,7 @@ export class CreateTalentRelatedEntities1700000000010
         referencedColumnNames: ['id'],
         referencedTableName: 'talents',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -342,14 +338,14 @@ export class CreateTalentRelatedEntities1700000000010
         referencedColumnNames: ['id'],
         referencedTableName: 'jobs',
         onDelete: 'CASCADE',
-      }),
+      })
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop foreign keys for recommendation_jobs
     const recommendationJobsTable = await queryRunner.getTable(
-      'recommendation_jobs',
+      'recommendation_jobs'
     );
     const recommendationJobsForeignKeys = recommendationJobsTable.foreignKeys;
     for (const foreignKey of recommendationJobsForeignKeys) {
@@ -359,31 +355,31 @@ export class CreateTalentRelatedEntities1700000000010
     // Drop foreign keys for uploaded_resumes
     const uploadedResumesTable = await queryRunner.getTable('uploaded_resumes');
     const uploadedResumesForeignKey = uploadedResumesTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('talent_id') !== -1,
+      (fk) => fk.columnNames.indexOf('talent_id') !== -1
     );
     if (uploadedResumesForeignKey) {
       await queryRunner.dropForeignKey(
         'uploaded_resumes',
-        uploadedResumesForeignKey,
+        uploadedResumesForeignKey
       );
     }
 
     // Drop foreign keys for external_links
     const externalLinksTable = await queryRunner.getTable('external_links');
     const externalLinksForeignKey = externalLinksTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('talent_id') !== -1,
+      (fk) => fk.columnNames.indexOf('talent_id') !== -1
     );
     if (externalLinksForeignKey) {
       await queryRunner.dropForeignKey(
         'external_links',
-        externalLinksForeignKey,
+        externalLinksForeignKey
       );
     }
 
     // Drop foreign keys for educations
     const educationsTable = await queryRunner.getTable('educations');
     const educationsForeignKey = educationsTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('talent_id') !== -1,
+      (fk) => fk.columnNames.indexOf('talent_id') !== -1
     );
     if (educationsForeignKey) {
       await queryRunner.dropForeignKey('educations', educationsForeignKey);
@@ -392,7 +388,7 @@ export class CreateTalentRelatedEntities1700000000010
     // Drop foreign keys for experiences
     const experiencesTable = await queryRunner.getTable('experiences');
     const experiencesForeignKey = experiencesTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('talent_id') !== -1,
+      (fk) => fk.columnNames.indexOf('talent_id') !== -1
     );
     if (experiencesForeignKey) {
       await queryRunner.dropForeignKey('experiences', experiencesForeignKey);

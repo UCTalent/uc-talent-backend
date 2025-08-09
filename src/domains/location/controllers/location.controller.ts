@@ -1,17 +1,21 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { LocationService } from '@location/services/location.service';
-import { City } from '@location/entities/city.entity';
-import { Country } from '@location/entities/country.entity';
-import { Region } from '@location/entities/region.entity';
-import {
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+
+import { Docs } from '@documents/location/location.document';
+import type {
   CityResponseDto,
   CountryResponseDto,
   RegionResponseDto,
+} from '@location/dtos/location-response.dto';
+import {
   CityListResponseDto,
   CountryListResponseDto,
   RegionListResponseDto,
 } from '@location/dtos/location-response.dto';
+import type { City } from '@location/entities/city.entity';
+import type { Country } from '@location/entities/country.entity';
+import type { Region } from '@location/entities/region.entity';
+import { LocationService } from '@location/services/location.service';
 import { ResponseHandler } from '@shared/utils/response-handler';
 
 @ApiTags('locations')
@@ -20,17 +24,13 @@ export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 
   @Get('cities')
-  @ApiOperation({ summary: 'Get all cities' })
-  @ApiResponse({
-    status: 200,
-    description: 'Cities retrieved successfully',
-    type: CityListResponseDto,
-  })
+  @ApiOperation(Docs.getCities.operation)
+  @ApiResponse(Docs.getCities.responses.success[0])
   async findAllCities() {
     const cities = await this.locationService.findAllCities();
     return ResponseHandler.success({
       data: {
-        cities: cities.map(city => this.mapCityToResponseDto(city)),
+        cities: cities.map((city) => this.mapCityToResponseDto(city)),
         total: cities.length,
         page: 1,
         limit: cities.length,
@@ -40,22 +40,14 @@ export class LocationController {
   }
 
   @Get('cities/:countryId')
-  @ApiOperation({ summary: 'Get cities by country ID' })
-  @ApiParam({
-    name: 'countryId',
-    description: 'Country ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Cities found successfully',
-    type: CityListResponseDto,
-  })
+  @ApiOperation(Docs.getCitiesByCountry.operation)
+  @ApiParam(Docs.getCitiesByCountry.param)
+  @ApiResponse(Docs.getCitiesByCountry.responses.success[0])
   async findCitiesByCountry(@Param('countryId') countryId: string) {
     const cities = await this.locationService.findCitiesByCountry(countryId);
     return ResponseHandler.success({
       data: {
-        cities: cities.map(city => this.mapCityToResponseDto(city)),
+        cities: cities.map((city) => this.mapCityToResponseDto(city)),
         total: cities.length,
         page: 1,
         limit: cities.length,
@@ -65,21 +57,10 @@ export class LocationController {
   }
 
   @Get('cities/city/:id')
-  @ApiOperation({ summary: 'Get city by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'City ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'City found successfully',
-    type: CityResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'City not found',
-  })
+  @ApiOperation(Docs.getCityById.operation)
+  @ApiParam(Docs.getCityById.param)
+  @ApiResponse(Docs.getCityById.responses.success[0])
+  @ApiResponse(Docs.getCityById.responses.error[0])
   async findCityById(@Param('id') id: string) {
     const city = await this.locationService.findCityById(id);
     if (!city) {
@@ -95,18 +76,14 @@ export class LocationController {
   }
 
   @Get('countries')
-  @ApiOperation({ summary: 'Get all countries' })
-  @ApiResponse({
-    status: 200,
-    description: 'Countries retrieved successfully',
-    type: CountryListResponseDto,
-  })
+  @ApiOperation(Docs.getCountries.operation)
+  @ApiResponse(Docs.getCountries.responses.success[0])
   async findAllCountries() {
     const countries = await this.locationService.findAllCountries();
     return ResponseHandler.success({
       data: {
-        countries: countries.map(country =>
-          this.mapCountryToResponseDto(country),
+        countries: countries.map((country) =>
+          this.mapCountryToResponseDto(country)
         ),
         total: countries.length,
         page: 1,
@@ -117,21 +94,10 @@ export class LocationController {
   }
 
   @Get('countries/:id')
-  @ApiOperation({ summary: 'Get country by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'Country ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Country found successfully',
-    type: CountryResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Country not found',
-  })
+  @ApiOperation(Docs.getCountryById.operation)
+  @ApiParam(Docs.getCountryById.param)
+  @ApiResponse(Docs.getCountryById.responses.success[0])
+  @ApiResponse(Docs.getCountryById.responses.error[0])
   async findCountryById(@Param('id') id: string) {
     const country = await this.locationService.findCountryById(id);
     if (!country) {
@@ -147,17 +113,13 @@ export class LocationController {
   }
 
   @Get('regions')
-  @ApiOperation({ summary: 'Get all regions' })
-  @ApiResponse({
-    status: 200,
-    description: 'Regions retrieved successfully',
-    type: RegionListResponseDto,
-  })
+  @ApiOperation(Docs.getRegions.operation)
+  @ApiResponse(Docs.getRegions.responses.success[0])
   async findAllRegions() {
     const regions = await this.locationService.findAllRegions();
     return ResponseHandler.success({
       data: {
-        regions: regions.map(region => this.mapRegionToResponseDto(region)),
+        regions: regions.map((region) => this.mapRegionToResponseDto(region)),
         total: regions.length,
         page: 1,
         limit: regions.length,
@@ -167,21 +129,10 @@ export class LocationController {
   }
 
   @Get('regions/:id')
-  @ApiOperation({ summary: 'Get region by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'Region ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Region found successfully',
-    type: RegionResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Region not found',
-  })
+  @ApiOperation(Docs.getRegionById.operation)
+  @ApiParam(Docs.getRegionById.param)
+  @ApiResponse(Docs.getRegionById.responses.success[0])
+  @ApiResponse(Docs.getRegionById.responses.error[0])
   async findRegionById(@Param('id') id: string) {
     const region = await this.locationService.findRegionById(id);
     if (!region) {

@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+
+import { EmailModule } from '@infrastructure/email/email.module';
+import { UserModule } from '@user/user.module';
+
 import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
 import { FirebaseAuthService } from './services/firebase-auth.service';
 import { Web3AuthService } from './services/web3-auth.service';
-import { UserModule } from '@user/user.module';
-import { EmailModule } from '@infrastructure/email/email.module';
 
 @Module({
   imports: [

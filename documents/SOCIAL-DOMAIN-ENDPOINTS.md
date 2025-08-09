@@ -7,6 +7,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 ## 🏗️ Social Domain Architecture
 
 ### Core Features
+
 - **Social Account Management**: Link/unlink social accounts
 - **Social Authentication**: OAuth login với các providers
 - **Account Synchronization**: Sync data từ social platforms
@@ -22,13 +23,15 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 #### Endpoint: `GET /api/v1/social-accounts`
 
 #### Headers
+
 ```typescript
 {
-  Authorization: 'Bearer {access_token}'
+  Authorization: 'Bearer {access_token}';
 }
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -83,6 +86,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 #### Endpoint: `POST /api/v1/social-accounts/link`
 
 #### Headers
+
 ```typescript
 {
   Authorization: 'Bearer {access_token}',
@@ -91,6 +95,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 ```
 
 #### Request Body
+
 ```json
 {
   "provider": "linkedin",
@@ -111,6 +116,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 ```
 
 #### Response Success (201)
+
 ```json
 {
   "success": true,
@@ -139,6 +145,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 ```
 
 #### Response Error (422)
+
 ```json
 {
   "success": false,
@@ -154,13 +161,15 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 #### Endpoint: `DELETE /api/v1/social-accounts/:id/unlink`
 
 #### Headers
+
 ```typescript
 {
-  Authorization: 'Bearer {access_token}'
+  Authorization: 'Bearer {access_token}';
 }
 ```
 
 #### Response Success (204)
+
 ```json
 {
   "success": true,
@@ -169,6 +178,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 ```
 
 #### Response Error (404)
+
 ```json
 {
   "success": false,
@@ -185,6 +195,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 #### Endpoint: `POST /api/v1/social-auth/{provider}`
 
 #### Supported Providers
+
 - `facebook`
 - `x` (Twitter X)
 - `twitter`
@@ -195,6 +206,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 - `telegram`
 
 #### Request Body
+
 ```json
 {
   "code": "oauth-authorization-code",
@@ -204,6 +216,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -235,13 +248,15 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 #### Endpoint: `POST /api/v1/social-accounts/:id/refresh-token`
 
 #### Headers
+
 ```typescript
 {
-  Authorization: 'Bearer {access_token}'
+  Authorization: 'Bearer {access_token}';
 }
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -263,13 +278,15 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 #### Endpoint: `POST /api/v1/social-accounts/:id/sync`
 
 #### Headers
+
 ```typescript
 {
-  Authorization: 'Bearer {access_token}'
+  Authorization: 'Bearer {access_token}';
 }
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -309,13 +326,15 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 #### Endpoint: `POST /api/v1/social-accounts/sync-all`
 
 #### Headers
+
 ```typescript
 {
-  Authorization: 'Bearer {access_token}'
+  Authorization: 'Bearer {access_token}';
 }
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -355,6 +374,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 #### Endpoint: `GET /api/v1/social-accounts/search`
 
 #### Query Parameters
+
 ```typescript
 {
   provider?: string;      // Filter by provider
@@ -368,6 +388,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -422,13 +443,15 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 #### Endpoint: `GET /api/v1/social-accounts/settings`
 
 #### Headers
+
 ```typescript
 {
-  Authorization: 'Bearer {access_token}'
+  Authorization: 'Bearer {access_token}';
 }
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -454,6 +477,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 #### Endpoint: `PATCH /api/v1/social-accounts/settings`
 
 #### Headers
+
 ```typescript
 {
   Authorization: 'Bearer {access_token}',
@@ -462,6 +486,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 ```
 
 #### Request Body
+
 ```json
 {
   "privacySettings": {
@@ -480,6 +505,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -511,7 +537,16 @@ Document này mô tả chi tiết các endpoint và business logic cho Social do
 // link-social-account.dto.ts
 export class LinkSocialAccountDto {
   @IsString()
-  @IsIn(['facebook', 'x', 'twitter', 'linkedin', 'github', 'instagram', 'discord', 'telegram'])
+  @IsIn([
+    'facebook',
+    'x',
+    'twitter',
+    'linkedin',
+    'github',
+    'instagram',
+    'discord',
+    'telegram',
+  ])
   provider: string;
 
   @IsString()
@@ -632,19 +667,19 @@ export class SocialAccountService {
   async getUserSocialAccounts(userId: string) {
     const socialAccounts = await this.socialAccountRepository.find({
       where: { userId },
-      order: { createdAt: 'DESC' }
+      order: { createdAt: 'DESC' },
     });
 
     return {
       success: true,
-      data: { socialAccounts }
+      data: { socialAccounts },
     };
   }
 
   async linkSocialAccount(userId: string, linkDto: LinkSocialAccountDto) {
     // Check if social account already exists
     const existingAccount = await this.socialAccountRepository.findOne({
-      where: { uid: linkDto.uid, provider: linkDto.provider }
+      where: { uid: linkDto.uid, provider: linkDto.provider },
     });
 
     if (existingAccount) {
@@ -653,29 +688,29 @@ export class SocialAccountService {
 
     // Check if user already has account for this provider
     const userExistingAccount = await this.socialAccountRepository.findOne({
-      where: { userId, provider: linkDto.provider }
+      where: { userId, provider: linkDto.provider },
     });
 
     const socialAccount = userExistingAccount || new SocialAccount();
-    
+
     Object.assign(socialAccount, {
       ...linkDto,
       userId,
       status: 'active',
-      lastSyncedAt: new Date()
+      lastSyncedAt: new Date(),
     });
 
     const savedAccount = await this.socialAccountRepository.save(socialAccount);
 
     return {
       success: true,
-      data: { socialAccount: savedAccount }
+      data: { socialAccount: savedAccount },
     };
   }
 
   async unlinkSocialAccount(userId: string, socialAccountId: string) {
     const socialAccount = await this.socialAccountRepository.findOne({
-      where: { id: socialAccountId, userId }
+      where: { id: socialAccountId, userId },
     });
 
     if (!socialAccount) {
@@ -686,13 +721,13 @@ export class SocialAccountService {
 
     return {
       success: true,
-      message: 'Social account unlinked successfully'
+      message: 'Social account unlinked successfully',
     };
   }
 
   async syncSocialAccount(userId: string, socialAccountId: string) {
     const socialAccount = await this.socialAccountRepository.findOne({
-      where: { id: socialAccountId, userId }
+      where: { id: socialAccountId, userId },
     });
 
     if (!socialAccount) {
@@ -723,18 +758,18 @@ export class SocialAccountService {
       data: {
         syncedAt: socialAccount.lastSyncedAt,
         syncedData: latestData,
-        changes
-      }
+        changes,
+      },
     };
   }
 
   async syncAllSocialAccounts(userId: string) {
     const socialAccounts = await this.socialAccountRepository.find({
-      where: { userId, status: 'active' }
+      where: { userId, status: 'active' },
     });
 
     const syncResults = await Promise.allSettled(
-      socialAccounts.map(account => 
+      socialAccounts.map((account) =>
         this.syncSocialAccount(userId, account.id)
       )
     );
@@ -744,19 +779,19 @@ export class SocialAccountService {
       provider: socialAccounts[index].provider,
       status: result.status === 'fulfilled' ? 'success' : 'failed',
       syncedAt: result.status === 'fulfilled' ? new Date() : null,
-      error: result.status === 'rejected' ? result.reason : null
+      error: result.status === 'rejected' ? result.reason : null,
     }));
 
     const summary = {
       totalAccounts: socialAccounts.length,
-      successfulSyncs: results.filter(r => r.status === 'success').length,
-      failedSyncs: results.filter(r => r.status === 'failed').length,
-      totalChanges: 0 // Calculate from results
+      successfulSyncs: results.filter((r) => r.status === 'success').length,
+      failedSyncs: results.filter((r) => r.status === 'failed').length,
+      totalChanges: 0, // Calculate from results
     };
 
     return {
       success: true,
-      data: { syncResults: results, summary }
+      data: { syncResults: results, summary },
     };
   }
 
@@ -784,13 +819,13 @@ export class SocialAccountService {
 
   private detectChanges(oldData: any, newData: any): any[] {
     const changes = [];
-    
+
     for (const key in newData) {
       if (oldData[key] !== newData[key]) {
         changes.push({
           field: key,
           oldValue: oldData[key],
-          newValue: newData[key]
+          newValue: newData[key],
         });
       }
     }
@@ -843,7 +878,7 @@ export class SocialAuthService {
       accessToken: tokenData.accessToken,
       refreshToken: tokenData.refreshToken,
       expiresAt: tokenData.expiresAt,
-      metadata: profileData
+      metadata: profileData,
     });
 
     // Generate JWT tokens
@@ -857,22 +892,25 @@ export class SocialAuthService {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
-          isNewUser
+          isNewUser,
         },
         tokens,
         socialAccount: {
           provider,
           uid: profileData.id,
-          status: 'active'
-        }
-      }
+          status: 'active',
+        },
+      },
     };
   }
 
-  private async findUserBySocialAccount(provider: string, uid: string): Promise<User | null> {
+  private async findUserBySocialAccount(
+    provider: string,
+    uid: string
+  ): Promise<User | null> {
     const socialAccount = await this.socialAccountRepository.findOne({
       where: { provider, uid },
-      relations: ['user']
+      relations: ['user'],
     });
 
     return socialAccount?.user || null;
@@ -883,17 +921,17 @@ export class SocialAuthService {
       email: profile.email,
       firstName: profile.firstName || profile.name?.split(' ')[0],
       lastName: profile.lastName || profile.name?.split(' ')[1],
-      profilePicture: profile.picture || profile.avatar
+      profilePicture: profile.picture || profile.avatar,
     });
   }
 
   private async generateTokens(user: User) {
     const payload = { sub: user.id, email: user.email };
-    
+
     return {
       accessToken: this.jwtService.sign(payload),
       refreshToken: this.jwtService.sign(payload, { expiresIn: '30d' }),
-      expiresIn: 3600
+      expiresIn: 3600,
     };
   }
 }

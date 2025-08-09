@@ -7,11 +7,13 @@ Document này mô tả chi tiết các endpoint và business logic liên quan đ
 ## 🏗️ Payment Domain Architecture
 
 ### Core Entities
+
 - **PaymentDistribution**: Phân phối và claim tiền thưởng/referral
 - **WalletAddress**: Địa chỉ ví nhận tiền
 - **Web3Event**: Sự kiện blockchain liên quan đến payment
 
 ### Supporting Entities
+
 - **User**: Người nhận
 - **Job**: Công việc liên quan
 
@@ -24,6 +26,7 @@ Document này mô tả chi tiết các endpoint và business logic liên quan đ
 #### Endpoint: `POST /api/v1/payment_distributions/claim`
 
 #### Request Body
+
 ```json
 {
   "payment_distributions": {
@@ -34,6 +37,7 @@ Document này mô tả chi tiết các endpoint và business logic liên quan đ
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -46,6 +50,7 @@ Document này mô tả chi tiết các endpoint và business logic liên quan đ
 ```
 
 #### Response Error (422)
+
 ```json
 {
   "success": false,
@@ -116,6 +121,7 @@ private validateRoleClaim(paymentDist: PaymentDistribution, userId: string): boo
 #### Endpoint: `PATCH /api/v1/payment_distributions/update_blockchain_status`
 
 #### Request Body
+
 ```json
 {
   "payment_distribution_id": "payment-dist-uuid",
@@ -125,6 +131,7 @@ private validateRoleClaim(paymentDist: PaymentDistribution, userId: string): boo
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -137,6 +144,7 @@ private validateRoleClaim(paymentDist: PaymentDistribution, userId: string): boo
 ```
 
 #### Response Error (404/422)
+
 ```json
 {
   "success": false,
@@ -293,20 +301,28 @@ describe('PaymentDistributionController', () => {
           provide: PaymentService,
           useValue: {
             claimPayment: jest.fn(),
-            updateBlockchainStatus: jest.fn()
-          }
-        }
-      ]
+            updateBlockchainStatus: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
-    controller = module.get<PaymentDistributionController>(PaymentDistributionController);
+    controller = module.get<PaymentDistributionController>(
+      PaymentDistributionController
+    );
     service = module.get<PaymentService>(PaymentService);
   });
 
   it('should claim payment', async () => {
-    const claimDto = { job_id: 'job-uuid', payment_distribution_id: 'dist-uuid' };
+    const claimDto = {
+      job_id: 'job-uuid',
+      payment_distribution_id: 'dist-uuid',
+    };
     const user = { id: 'user-uuid' };
-    const expectedResult = { success: true, data: { id: 'dist-uuid', status: 'completed' } };
+    const expectedResult = {
+      success: true,
+      data: { id: 'dist-uuid', status: 'completed' },
+    };
 
     jest.spyOn(service, 'claimPayment').mockResolvedValue(expectedResult);
 

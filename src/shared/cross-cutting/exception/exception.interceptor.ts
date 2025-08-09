@@ -1,12 +1,12 @@
+import type { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import {
-  ArgumentsHost,
   BadRequestException,
   Catch,
-  ExceptionFilter,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
 
+import { env } from '@/shared/infrastructure/env';
 import { ResponseHandler } from '@shared/utils/response-handler';
 
 @Catch()
@@ -19,14 +19,14 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
-    const isDev = process.env.NODE_ENV === 'development';
+    const isLocal = env.NODE_ENV === 'local';
 
     if (exception instanceof BadRequestException) {
       return response.status(status).json(exception.getResponse());
     }
 
     const httpStatusName = Object.keys(HttpStatus).find(
-      key => typeof HttpStatus[key] === 'number' && HttpStatus[key] === status,
+      (key) => typeof HttpStatus[key] === 'number' && HttpStatus[key] === status
     );
 
     return response.status(status).json(
@@ -36,8 +36,8 @@ export class GlobalHttpExceptionFilter implements ExceptionFilter {
           ? [exception.name, httpStatusName]
           : [httpStatusName],
         message: exception.message,
-        stack: isDev ? exception.stack : undefined,
-      }),
+        stack: isLocal ? exception.stack : undefined,
+      })
     );
   }
 }

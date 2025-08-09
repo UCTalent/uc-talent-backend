@@ -1,17 +1,18 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Skill } from './entities/skill.entity';
-import { Speciality } from './entities/speciality.entity';
-import { Role } from './entities/role.entity';
-import { SkillService } from './services/skill.service';
-import { SpecialityService } from './services/speciality.service';
-import { RoleService } from './services/role.service';
+
+import { RoleController } from './controllers/role.controller';
 import { SkillController } from './controllers/skill.controller';
 import { SpecialityController } from './controllers/speciality.controller';
-import { RoleController } from './controllers/role.controller';
+import { Role } from './entities/role.entity';
+import { Skill } from './entities/skill.entity';
+import { Speciality } from './entities/speciality.entity';
+import { RoleRepository } from './repositories/role.repository';
 import { SkillRepository } from './repositories/skill.repository';
 import { SpecialityRepository } from './repositories/speciality.repository';
-import { RoleRepository } from './repositories/role.repository';
+import { RoleService } from './services/role.service';
+import { SkillService } from './services/skill.service';
+import { SpecialityService } from './services/speciality.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Skill, Speciality, Role])],

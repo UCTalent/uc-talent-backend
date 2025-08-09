@@ -1,10 +1,13 @@
 # Response Handler Refactoring Summary
 
 ## Overview
+
 This document summarizes the refactoring work completed to standardize response handling across all controllers in the UC Talent Backend application.
 
 ## Problem Statement
+
 The controllers were returning responses in inconsistent formats:
+
 - Some returned raw data (e.g., `return this.mapToResponseDto(job)`)
 - Some returned objects with `success` property (e.g., `{ success: true, data: ... }`)
 - Some returned paginated responses with different structures
@@ -13,12 +16,15 @@ The controllers were returning responses in inconsistent formats:
 ## Solution Implemented
 
 ### 1. Utilized Existing Infrastructure
+
 The application already had the necessary infrastructure in place:
+
 - **`ResponseHandler` utility** (`src/shared/utils/response-handler.ts`) - Provides consistent response formatting
 - **`TransformerInterceptor`** (`src/shared/interceptors/transformer/transformer.interceptor.ts`) - Handles response transformation globally
 - **`AllExceptionsFilter`** (`src/shared/interceptors/exception/http-exception.interceptor.ts`) - Handles error responses globally
 
 ### 2. Refactored Controllers
+
 The following controllers were refactored to use the `ResponseHandler` utility:
 
 #### ✅ Completed Refactoring
@@ -59,6 +65,7 @@ The following controllers were refactored to use the `ResponseHandler` utility:
 ### 3. Response Format Standardization
 
 #### Success Response Format
+
 ```typescript
 {
   status_code: 200,
@@ -70,6 +77,7 @@ The following controllers were refactored to use the `ResponseHandler` utility:
 ```
 
 #### Error Response Format
+
 ```typescript
 {
   status_code: 400,
@@ -98,23 +106,25 @@ The following controllers were refactored to use the `ResponseHandler` utility:
 ### 6. Technical Details
 
 #### ResponseHandler Usage
+
 ```typescript
 // Success response
 return ResponseHandler.success({
   data: result,
   message: 'Operation completed successfully',
-  statusCode: HttpStatus.OK
+  statusCode: HttpStatus.OK,
 });
 
 // Error response
 return ResponseHandler.error({
   statusCode: HttpStatus.NOT_FOUND,
   message: 'Resource not found',
-  errors: ['Specific error details']
+  errors: ['Specific error details'],
 });
 ```
 
 #### Global Interceptors
+
 - **TransformerInterceptor**: Automatically transforms responses to the standard format
 - **AllExceptionsFilter**: Handles unhandled exceptions and formats error responses
 

@@ -1,19 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { SpecialityService } from '@skill/services/speciality.service';
-import { Speciality } from '@skill/entities/speciality.entity';
-import {
-  SpecialityResponseDto,
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+
+import { Docs } from '@documents/skill/speciality.document';
+import type {
   SpecialityListResponseDto,
+  SpecialityResponseDto,
 } from '@skill/dtos/skill-response.dto';
+import type { Speciality } from '@skill/entities/speciality.entity';
+import { SpecialityService } from '@skill/services/speciality.service';
 
 @ApiTags('specialities')
 @Controller('specialities')
@@ -21,17 +23,13 @@ export class SpecialityController {
   constructor(private readonly specialityService: SpecialityService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all specialities' })
-  @ApiResponse({
-    status: 200,
-    description: 'Specialities retrieved successfully',
-    type: SpecialityListResponseDto,
-  })
+  @ApiOperation(Docs.getSpecialities.operation)
+  @ApiResponse(Docs.getSpecialities.responses.success[0])
   async findAll(): Promise<SpecialityListResponseDto> {
     const specialities = await this.specialityService.findAll();
     return {
-      specialities: specialities.map(speciality =>
-        this.mapToResponseDto(speciality),
+      specialities: specialities.map((speciality) =>
+        this.mapToResponseDto(speciality)
       ),
       total: specialities.length,
       page: 1,
@@ -40,23 +38,12 @@ export class SpecialityController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get speciality by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'Speciality ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Speciality found successfully',
-    type: SpecialityResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Speciality not found',
-  })
+  @ApiOperation(Docs.getSpecialityById.operation)
+  @ApiParam(Docs.getSpecialityById.param)
+  @ApiResponse(Docs.getSpecialityById.responses.success[0])
+  @ApiResponse(Docs.getSpecialityById.responses.error[0])
   async findById(
-    @Param('id') id: string,
+    @Param('id') id: string
   ): Promise<SpecialityResponseDto | null> {
     const speciality = await this.specialityService.findById(id);
     return speciality ? this.mapToResponseDto(speciality) : null;

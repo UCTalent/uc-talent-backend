@@ -1,5 +1,7 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
 import { Organization } from './organization.entity';
 
 @Entity('industries')
@@ -11,6 +13,6 @@ export class Industry extends BaseEntity {
   description: string;
 
   // Relationships
-  @OneToMany(() => Organization, organization => organization.industry)
+  @OneToMany(() => Organization, (organization) => organization.industry)
   organizations: Organization[];
 }

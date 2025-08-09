@@ -1,7 +1,9 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
-import { Job } from './job.entity';
 import { User } from '@user/entities/user.entity';
+
+import { Job } from './job.entity';
 
 @Entity('referral_links')
 export class ReferralLink extends BaseEntity {
@@ -12,7 +14,7 @@ export class ReferralLink extends BaseEntity {
   referrerId: string;
 
   // Relationships
-  @ManyToOne(() => Job, job => job.referralLinks)
+  @ManyToOne(() => Job, (job) => job.referralLinks)
   @JoinColumn({ name: 'job_id' })
   job: Job;
 

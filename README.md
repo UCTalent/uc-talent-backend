@@ -55,36 +55,41 @@ src/
 ## 🛠️ Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd uc-talent-backend
    ```
 
 2. **Install dependencies**
+
    ```bash
    yarn install
    ```
 
 3. **Environment setup**
+
    ```bash
    cp env.example .env
    # Edit .env with your configuration
    ```
 
 4. **Database setup**
+
    ```bash
    # Create database
    createdb uc_talent
-   
+
    # Run migrations (when available)
    yarn migration:run
    ```
 
 5. **Start the application**
+
    ```bash
    # Development
    yarn start:dev
-   
+
    # Production
    yarn build
    yarn start:prod
@@ -122,20 +127,24 @@ The application uses PostgreSQL with the following main tables:
 Base URL: `http://localhost:3001/api/v1`
 
 #### Authentication
+
 - `POST /auth/firebase` - Firebase authentication
 - `POST /auth/thirdweb` - Web3 authentication
 
 #### Users
+
 - `GET /users/:id` - Get user profile
 - `PUT /users/:id` - Update user profile
 - `POST /users` - Create user
 
 #### Talents
+
 - `GET /talents/me` - Get current talent profile
 - `POST /talents` - Create talent profile
 - `PUT /talents/:id` - Update talent profile
 
 #### Jobs
+
 - `GET /jobs` - List jobs
 - `GET /jobs/:id` - Get job details
 - `POST /jobs` - Create job
@@ -182,28 +191,33 @@ yarn format             # Format code
 ## 🏛️ Domain Structure
 
 ### User Domain
+
 - Authentication & authorization
 - Profile management
 - Social login integration
 
 ### Talent Domain
+
 - Professional profiles
 - Experience & education
 - Skills & specialities
 - Resume management
 
 ### Job Domain
+
 - Job postings
 - Application tracking
 - Referral system
 - Web3 integration
 
 ### Organization Domain
+
 - Company profiles
 - Industry classification
 - Location management
 
 ### Payment Domain
+
 - Payment distribution
 - Wallet management
 - Blockchain integration

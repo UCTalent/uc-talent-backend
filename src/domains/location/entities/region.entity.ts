@@ -1,6 +1,7 @@
-import { Entity, Column, OneToMany } from 'typeorm';
-import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
+
 import { Job } from '@job/entities/job.entity';
+import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 
 @Entity('regions')
 export class Region extends BaseEntity {
@@ -11,6 +12,6 @@ export class Region extends BaseEntity {
   description: string;
 
   // Relationships
-  @OneToMany(() => Job, job => job.region)
+  @OneToMany(() => Job, (job) => job.region)
   jobs: Job[];
 }

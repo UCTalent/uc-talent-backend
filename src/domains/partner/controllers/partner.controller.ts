@@ -1,44 +1,46 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Patch,
   Body,
-  Param,
-  Query,
-  UseGuards,
+  Controller,
+  Delete,
+  Get,
   Headers,
   HttpCode,
   HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiQuery,
-  ApiParam,
   ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { PartnerService } from '@domains/partner/services/partner.service';
+
+import { Docs as PartnerDocs } from '@documents/partner/partner.document';
 import { CreatePartnerDto } from '@domains/partner/dtos/create-partner.dto';
-import { UpdatePartnerDto } from '@domains/partner/dtos/update-partner.dto';
 import { CreatePartnerHostDto } from '@domains/partner/dtos/create-partner-host.dto';
-import { UpdatePartnerHostDto } from '@domains/partner/dtos/update-partner-host.dto';
-import {
-  PartnerQueryDto,
-  PartnerHostQueryDto,
-} from '@domains/partner/dtos/partner-query.dto';
 import {
   CreatePartnerNetworkDto,
   UpdatePartnerNetworkDto,
 } from '@domains/partner/dtos/partner-network.dto';
 import {
-  PartnerResponseDto,
+  PartnerHostQueryDto,
+  PartnerQueryDto,
+} from '@domains/partner/dtos/partner-query.dto';
+import {
   PartnerHostResponseDto,
   PartnerNetworkResponseDto,
+  PartnerResponseDto,
 } from '@domains/partner/dtos/partner-response.dto';
+import { UpdatePartnerDto } from '@domains/partner/dtos/update-partner.dto';
+import { UpdatePartnerHostDto } from '@domains/partner/dtos/update-partner-host.dto';
+import { PartnerService } from '@domains/partner/services/partner.service';
 
 @ApiTags('Partners')
 @Controller('partners')
@@ -47,84 +49,56 @@ export class PartnerController {
 
   // Partner Management Endpoints
   @Get()
-  @ApiOperation({ summary: 'Get partners list' })
-  @ApiResponse({
-    status: 200,
-    description: 'Partners retrieved successfully',
-    type: [PartnerResponseDto],
-  })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'search', required: false, type: String })
-  @ApiQuery({ name: 'isUcTalent', required: false, type: Boolean })
-  @ApiQuery({
-    name: 'sortBy',
-    required: false,
-    enum: ['name', 'createdAt', 'updatedAt'],
-  })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'] })
+  @ApiOperation(PartnerDocs.getPartners.operation)
+  @ApiQuery(PartnerDocs.getPartners.query as any)
+  @ApiResponse(PartnerDocs.getPartners.responses.success[0])
   async getPartners(@Query() query: PartnerQueryDto) {
     return this.partnerService.getPartners(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get partner details' })
-  @ApiParam({ name: 'id', description: 'Partner ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Partner retrieved successfully',
-    type: PartnerResponseDto,
-  })
-  @ApiResponse({ status: 404, description: 'Partner not found' })
+  @ApiOperation(PartnerDocs.getPartnerById.operation)
+  @ApiParam(PartnerDocs.getPartnerById.param)
+  @ApiResponse(PartnerDocs.getPartnerById.responses.success[0])
+  @ApiResponse(PartnerDocs.getPartnerById.responses.error[0])
   async getPartnerById(@Param('id') id: string) {
     return this.partnerService.getPartnerById(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create new partner' })
-  @ApiResponse({
-    status: 201,
-    description: 'Partner created successfully',
-    type: PartnerResponseDto,
-  })
-  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiOperation(PartnerDocs.createPartner.operation)
+  @ApiResponse(PartnerDocs.createPartner.responses.success[0])
+  @ApiResponse(PartnerDocs.createPartner.responses.error[0])
   async createPartner(@Body() createPartnerDto: CreatePartnerDto) {
     return this.partnerService.createPartner(createPartnerDto);
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update partner' })
-  @ApiParam({ name: 'id', description: 'Partner ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Partner updated successfully',
-    type: PartnerResponseDto,
-  })
-  @ApiResponse({ status: 404, description: 'Partner not found' })
+  @ApiOperation(PartnerDocs.updatePartner.operation)
+  @ApiParam(PartnerDocs.updatePartner.param)
+  @ApiResponse(PartnerDocs.updatePartner.responses.success[0])
+  @ApiResponse(PartnerDocs.updatePartner.responses.error[0])
   async updatePartner(
     @Param('id') id: string,
-    @Body() updatePartnerDto: UpdatePartnerDto,
+    @Body() updatePartnerDto: UpdatePartnerDto
   ) {
     return this.partnerService.updatePartner(id, updatePartnerDto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete partner' })
-  @ApiParam({ name: 'id', description: 'Partner ID' })
-  @ApiResponse({ status: 200, description: 'Partner deleted successfully' })
-  @ApiResponse({ status: 404, description: 'Partner not found' })
+  @ApiOperation(PartnerDocs.deletePartner.operation)
+  @ApiParam(PartnerDocs.deletePartner.param)
+  @ApiResponse(PartnerDocs.deletePartner.responses.success[0])
+  @ApiResponse(PartnerDocs.deletePartner.responses.error[0])
   async deletePartner(@Param('id') id: string) {
     return this.partnerService.deletePartner(id);
   }
 
   @Get(':id/stats')
-  @ApiOperation({ summary: 'Get partner statistics' })
-  @ApiParam({ name: 'id', description: 'Partner ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Partner statistics retrieved successfully',
-  })
-  @ApiResponse({ status: 404, description: 'Partner not found' })
+  @ApiOperation(PartnerDocs.getPartnerStats.operation)
+  @ApiParam(PartnerDocs.getPartnerStats.param)
+  @ApiResponse(PartnerDocs.getPartnerStats.responses.success[0])
+  @ApiResponse(PartnerDocs.getPartnerStats.responses.error[0])
   async getPartnerStats(@Param('id') id: string) {
     // Note: This method would need to be implemented in the service
     // return this.partnerService.getPartnerStats(id);
@@ -138,64 +112,38 @@ export class PartnerHostController {
   constructor(private readonly partnerService: PartnerService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get partner hosts list' })
-  @ApiResponse({
-    status: 200,
-    description: 'Partner hosts retrieved successfully',
-    type: [PartnerHostResponseDto],
-  })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'partnerId', required: false, type: String })
-  @ApiQuery({ name: 'host', required: false, type: String })
-  @ApiQuery({ name: 'isUcTalent', required: false, type: Boolean })
-  @ApiQuery({
-    name: 'sortBy',
-    required: false,
-    enum: ['host', 'createdAt', 'updatedAt'],
-  })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'] })
+  @ApiOperation(PartnerDocs.getPartnerHosts.operation)
+  @ApiQuery(PartnerDocs.getPartnerHosts.query as any)
+  @ApiResponse(PartnerDocs.getPartnerHosts.responses.success[0])
   async getPartnerHosts(@Query() query: PartnerHostQueryDto) {
     return this.partnerService.getPartnerHosts(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get partner host details' })
-  @ApiParam({ name: 'id', description: 'Partner Host ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Partner host retrieved successfully',
-    type: PartnerHostResponseDto,
-  })
-  @ApiResponse({ status: 404, description: 'Partner host not found' })
+  @ApiOperation(PartnerDocs.getPartnerHostById.operation)
+  @ApiParam(PartnerDocs.getPartnerHostById.param)
+  @ApiResponse(PartnerDocs.getPartnerHostById.responses.success[0])
+  @ApiResponse(PartnerDocs.getPartnerHostById.responses.error[0])
   async getPartnerHostById(@Param('id') id: string) {
     return this.partnerService.getPartnerHostById(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create new partner host' })
-  @ApiResponse({
-    status: 201,
-    description: 'Partner host created successfully',
-    type: PartnerHostResponseDto,
-  })
-  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiOperation(PartnerDocs.createPartnerHost.operation)
+  @ApiResponse(PartnerDocs.createPartnerHost.responses.success[0])
+  @ApiResponse(PartnerDocs.createPartnerHost.responses.error[0])
   async createPartnerHost(@Body() createPartnerHostDto: CreatePartnerHostDto) {
     return this.partnerService.createPartnerHost(createPartnerHostDto);
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update partner host' })
-  @ApiParam({ name: 'id', description: 'Partner Host ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Partner host updated successfully',
-    type: PartnerHostResponseDto,
-  })
-  @ApiResponse({ status: 404, description: 'Partner host not found' })
+  @ApiOperation(PartnerDocs.updatePartnerHost.operation)
+  @ApiParam(PartnerDocs.updatePartnerHost.param)
+  @ApiResponse(PartnerDocs.updatePartnerHost.responses.success[0])
+  @ApiResponse(PartnerDocs.updatePartnerHost.responses.error[0])
   async updatePartnerHost(
     @Param('id') id: string,
-    @Body() updatePartnerHostDto: UpdatePartnerHostDto,
+    @Body() updatePartnerHostDto: UpdatePartnerHostDto
   ) {
     // Note: This method would need to be implemented in the service
     // return this.partnerService.updatePartnerHost(id, updatePartnerHostDto);
@@ -206,68 +154,52 @@ export class PartnerHostController {
   }
 
   @Post(':id/regenerate-token')
-  @ApiOperation({ summary: 'Regenerate access token for partner host' })
-  @ApiParam({ name: 'id', description: 'Partner Host ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Access token regenerated successfully',
-  })
-  @ApiResponse({ status: 404, description: 'Partner host not found' })
+  @ApiOperation(PartnerDocs.regenerateHostToken.operation)
+  @ApiParam(PartnerDocs.regenerateHostToken.param)
+  @ApiResponse(PartnerDocs.regenerateHostToken.responses.success[0])
+  @ApiResponse(PartnerDocs.regenerateHostToken.responses.error[0])
   @HttpCode(HttpStatus.OK)
   async regenerateAccessToken(@Param('id') id: string) {
     return this.partnerService.regenerateAccessToken(id);
   }
 
   @Get(':hostId/networks')
-  @ApiOperation({ summary: 'Get partner host networks' })
-  @ApiParam({ name: 'hostId', description: 'Partner Host ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Networks retrieved successfully',
-    type: [PartnerNetworkResponseDto],
-  })
+  @ApiOperation(PartnerDocs.getPartnerNetworks.operation)
+  @ApiParam(PartnerDocs.getPartnerNetworks.param)
+  @ApiResponse(PartnerDocs.getPartnerNetworks.responses.success[0])
   async getPartnerNetworks(@Param('hostId') hostId: string) {
     return this.partnerService.getPartnerNetworks(hostId);
   }
 
   @Post(':hostId/networks')
-  @ApiOperation({ summary: 'Add network to partner host' })
-  @ApiParam({ name: 'hostId', description: 'Partner Host ID' })
-  @ApiResponse({
-    status: 201,
-    description: 'Network added successfully',
-    type: PartnerNetworkResponseDto,
-  })
-  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiOperation(PartnerDocs.addNetworkToPartnerHost.operation)
+  @ApiParam(PartnerDocs.addNetworkToPartnerHost.param)
+  @ApiResponse(PartnerDocs.addNetworkToPartnerHost.responses.success[0])
+  @ApiResponse(PartnerDocs.addNetworkToPartnerHost.responses.error[0])
   async addNetworkToPartnerHost(
     @Param('hostId') hostId: string,
-    @Body() createNetworkDto: CreatePartnerNetworkDto,
+    @Body() createNetworkDto: CreatePartnerNetworkDto
   ) {
     return this.partnerService.addNetworkToPartnerHost(
       hostId,
-      createNetworkDto,
+      createNetworkDto
     );
   }
 
   @Patch(':hostId/networks/:networkId')
-  @ApiOperation({ summary: 'Update partner host network' })
-  @ApiParam({ name: 'hostId', description: 'Partner Host ID' })
-  @ApiParam({ name: 'networkId', description: 'Network ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Network updated successfully',
-    type: PartnerNetworkResponseDto,
-  })
-  @ApiResponse({ status: 404, description: 'Network not found' })
+  @ApiOperation(PartnerDocs.updatePartnerNetwork.operation)
+  @ApiParam(PartnerDocs.updatePartnerNetwork.param)
+  @ApiResponse(PartnerDocs.updatePartnerNetwork.responses.success[0])
+  @ApiResponse(PartnerDocs.updatePartnerNetwork.responses.error[0])
   async updatePartnerNetwork(
     @Param('hostId') hostId: string,
     @Param('networkId') networkId: string,
-    @Body() updateNetworkDto: UpdatePartnerNetworkDto,
+    @Body() updateNetworkDto: UpdatePartnerNetworkDto
   ) {
     return this.partnerService.updatePartnerNetwork(
       hostId,
       networkId,
-      updateNetworkDto,
+      updateNetworkDto
     );
   }
 }
@@ -278,23 +210,13 @@ export class PartnerAuthController {
   constructor(private readonly partnerService: PartnerService) {}
 
   @Post('validate')
-  @ApiOperation({ summary: 'Validate partner token' })
-  @ApiHeader({
-    name: 'X-Partner-Token',
-    description: 'Partner access token',
-    required: true,
-  })
-  @ApiHeader({
-    name: 'X-Partner-Host',
-    description: 'Partner host domain',
-    required: true,
-  })
-  @ApiResponse({ status: 200, description: 'Token validated successfully' })
-  @ApiResponse({ status: 401, description: 'Invalid token' })
+  @ApiOperation(PartnerDocs.validatePartnerToken.operation)
+  @ApiResponse(PartnerDocs.validatePartnerToken.responses.success[0])
+  @ApiResponse(PartnerDocs.validatePartnerToken.responses.error[0])
   @HttpCode(HttpStatus.OK)
   async validatePartnerToken(
     @Headers('x-partner-token') token: string,
-    @Headers('x-partner-host') host: string,
+    @Headers('x-partner-host') host: string
   ) {
     return this.partnerService.validatePartnerToken(token, host);
   }

@@ -1,7 +1,9 @@
 # Authentication Migration Guide
+
 ## Firebase Auth & Web3 Auth (Thirdweb) Implementation
 
 ### Table of Contents
+
 1. [Prerequisites](#prerequisites)
 2. [Database Setup](#database-setup)
 3. [Dependencies](#dependencies)
@@ -17,6 +19,7 @@
 ## Prerequisites
 
 ### Required Gems
+
 ```ruby
 # Gemfile
 gem 'firebase-admin-sdk'  # For Firebase Auth
@@ -27,6 +30,7 @@ gem 'trailblazer'         # For operations (optional)
 ```
 
 ### Install Dependencies
+
 ```bash
 bundle install
 ```
@@ -36,6 +40,7 @@ bundle install
 ## Database Setup
 
 ### 1. Add Firebase Fields to User Model
+
 ```ruby
 # db/migrate/YYYYMMDDHHMMSS_add_firebase_fields_to_users.rb
 class AddFirebaseFieldsToUsers < ActiveRecord::Migration[7.1]
@@ -48,6 +53,7 @@ end
 ```
 
 ### 2. Add Web3 Fields to User Model
+
 ```ruby
 # db/migrate/YYYYMMDDHHMMSS_add_thirdweb_fields_to_users.rb
 class AddThirdwebFieldsToUsers < ActiveRecord::Migration[7.1]
@@ -59,6 +65,7 @@ end
 ```
 
 ### 3. Update User Model
+
 ```ruby
 # app/models/user.rb
 class User < ApplicationRecord
@@ -94,6 +101,7 @@ end
 ## Environment Variables
 
 ### Required Environment Variables
+
 ```bash
 # Firebase Configuration
 FIREBASE_SA_KEY=base64_encoded_service_account_key
@@ -114,6 +122,7 @@ DOORKEEPER_REDIRECT_URI=your_redirect_uri
 ## Firebase Auth Implementation
 
 ### 1. Firebase Admin SDK Setup
+
 ```ruby
 # lib/firebase_admin.rb
 require 'firebase-admin-sdk'
@@ -140,6 +149,7 @@ end
 ```
 
 ### 2. Auth Controller
+
 ```ruby
 # app/controllers/api/v1/auth_controller.rb
 require 'net/http'
@@ -233,6 +243,7 @@ end
 ## Web3 Auth (Thirdweb) Implementation
 
 ### 1. Thirdweb Operation
+
 ```ruby
 # app/concepts/authentication/operation/thirdweb.rb
 module Authentication::Operation
@@ -398,6 +409,7 @@ end
 ```
 
 ### 2. Add Thirdweb Auth to Controller
+
 ```ruby
 # Add this method to your AuthController
 def thirdweb_auth
@@ -421,6 +433,7 @@ end
 ## Routes Configuration
 
 ### 1. Add Routes
+
 ```ruby
 # config/routes.rb
 Rails.application.routes.draw do
@@ -440,6 +453,7 @@ end
 ```
 
 ### 2. Doorkeeper Configuration
+
 ```ruby
 # config/initializers/doorkeeper.rb
 Doorkeeper.configure do
@@ -475,6 +489,7 @@ end
 ## Testing
 
 ### 1. Route Tests
+
 ```ruby
 # spec/routing/auth_routing_spec.rb
 require "rails_helper"
@@ -493,6 +508,7 @@ end
 ```
 
 ### 2. Controller Tests
+
 ```ruby
 # spec/controllers/api/v1/auth_controller_spec.rb
 require 'rails_helper'
@@ -514,7 +530,7 @@ RSpec.describe Api::V1::AuthController, type: :controller do
 
       it 'creates user and returns access token' do
         post :firebase_auth, params: { firebase_token: valid_token }
-        
+
         expect(response).to have_http_status(:ok)
         expect(JSON.parse(response.body)).to include('access_token')
       end
@@ -527,7 +543,7 @@ RSpec.describe Api::V1::AuthController, type: :controller do
 
       it 'returns unauthorized error' do
         post :firebase_auth, params: { firebase_token: invalid_token }
-        
+
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -546,7 +562,7 @@ RSpec.describe Api::V1::AuthController, type: :controller do
 
       it 'returns access token' do
         post :thirdweb_auth, params: { jwt: valid_jwt }
-        
+
         expect(response).to have_http_status(:ok)
       end
     end
@@ -560,7 +576,7 @@ RSpec.describe Api::V1::AuthController, type: :controller do
 
       it 'returns unauthorized error' do
         post :thirdweb_auth, params: { jwt: invalid_jwt }
-        
+
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -573,6 +589,7 @@ end
 ## Migration Steps
 
 ### Step 1: Setup Dependencies
+
 ```bash
 # Add gems to Gemfile
 bundle add firebase-admin-sdk jwt doorkeeper devise trailblazer
@@ -582,6 +599,7 @@ bundle install
 ```
 
 ### Step 2: Database Migration
+
 ```bash
 # Generate and run migrations
 rails generate migration AddFirebaseFieldsToUsers firebase_uid:string firebase_provider:string
@@ -592,6 +610,7 @@ rails db:migrate
 ```
 
 ### Step 3: Copy Files
+
 ```bash
 # Copy the following files to your project:
 # - lib/firebase_admin.rb
@@ -601,6 +620,7 @@ rails db:migrate
 ```
 
 ### Step 4: Update User Model
+
 ```ruby
 # Add fields to your User model
 # Update devise configuration
@@ -608,6 +628,7 @@ rails db:migrate
 ```
 
 ### Step 5: Environment Variables
+
 ```bash
 # Add to your .env file
 FIREBASE_SA_KEY=your_base64_encoded_service_account_key
@@ -617,6 +638,7 @@ UC_GATEWAY_API_KEY=your_gateway_api_key
 ```
 
 ### Step 6: Routes
+
 ```ruby
 # Add to config/routes.rb
 namespace :api do
@@ -632,6 +654,7 @@ end
 ```
 
 ### Step 7: Seeds (Optional)
+
 ```ruby
 # db/seeds.rb
 doorkeeper_app_thirdweb = Doorkeeper::Application.find_or_create_by(name: "thirdweb") do |app|
@@ -647,6 +670,7 @@ puts "secret: #{doorkeeper_app_thirdweb.secret}"
 ```
 
 ### Step 8: Test
+
 ```bash
 # Run tests
 rspec spec/routing/auth_routing_spec.rb
@@ -658,6 +682,7 @@ rspec spec/controllers/api/v1/auth_controller_spec.rb
 ## API Endpoints
 
 ### Firebase Auth
+
 ```
 POST /api/v1/auth/firebase_auth
 Content-Type: application/json
@@ -682,6 +707,7 @@ Response:
 ```
 
 ### Web3 Auth (Thirdweb)
+
 ```
 POST /api/v1/auth/thirdweb_auth
 Content-Type: application/json
@@ -725,6 +751,7 @@ Response:
    - Check for existing columns before migration
 
 ### Debug Commands
+
 ```bash
 # Check environment variables
 rails console

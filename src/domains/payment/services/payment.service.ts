@@ -1,22 +1,23 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
 import { Not } from 'typeorm';
-import { PaymentDistribution } from '@payment/entities/payment-distribution.entity';
+
+import type { ClaimPaymentDto } from '@payment/dtos/claim-payment.dto';
+import type { UpdateBlockchainStatusDto } from '@payment/dtos/update-blockchain-status.dto';
+import type { PaymentDistribution } from '@payment/entities/payment-distribution.entity';
 import { PaymentDistributionRepository } from '@payment/repositories/payment-distribution.repository';
-import { ClaimPaymentDto } from '@payment/dtos/claim-payment.dto';
-import { UpdateBlockchainStatusDto } from '@payment/dtos/update-blockchain-status.dto';
 
 @Injectable()
 export class PaymentService {
   constructor(
-    private readonly paymentDistributionRepository: PaymentDistributionRepository,
+    private readonly paymentDistributionRepository: PaymentDistributionRepository
   ) {}
 
   async createPaymentDistribution(
-    data: Partial<PaymentDistribution>,
+    data: Partial<PaymentDistribution>
   ): Promise<PaymentDistribution> {
     return this.paymentDistributionRepository.create(data);
   }
@@ -32,7 +33,7 @@ export class PaymentService {
   }
 
   async findPaymentDistributionsByRecipient(
-    recipientId: string,
+    recipientId: string
   ): Promise<PaymentDistribution[]> {
     return this.paymentDistributionRepository.findByRecipientId(recipientId);
   }
@@ -59,7 +60,7 @@ export class PaymentService {
 
     if (!paymentDist) {
       throw new NotFoundException(
-        'Payment distribution not found or not claimable',
+        'Payment distribution not found or not claimable'
       );
     }
 
@@ -72,11 +73,11 @@ export class PaymentService {
     await this.paymentDistributionRepository.updatePaymentStatus(
       paymentDist.id,
       'completed',
-      new Date(),
+      new Date()
     );
 
     const updatedPayment = await this.paymentDistributionRepository.findById(
-      paymentDist.id,
+      paymentDist.id
     );
 
     return {
@@ -91,7 +92,7 @@ export class PaymentService {
 
   async updateBlockchainStatus(updateDto: UpdateBlockchainStatusDto) {
     const paymentDist = await this.paymentDistributionRepository.findById(
-      updateDto.payment_distribution_id,
+      updateDto.payment_distribution_id
     );
 
     if (!paymentDist) {
@@ -106,11 +107,11 @@ export class PaymentService {
       paymentDist.id,
       'completed',
       undefined,
-      updateDto.transaction_hash,
+      updateDto.transaction_hash
     );
 
     const updatedPayment = await this.paymentDistributionRepository.findById(
-      paymentDist.id,
+      paymentDist.id
     );
 
     return {
@@ -125,7 +126,7 @@ export class PaymentService {
 
   private validateRoleClaim(
     paymentDist: PaymentDistribution,
-    userId: string,
+    userId: string
   ): boolean {
     // Implement logic to validate role claim
     // This should check job status, job_apply status, etc.

@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { Web3Event } from '@payment/entities/web3-event.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class Web3EventRepository implements IBaseRepository<Web3Event> {
   constructor(
     @InjectRepository(Web3Event)
-    private readonly repository: Repository<Web3Event>,
+    private readonly repository: Repository<Web3Event>
   ) {}
 
   async findById(id: string): Promise<Web3Event | null> {

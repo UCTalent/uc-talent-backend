@@ -1,37 +1,37 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Put,
   Body,
-  Param,
+  Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
+  Post,
+  Put,
   Query,
   Request,
 } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
   ApiBody,
+  ApiOperation,
+  ApiParam,
   ApiQuery,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { TalentService } from '@talent/services/talent.service';
-import { CreateTalentDto } from '@talent/dtos/create-talent.dto';
-import { UpdateTalentDto } from '@talent/dtos/update-talent.dto';
-import { TalentIndexQueryDto } from '@talent/dtos/talent-index-query.dto';
-import { CreateExperienceDto } from '@talent/dtos/create-experience.dto';
-import { CreateEducationDto } from '@talent/dtos/create-education.dto';
-import { CreateExternalLinkDto } from '@talent/dtos/create-external-link.dto';
-import {
-  TalentResponseDto,
-  TalentListResponseDto,
-} from '@talent/dtos/talent-response.dto';
-import { Talent } from '@talent/entities/talent.entity';
+
+import { Docs } from '@documents/talent/talent.document';
 import { ResponseHandler } from '@shared/utils/response-handler';
+import { CreateEducationDto } from '@talent/dtos/create-education.dto';
+import { CreateExperienceDto } from '@talent/dtos/create-experience.dto';
+import { CreateExternalLinkDto } from '@talent/dtos/create-external-link.dto';
+import { CreateTalentDto } from '@talent/dtos/create-talent.dto';
+import { TalentIndexQueryDto } from '@talent/dtos/talent-index-query.dto';
+import type { TalentResponseDto } from '@talent/dtos/talent-response.dto';
+// import { TalentListResponseDto } from '@talent/dtos/talent-response.dto';
+import { UpdateTalentDto } from '@talent/dtos/update-talent.dto';
+import type { Talent } from '@talent/entities/talent.entity';
+import { TalentService } from '@talent/services/talent.service';
 
 @ApiTags('talents')
 @Controller('talents')
@@ -40,21 +40,14 @@ export class TalentController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create a new talent' })
-  @ApiBody({ type: CreateTalentDto })
-  @ApiResponse({
-    status: 201,
-    description: 'Talent created successfully',
-    type: TalentResponseDto,
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Bad request - validation error',
-  })
+  @ApiOperation(Docs.createTalent.operation)
+  @ApiBody(Docs.createTalent.body)
+  @ApiResponse(Docs.createTalent.responses.success[0])
+  @ApiResponse(Docs.createTalent.responses.error[0])
   async create(@Body() createTalentDto: CreateTalentDto, @Request() req: any) {
     const talent = await this.talentService.create(
       createTalentDto,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: this.mapToResponseDto(talent),
@@ -64,18 +57,14 @@ export class TalentController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get talents with filters' })
-  @ApiQuery({ type: TalentIndexQueryDto })
-  @ApiResponse({
-    status: 200,
-    description: 'Talents retrieved successfully',
-    type: TalentListResponseDto,
-  })
+  @ApiOperation(Docs.getTalents.operation)
+  @ApiQuery(Docs.getTalents.query as any)
+  @ApiResponse(Docs.getTalents.responses.success[0])
   async findAll(@Query() query: TalentIndexQueryDto) {
     const result = await this.talentService.getTalents(query);
     return ResponseHandler.success({
       data: {
-        talents: result.talents.map(talent => this.mapToResponseDto(talent)),
+        talents: result.talents.map((talent) => this.mapToResponseDto(talent)),
         pagination: result.pagination,
       },
       message: 'Talents retrieved successfully',
@@ -83,21 +72,10 @@ export class TalentController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get talent by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'Talent ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Talent found successfully',
-    type: TalentResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Talent not found',
-  })
+  @ApiOperation(Docs.getTalentById.operation)
+  @ApiParam(Docs.getTalentById.param)
+  @ApiResponse(Docs.getTalentById.responses.success[0])
+  @ApiResponse(Docs.getTalentById.responses.error[0])
   async findById(@Param('id') id: string) {
     const talent = await this.talentService.findById(id);
     return ResponseHandler.success({
@@ -107,31 +85,20 @@ export class TalentController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update talent by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'Talent ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiBody({ type: UpdateTalentDto })
-  @ApiResponse({
-    status: 200,
-    description: 'Talent updated successfully',
-    type: TalentResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Talent not found',
-  })
+  @ApiOperation(Docs.updateTalent.operation)
+  @ApiParam(Docs.updateTalent.param)
+  @ApiBody(Docs.updateTalent.body)
+  @ApiResponse(Docs.updateTalent.responses.success[0])
+  @ApiResponse(Docs.updateTalent.responses.error[0])
   async update(
     @Param('id') id: string,
     @Body() updateTalentDto: UpdateTalentDto,
-    @Request() req: any,
+    @Request() req: any
   ) {
     const talent = await this.talentService.update(
       id,
       updateTalentDto,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: this.mapToResponseDto(talent),
@@ -140,20 +107,10 @@ export class TalentController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete talent by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'Talent ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Talent deleted successfully',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Talent not found',
-  })
+  @ApiOperation(Docs.deleteTalent.operation)
+  @ApiParam(Docs.deleteTalent.param)
+  @ApiResponse(Docs.deleteTalent.responses.success[0])
+  @ApiResponse(Docs.deleteTalent.responses.error[0])
   async delete(@Param('id') id: string, @Request() req: any) {
     await this.talentService.delete(id, req.user?.id);
     return ResponseHandler.success({
@@ -163,16 +120,9 @@ export class TalentController {
   }
 
   @Get('profile/me')
-  @ApiOperation({ summary: 'Get current user talent profile' })
-  @ApiResponse({
-    status: 200,
-    description: 'Talent profile retrieved successfully',
-    type: TalentResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Talent profile not found',
-  })
+  @ApiOperation(Docs.getMyProfile.operation)
+  @ApiResponse(Docs.getMyProfile.responses.success[0])
+  @ApiResponse(Docs.getMyProfile.responses.error[0])
   async getMyProfile(@Request() req: any) {
     const talent = await this.talentService.findByUserId(req.user?.id);
     if (!talent) {
@@ -188,20 +138,13 @@ export class TalentController {
   }
 
   @Get(':id/profile-completion')
-  @ApiOperation({ summary: 'Get talent profile completion percentage' })
-  @ApiParam({
-    name: 'id',
-    description: 'Talent ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Profile completion retrieved successfully',
-  })
+  @ApiOperation(Docs.getProfileCompletion.operation)
+  @ApiParam(Docs.getProfileCompletion.param)
+  @ApiResponse(Docs.getProfileCompletion.responses.success[0])
   async getProfileCompletion(@Param('id') id: string, @Request() req: any) {
     const completion = await this.talentService.getProfileCompletion(
       id,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: completion,
@@ -210,26 +153,19 @@ export class TalentController {
   }
 
   @Post(':id/experiences')
-  @ApiOperation({ summary: 'Add experience to talent' })
-  @ApiParam({
-    name: 'id',
-    description: 'Talent ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiBody({ type: CreateExperienceDto })
-  @ApiResponse({
-    status: 201,
-    description: 'Experience added successfully',
-  })
+  @ApiOperation(Docs.addExperience.operation)
+  @ApiParam(Docs.addExperience.param)
+  @ApiBody(Docs.addExperience.body)
+  @ApiResponse(Docs.addExperience.responses.success[0])
   async addExperience(
     @Param('id') id: string,
     @Body() createExperienceDto: CreateExperienceDto,
-    @Request() req: any,
+    @Request() req: any
   ) {
     const experience = await this.talentService.addExperience(
       id,
       createExperienceDto,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: experience,
@@ -239,26 +175,19 @@ export class TalentController {
   }
 
   @Post(':id/educations')
-  @ApiOperation({ summary: 'Add education to talent' })
-  @ApiParam({
-    name: 'id',
-    description: 'Talent ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiBody({ type: CreateEducationDto })
-  @ApiResponse({
-    status: 201,
-    description: 'Education added successfully',
-  })
+  @ApiOperation(Docs.addEducation.operation)
+  @ApiParam(Docs.addEducation.param)
+  @ApiBody(Docs.addEducation.body)
+  @ApiResponse(Docs.addEducation.responses.success[0])
   async addEducation(
     @Param('id') id: string,
     @Body() createEducationDto: CreateEducationDto,
-    @Request() req: any,
+    @Request() req: any
   ) {
     const education = await this.talentService.addEducation(
       id,
       createEducationDto,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: education,
@@ -268,26 +197,19 @@ export class TalentController {
   }
 
   @Post(':id/external-links')
-  @ApiOperation({ summary: 'Add external link to talent' })
-  @ApiParam({
-    name: 'id',
-    description: 'Talent ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiBody({ type: CreateExternalLinkDto })
-  @ApiResponse({
-    status: 201,
-    description: 'External link added successfully',
-  })
+  @ApiOperation(Docs.addExternalLink.operation)
+  @ApiParam(Docs.addExternalLink.param)
+  @ApiBody(Docs.addExternalLink.body)
+  @ApiResponse(Docs.addExternalLink.responses.success[0])
   async addExternalLink(
     @Param('id') id: string,
     @Body() createExternalLinkDto: CreateExternalLinkDto,
-    @Request() req: any,
+    @Request() req: any
   ) {
     const externalLink = await this.talentService.addExternalLink(
       id,
       createExternalLinkDto,
-      req.user?.id,
+      req.user?.id
     );
     return ResponseHandler.success({
       data: externalLink,
@@ -297,21 +219,14 @@ export class TalentController {
   }
 
   @Get(':id/similar-talents')
-  @ApiOperation({ summary: 'Get similar talents' })
-  @ApiParam({
-    name: 'id',
-    description: 'Talent ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Similar talents retrieved successfully',
-  })
+  @ApiOperation(Docs.getSimilarTalents.operation)
+  @ApiParam(Docs.getSimilarTalents.param)
+  @ApiResponse(Docs.getSimilarTalents.responses.success[0])
   async getSimilarTalents(@Param('id') id: string) {
     const talents = await this.talentService.getSimilarTalents(id);
     return ResponseHandler.success({
       data: {
-        talents: talents.map(talent => this.mapToResponseDto(talent)),
+        talents: talents.map((talent) => this.mapToResponseDto(talent)),
         total: talents.length,
       },
       message: 'Similar talents retrieved successfully',

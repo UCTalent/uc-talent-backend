@@ -10,7 +10,15 @@ Document này mô tả các entities và database schema cần thiết cho Partn
 
 ```typescript
 // partner.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { PartnerHost } from './partner-host.entity';
 
@@ -28,7 +36,7 @@ export class Partner extends BaseEntity {
   isUcTalent: boolean;
 
   // Relationships
-  @OneToMany(() => PartnerHost, partnerHost => partnerHost.partner)
+  @OneToMany(() => PartnerHost, (partnerHost) => partnerHost.partner)
   partnerHosts: PartnerHost[];
 
   // Virtual fields for computed properties
@@ -47,7 +55,17 @@ export class Partner extends BaseEntity {
 
 ```typescript
 // partner-host.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { Partner } from './partner.entity';
 import { PartnerHostNetwork } from './partner-host-network.entity';
@@ -75,14 +93,14 @@ export class PartnerHost extends BaseEntity {
   partnerId: string;
 
   // Relationships
-  @ManyToOne(() => Partner, partner => partner.partnerHosts)
+  @ManyToOne(() => Partner, (partner) => partner.partnerHosts)
   @JoinColumn({ name: 'partner_id' })
   partner: Partner;
 
-  @OneToMany(() => PartnerHostNetwork, network => network.partnerHost)
+  @OneToMany(() => PartnerHostNetwork, (network) => network.partnerHost)
   networks: PartnerHostNetwork[];
 
-  @OneToMany(() => Job, job => job.partnerHost)
+  @OneToMany(() => Job, (job) => job.partnerHost)
   jobs: Job[];
 
   // Virtual fields for computed properties
@@ -98,7 +116,16 @@ export class PartnerHost extends BaseEntity {
 
 ```typescript
 // partner-host-network.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from '@/shared/common/base.entity';
 import { PartnerHost } from './partner-host.entity';
 
@@ -106,14 +133,14 @@ export enum NetworkType {
   COTI_V2 = 'coti_v2',
   BASE = 'base',
   BNB = 'bnb',
-  ETHEREUM = 'ethereum'
+  ETHEREUM = 'ethereum',
 }
 
 @Entity('partner_host_networks')
 export class PartnerHostNetwork extends BaseEntity {
   @Column({
     type: 'enum',
-    enum: NetworkType
+    enum: NetworkType,
   })
   @Index()
   network: NetworkType;
@@ -126,7 +153,7 @@ export class PartnerHostNetwork extends BaseEntity {
   partnerHostId: string;
 
   // Relationships
-  @ManyToOne(() => PartnerHost, partnerHost => partnerHost.networks)
+  @ManyToOne(() => PartnerHost, (partnerHost) => partnerHost.networks)
   @JoinColumn({ name: 'partner_host_id' })
   partnerHost: PartnerHost;
 }
@@ -146,15 +173,29 @@ export class CreatePartners1700000000019 implements MigrationInterface {
       new Table({
         name: 'partners',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'name', type: 'varchar' },
           { name: 'slug', type: 'varchar', isUnique: true },
           { name: 'is_uc_talent', type: 'boolean', default: false },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createIndex(
@@ -162,14 +203,14 @@ export class CreatePartners1700000000019 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_PARTNERS_NAME',
         columnNames: ['name'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'partners',
       new TableIndex({
         name: 'IDX_PARTNERS_SLUG',
         columnNames: ['slug'],
-      }),
+      })
     );
   }
 
@@ -183,7 +224,13 @@ export class CreatePartners1700000000019 implements MigrationInterface {
 
 ```typescript
 // 1700000000020-CreatePartnerHosts.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreatePartnerHosts1700000000020 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -191,17 +238,31 @@ export class CreatePartnerHosts1700000000020 implements MigrationInterface {
       new Table({
         name: 'partner_hosts',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'host', type: 'varchar', isUnique: true },
           { name: 'slug', type: 'varchar', isUnique: true },
           { name: 'access_token', type: 'varchar', isUnique: true },
           { name: 'is_uc_talent', type: 'boolean', default: false },
           { name: 'partner_id', type: 'uuid' },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createForeignKey(
@@ -211,7 +272,7 @@ export class CreatePartnerHosts1700000000020 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'partners',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -219,28 +280,28 @@ export class CreatePartnerHosts1700000000020 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_PARTNER_HOSTS_HOST',
         columnNames: ['host'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'partner_hosts',
       new TableIndex({
         name: 'IDX_PARTNER_HOSTS_SLUG',
         columnNames: ['slug'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'partner_hosts',
       new TableIndex({
         name: 'IDX_PARTNER_HOSTS_ACCESS_TOKEN',
         columnNames: ['access_token'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'partner_hosts',
       new TableIndex({
         name: 'IDX_PARTNER_HOSTS_PARTNER_ID',
         columnNames: ['partner_id'],
-      }),
+      })
     );
   }
 
@@ -254,23 +315,45 @@ export class CreatePartnerHosts1700000000020 implements MigrationInterface {
 
 ```typescript
 // 1700000000021-CreatePartnerHostNetworks.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
-export class CreatePartnerHostNetworks1700000000021 implements MigrationInterface {
+export class CreatePartnerHostNetworks1700000000021
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
         name: 'partner_host_networks',
         columns: [
-          { name: 'id', type: 'uuid', isPrimary: true, generationStrategy: 'uuid', default: 'uuid_generate_v4()' },
+          {
+            name: 'id',
+            type: 'uuid',
+            isPrimary: true,
+            generationStrategy: 'uuid',
+            default: 'uuid_generate_v4()',
+          },
           { name: 'network', type: 'varchar' },
           { name: 'default', type: 'boolean', default: false },
           { name: 'partner_host_id', type: 'uuid' },
-          { name: 'created_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' },
-          { name: 'updated_at', type: 'timestamp', default: 'CURRENT_TIMESTAMP' }
+          {
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
         ],
       }),
-      true,
+      true
     );
 
     await queryRunner.createForeignKey(
@@ -280,7 +363,7 @@ export class CreatePartnerHostNetworks1700000000021 implements MigrationInterfac
         referencedColumnNames: ['id'],
         referencedTableName: 'partner_hosts',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -288,14 +371,14 @@ export class CreatePartnerHostNetworks1700000000021 implements MigrationInterfac
       new TableIndex({
         name: 'IDX_PARTNER_HOST_NETWORKS_HOST_ID',
         columnNames: ['partner_host_id'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'partner_host_networks',
       new TableIndex({
         name: 'IDX_PARTNER_HOST_NETWORKS_NETWORK',
         columnNames: ['network'],
-      }),
+      })
     );
     await queryRunner.createIndex(
       'partner_host_networks',
@@ -303,7 +386,7 @@ export class CreatePartnerHostNetworks1700000000021 implements MigrationInterfac
         name: 'IDX_PARTNER_HOST_NETWORKS_HOST_ID_NETWORK',
         columnNames: ['partner_host_id', 'network'],
         isUnique: true,
-      }),
+      })
     );
   }
 
@@ -329,7 +412,7 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class PartnerRepository extends BaseRepository<Partner> {
   constructor(
     @InjectRepository(Partner)
-    private readonly partnerRepository: Repository<Partner>,
+    private readonly partnerRepository: Repository<Partner>
   ) {
     super(partnerRepository);
   }
@@ -345,7 +428,7 @@ export class PartnerRepository extends BaseRepository<Partner> {
   async findUcTalentPartners(): Promise<Partner[]> {
     return this.partnerRepository.find({
       where: { isUcTalent: true },
-      relations: ['partnerHosts']
+      relations: ['partnerHosts'],
     });
   }
 
@@ -378,7 +461,7 @@ import { BaseRepository } from '@/shared/common/base.repository';
 export class PartnerHostRepository extends BaseRepository<PartnerHost> {
   constructor(
     @InjectRepository(PartnerHost)
-    private readonly partnerHostRepository: Repository<PartnerHost>,
+    private readonly partnerHostRepository: Repository<PartnerHost>
   ) {
     super(partnerHostRepository);
   }
@@ -392,16 +475,16 @@ export class PartnerHostRepository extends BaseRepository<PartnerHost> {
   }
 
   async findByAccessToken(accessToken: string): Promise<PartnerHost | null> {
-    return this.partnerHostRepository.findOne({ 
+    return this.partnerHostRepository.findOne({
       where: { accessToken },
-      relations: ['partner', 'networks']
+      relations: ['partner', 'networks'],
     });
   }
 
   async findByPartner(partnerId: string): Promise<PartnerHost[]> {
     return this.partnerHostRepository.find({
       where: { partnerId },
-      relations: ['networks', 'jobs']
+      relations: ['networks', 'jobs'],
     });
   }
 
@@ -432,38 +515,51 @@ export class PartnerHostRepository extends BaseRepository<PartnerHost> {
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PartnerHostNetwork, NetworkType } from './entities/partner-host-network.entity';
+import {
+  PartnerHostNetwork,
+  NetworkType,
+} from './entities/partner-host-network.entity';
 import { BaseRepository } from '@/shared/common/base.repository';
 
 @Injectable()
 export class PartnerHostNetworkRepository extends BaseRepository<PartnerHostNetwork> {
   constructor(
     @InjectRepository(PartnerHostNetwork)
-    private readonly partnerHostNetworkRepository: Repository<PartnerHostNetwork>,
+    private readonly partnerHostNetworkRepository: Repository<PartnerHostNetwork>
   ) {
     super(partnerHostNetworkRepository);
   }
 
-  async findByPartnerHost(partnerHostId: string): Promise<PartnerHostNetwork[]> {
+  async findByPartnerHost(
+    partnerHostId: string
+  ): Promise<PartnerHostNetwork[]> {
     return this.partnerHostNetworkRepository.find({
       where: { partnerHostId },
-      order: { default: 'DESC', network: 'ASC' }
+      order: { default: 'DESC', network: 'ASC' },
     });
   }
 
-  async findByNetwork(partnerHostId: string, network: NetworkType): Promise<PartnerHostNetwork | null> {
+  async findByNetwork(
+    partnerHostId: string,
+    network: NetworkType
+  ): Promise<PartnerHostNetwork | null> {
     return this.partnerHostNetworkRepository.findOne({
-      where: { partnerHostId, network }
+      where: { partnerHostId, network },
     });
   }
 
-  async findDefaultNetwork(partnerHostId: string): Promise<PartnerHostNetwork | null> {
+  async findDefaultNetwork(
+    partnerHostId: string
+  ): Promise<PartnerHostNetwork | null> {
     return this.partnerHostNetworkRepository.findOne({
-      where: { partnerHostId, default: true }
+      where: { partnerHostId, default: true },
     });
   }
 
-  async setDefaultNetwork(partnerHostId: string, networkId: string): Promise<void> {
+  async setDefaultNetwork(
+    partnerHostId: string,
+    networkId: string
+  ): Promise<void> {
     // First, unset all default networks for this partner host
     await this.partnerHostNetworkRepository.update(
       { partnerHostId },
@@ -482,7 +578,10 @@ export class PartnerHostNetworkRepository extends BaseRepository<PartnerHostNetw
       .createQueryBuilder('network')
       .select('network.network', 'network')
       .addSelect('COUNT(*)', 'count')
-      .addSelect('COUNT(CASE WHEN network.default = true THEN 1 END)', 'defaultCount')
+      .addSelect(
+        'COUNT(CASE WHEN network.default = true THEN 1 END)',
+        'defaultCount'
+      )
       .groupBy('network.network')
       .getRawMany();
   }
@@ -495,7 +594,12 @@ export class PartnerHostNetworkRepository extends BaseRepository<PartnerHostNetw
 
 ```typescript
 // partner-token.guard.ts
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PartnerHostRepository } from '../repositories/partner-host.repository';
 
 @Injectable()
@@ -506,20 +610,21 @@ export class PartnerTokenGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     const host = this.extractHostFromHeader(request);
-    
+
     if (!token || !host) {
       throw new UnauthorizedException('Partner token and host are required');
     }
-    
-    const partnerHost = await this.partnerHostRepository.findByAccessToken(token);
-    
+
+    const partnerHost =
+      await this.partnerHostRepository.findByAccessToken(token);
+
     if (!partnerHost || partnerHost.host !== host) {
       throw new UnauthorizedException('Invalid partner token or host');
     }
-    
+
     request['partnerHost'] = partnerHost;
     request['partner'] = partnerHost.partner;
-    
+
     return true;
   }
 
@@ -543,14 +648,14 @@ export const PartnerHost = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
     return request.partnerHost;
-  },
+  }
 );
 
 export const Partner = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
     return request.partner;
-  },
+  }
 );
 ```
 
@@ -575,7 +680,7 @@ export class PartnerStatisticsService {
     const [hosts, networks, jobs] = await Promise.all([
       this.partnerHostRepository.findByPartner(partnerId),
       this.partnerHostNetworkRepository.findByPartnerHost(partnerId),
-      this.jobRepository.find({ where: { partnerHost: { partnerId } } })
+      this.jobRepository.find({ where: { partnerHost: { partnerId } } }),
     ]);
 
     const networkStats = this.calculateNetworkStats(networks);
@@ -584,12 +689,12 @@ export class PartnerStatisticsService {
     return {
       hosts: {
         total: hosts.length,
-        active: hosts.filter(h => h.isUcTalent).length,
-        inactive: hosts.filter(h => !h.isUcTalent).length
+        active: hosts.filter((h) => h.isUcTalent).length,
+        inactive: hosts.filter((h) => !h.isUcTalent).length,
       },
       networks: networkStats,
       jobs: jobStats,
-      activity: await this.calculateActivityStats(partnerId)
+      activity: await this.calculateActivityStats(partnerId),
     };
   }
 
@@ -599,10 +704,10 @@ export class PartnerStatisticsService {
       ethereum: 0,
       base: 0,
       bnb: 0,
-      coti_v2: 0
+      coti_v2: 0,
     };
 
-    networks.forEach(network => {
+    networks.forEach((network) => {
       stats[network.network]++;
     });
 
@@ -612,9 +717,9 @@ export class PartnerStatisticsService {
   private calculateJobStats(jobs: Job[]) {
     return {
       total: jobs.length,
-      active: jobs.filter(j => j.status === 'active').length,
-      closed: jobs.filter(j => j.status === 'closed').length,
-      expired: jobs.filter(j => j.status === 'expired').length
+      active: jobs.filter((j) => j.status === 'active').length,
+      closed: jobs.filter((j) => j.status === 'closed').length,
+      expired: jobs.filter((j) => j.status === 'expired').length,
     };
   }
 
@@ -627,26 +732,27 @@ export class PartnerStatisticsService {
       this.jobRepository.count({
         where: {
           partnerHost: { partnerId },
-          createdAt: MoreThanOrEqual(thisMonth)
-        }
+          createdAt: MoreThanOrEqual(thisMonth),
+        },
       }),
       this.jobRepository.count({
         where: {
           partnerHost: { partnerId },
           createdAt: MoreThanOrEqual(lastMonth),
-          createdAt: LessThan(thisMonth)
-        }
-      })
+          createdAt: LessThan(thisMonth),
+        },
+      }),
     ]);
 
-    const growthRate = jobsLastMonth > 0 
-      ? ((jobsThisMonth - jobsLastMonth) / jobsLastMonth) * 100 
-      : 0;
+    const growthRate =
+      jobsLastMonth > 0
+        ? ((jobsThisMonth - jobsLastMonth) / jobsLastMonth) * 100
+        : 0;
 
     return {
       jobsThisMonth,
       jobsLastMonth,
-      growthRate
+      growthRate,
     };
   }
 }
@@ -671,4 +777,4 @@ export class PartnerStatisticsService {
 
 ---
 
-**🎉 Ready for implementation!** 
+**🎉 Ready for implementation!**

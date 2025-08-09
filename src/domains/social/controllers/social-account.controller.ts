@@ -1,56 +1,53 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
   Body,
-  Param,
-  Query,
-  UseGuards,
+  Controller,
+  Delete,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
-  ApiTags,
+  ApiBearerAuth,
   ApiOperation,
-  ApiResponse,
   ApiParam,
   ApiQuery,
-  ApiBearerAuth,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-import { SocialAccountService } from '@domains/social/services/social-account.service';
-import { SocialAuthService } from '@domains/social/services/social-auth.service';
+
+import { Docs as SocialDocs } from '@documents/social/social.document';
 import { LinkSocialAccountDto } from '@domains/social/dtos/link-social-account.dto';
 import { SocialAuthDto } from '@domains/social/dtos/social-auth.dto';
-import { SocialSettingsDto } from '@domains/social/dtos/social-settings.dto';
-import { SocialSearchDto } from '@domains/social/dtos/social-search.dto';
 import {
   SocialAccountResponseDto,
-  SocialSettingsResponseDto,
   SocialProfileResponseDto,
+  SocialSettingsResponseDto,
   SyncResultResponseDto,
 } from '@domains/social/dtos/social-response.dto';
-import { JwtAuthGuard } from '@shared/cross-cutting/authorization';
-import { CurrentUser } from '@shared/cross-cutting/authorization';
+import { SocialSearchDto } from '@domains/social/dtos/social-search.dto';
+import { SocialSettingsDto } from '@domains/social/dtos/social-settings.dto';
+import { SocialAccountService } from '@domains/social/services/social-account.service';
+import { SocialAuthService } from '@domains/social/services/social-auth.service';
+import { CurrentUser, JwtAuthGuard } from '@shared/cross-cutting/authorization';
 
 @ApiTags('Social Accounts')
 @Controller('social-accounts')
 export class SocialAccountController {
   constructor(
     private readonly socialAccountService: SocialAccountService,
-    private readonly socialAuthService: SocialAuthService,
+    private readonly socialAuthService: SocialAuthService
   ) {}
 
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get user social accounts' })
-  @ApiResponse({
-    status: 200,
-    description: 'Social accounts retrieved successfully',
-    type: [SocialAccountResponseDto],
-  })
+  @ApiOperation(SocialDocs.getUserSocialAccounts.operation)
+  @ApiResponse(SocialDocs.getUserSocialAccounts.responses.success[0])
   async getUserSocialAccounts(@CurrentUser() user: any) {
     return this.socialAccountService.getUserSocialAccounts(user.id);
   }
@@ -58,16 +55,12 @@ export class SocialAccountController {
   @Post('link')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Link social account' })
-  @ApiResponse({
-    status: 201,
-    description: 'Social account linked successfully',
-    type: SocialAccountResponseDto,
-  })
-  @ApiResponse({ status: 422, description: 'Validation error' })
+  @ApiOperation(SocialDocs.linkSocialAccount.operation)
+  @ApiResponse(SocialDocs.linkSocialAccount.responses.success[0])
+  @ApiResponse(SocialDocs.linkSocialAccount.responses.error[0])
   async linkSocialAccount(
     @CurrentUser() user: any,
-    @Body() linkDto: LinkSocialAccountDto,
+    @Body() linkDto: LinkSocialAccountDto
   ) {
     return this.socialAccountService.linkSocialAccount(user.id, linkDto);
   }
@@ -75,13 +68,10 @@ export class SocialAccountController {
   @Delete(':id/unlink')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Unlink social account' })
-  @ApiParam({ name: 'id', description: 'Social account ID' })
-  @ApiResponse({
-    status: 204,
-    description: 'Social account unlinked successfully',
-  })
-  @ApiResponse({ status: 404, description: 'Social account not found' })
+  @ApiOperation(SocialDocs.unlinkSocialAccount.operation)
+  @ApiParam(SocialDocs.unlinkSocialAccount.param)
+  @ApiResponse(SocialDocs.unlinkSocialAccount.responses.success[0])
+  @ApiResponse(SocialDocs.unlinkSocialAccount.responses.error[0])
   @HttpCode(HttpStatus.NO_CONTENT)
   async unlinkSocialAccount(@CurrentUser() user: any, @Param('id') id: string) {
     return this.socialAccountService.unlinkSocialAccount(user.id, id);
@@ -90,13 +80,10 @@ export class SocialAccountController {
   @Post(':id/sync')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Sync social account data' })
-  @ApiParam({ name: 'id', description: 'Social account ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Social account synced successfully',
-  })
-  @ApiResponse({ status: 404, description: 'Social account not found' })
+  @ApiOperation(SocialDocs.syncSocialAccount.operation)
+  @ApiParam(SocialDocs.syncSocialAccount.param)
+  @ApiResponse(SocialDocs.syncSocialAccount.responses.success[0])
+  @ApiResponse(SocialDocs.syncSocialAccount.responses.error[0])
   async syncSocialAccount(@CurrentUser() user: any, @Param('id') id: string) {
     return this.socialAccountService.syncSocialAccount(user.id, id);
   }
@@ -104,12 +91,8 @@ export class SocialAccountController {
   @Post('sync-all')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Sync all social accounts' })
-  @ApiResponse({
-    status: 200,
-    description: 'All social accounts synced successfully',
-    type: [SyncResultResponseDto],
-  })
+  @ApiOperation(SocialDocs.syncAllSocialAccounts.operation)
+  @ApiResponse(SocialDocs.syncAllSocialAccounts.responses.success[0])
   async syncAllSocialAccounts(@CurrentUser() user: any) {
     return this.socialAccountService.syncAllSocialAccounts(user.id);
   }
@@ -117,31 +100,18 @@ export class SocialAccountController {
   @Post(':id/refresh-token')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Refresh social account token' })
-  @ApiParam({ name: 'id', description: 'Social account ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Token refreshed successfully',
-  })
-  @ApiResponse({ status: 404, description: 'Social account not found' })
+  @ApiOperation(SocialDocs.refreshToken.operation)
+  @ApiParam(SocialDocs.refreshToken.param)
+  @ApiResponse(SocialDocs.refreshToken.responses.success[0])
+  @ApiResponse(SocialDocs.refreshToken.responses.error[0])
   async refreshToken(@CurrentUser() user: any, @Param('id') id: string) {
     return this.socialAccountService.refreshSocialToken(user.id, id);
   }
 
   @Get('search')
-  @ApiOperation({ summary: 'Search users by social profile' })
-  @ApiQuery({ name: 'provider', required: false, type: String })
-  @ApiQuery({ name: 'query', required: false, type: String })
-  @ApiQuery({ name: 'skills', required: false, type: [String] })
-  @ApiQuery({ name: 'location', required: false, type: String })
-  @ApiQuery({ name: 'industry', required: false, type: String })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiResponse({
-    status: 200,
-    description: 'Search results retrieved successfully',
-    type: [SocialProfileResponseDto],
-  })
+  @ApiOperation(SocialDocs.searchSocialProfiles.operation)
+  @ApiQuery(SocialDocs.searchSocialProfiles.query as any)
+  @ApiResponse(SocialDocs.searchSocialProfiles.responses.success[0])
   async searchSocialProfiles(@Query() searchDto: SocialSearchDto) {
     return this.socialAccountService.searchSocialProfiles(searchDto);
   }
@@ -149,12 +119,8 @@ export class SocialAccountController {
   @Get('settings')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get social privacy settings' })
-  @ApiResponse({
-    status: 200,
-    description: 'Settings retrieved successfully',
-    type: SocialSettingsResponseDto,
-  })
+  @ApiOperation(SocialDocs.getSocialSettings.operation)
+  @ApiResponse(SocialDocs.getSocialSettings.responses.success[0])
   async getSocialSettings(@CurrentUser() user: any) {
     return this.socialAccountService.getSocialSettings(user.id);
   }
@@ -162,27 +128,20 @@ export class SocialAccountController {
   @Put('settings')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update social privacy settings' })
-  @ApiResponse({
-    status: 200,
-    description: 'Settings updated successfully',
-    type: SocialSettingsResponseDto,
-  })
+  @ApiOperation(SocialDocs.updateSocialSettings.operation)
+  @ApiResponse(SocialDocs.updateSocialSettings.responses.success[0])
   async updateSocialSettings(
     @CurrentUser() user: any,
-    @Body() settingsDto: SocialSettingsDto,
+    @Body() settingsDto: SocialSettingsDto
   ) {
     return this.socialAccountService.updateSocialSettings(user.id, settingsDto);
   }
 
   // Legacy endpoints for backward compatibility
   @Get('user/:userId')
-  @ApiOperation({ summary: 'Get social accounts by user ID (legacy)' })
-  @ApiParam({ name: 'userId', description: 'User ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Social accounts found successfully',
-  })
+  @ApiOperation(SocialDocs.findByUserIdLegacy.operation)
+  @ApiParam(SocialDocs.findByUserIdLegacy.param)
+  @ApiResponse(SocialDocs.findByUserIdLegacy.responses.success[0])
   async findByUserId(@Param('userId') userId: string) {
     const socialAccounts =
       await this.socialAccountService.findSocialAccountsByUserId(userId);
@@ -195,25 +154,19 @@ export class SocialAccountController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get social account by ID (legacy)' })
-  @ApiParam({ name: 'id', description: 'Social account ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Social account found successfully',
-  })
-  @ApiResponse({ status: 404, description: 'Social account not found' })
+  @ApiOperation(SocialDocs.findByIdLegacy.operation)
+  @ApiParam(SocialDocs.findByIdLegacy.param)
+  @ApiResponse(SocialDocs.findByIdLegacy.responses.success[0])
+  @ApiResponse(SocialDocs.findByIdLegacy.responses.error[0])
   async findById(@Param('id') id: string) {
     return this.socialAccountService.findSocialAccountById(id);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete social account by ID (legacy)' })
-  @ApiParam({ name: 'id', description: 'Social account ID' })
-  @ApiResponse({
-    status: 204,
-    description: 'Social account deleted successfully',
-  })
-  @ApiResponse({ status: 404, description: 'Social account not found' })
+  @ApiOperation(SocialDocs.deleteLegacy.operation)
+  @ApiParam(SocialDocs.deleteLegacy.param)
+  @ApiResponse(SocialDocs.deleteLegacy.responses.success[0])
+  @ApiResponse(SocialDocs.deleteLegacy.responses.error[0])
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string): Promise<void> {
     return this.socialAccountService.deleteSocialAccount(id);
@@ -226,29 +179,13 @@ export class SocialAuthController {
   constructor(private readonly socialAuthService: SocialAuthService) {}
 
   @Post(':provider')
-  @ApiOperation({ summary: 'Authenticate with social provider' })
-  @ApiParam({
-    name: 'provider',
-    description: 'Social provider',
-    enum: [
-      'facebook',
-      'x',
-      'twitter',
-      'linkedin',
-      'github',
-      'instagram',
-      'discord',
-      'telegram',
-    ],
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Authentication successful',
-  })
-  @ApiResponse({ status: 400, description: 'Authentication failed' })
+  @ApiOperation(SocialDocs.authenticateWithSocial.operation)
+  @ApiParam(SocialDocs.authenticateWithSocial.param as any)
+  @ApiResponse(SocialDocs.authenticateWithSocial.responses.success[0])
+  @ApiResponse(SocialDocs.authenticateWithSocial.responses.error[0])
   async authenticateWithSocial(
     @Param('provider') provider: string,
-    @Body() authDto: SocialAuthDto,
+    @Body() authDto: SocialAuthDto
   ) {
     return this.socialAuthService.authenticateWithSocial(provider, authDto);
   }

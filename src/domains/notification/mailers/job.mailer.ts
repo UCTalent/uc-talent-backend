@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { MailerService } from '@infrastructure/email/services/mailer.service';
 
 @Injectable()
@@ -9,7 +10,7 @@ export class JobMailer {
     to: string,
     jobTitle: string,
     companyName: string,
-    candidateName: string,
+    candidateName: string
   ): Promise<void> {
     const subject = 'Job Application Confirmation';
     const html = `
@@ -27,7 +28,7 @@ export class JobMailer {
     to: string,
     jobTitle: string,
     companyName: string,
-    referrerName: string,
+    referrerName: string
   ): Promise<void> {
     const subject = 'Job Referral Notification';
     const html = `
@@ -44,7 +45,7 @@ export class JobMailer {
     to: string,
     jobTitle: string,
     companyName: string,
-    status: string,
+    status: string
   ): Promise<void> {
     const subject = 'Job Application Status Update';
     const html = `

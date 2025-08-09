@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { SocialSetting } from '@domains/social/entities/social-setting.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class SocialSettingRepository implements IBaseRepository<SocialSetting> {
   constructor(
     @InjectRepository(SocialSetting)
-    private readonly repository: Repository<SocialSetting>,
+    private readonly repository: Repository<SocialSetting>
   ) {}
 
   async findById(id: string): Promise<SocialSetting | null> {
@@ -31,7 +32,7 @@ export class SocialSettingRepository implements IBaseRepository<SocialSetting> {
 
   async update(
     id: string,
-    data: Partial<SocialSetting>,
+    data: Partial<SocialSetting>
   ): Promise<SocialSetting> {
     await this.repository.update(id, data);
     return this.findById(id);

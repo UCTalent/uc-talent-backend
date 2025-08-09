@@ -80,14 +80,8 @@
           "validation": "encrypted"
         }
       ],
-      "repositories": [
-        "UserRepository"
-      ],
-      "services": [
-        "UserService",
-        "AuthenticationService",
-        "OAuth2Service"
-      ],
+      "repositories": ["UserRepository"],
+      "services": ["UserService", "AuthenticationService", "OAuth2Service"],
       "controllers": [
         "UserController",
         "AuthController",
@@ -101,11 +95,7 @@
         "ChangeEmailDto",
         "ChangeInfoDto"
       ],
-      "events": [
-        "UserCreatedEvent",
-        "UserConfirmedEvent",
-        "UserUpdatedEvent"
-      ]
+      "events": ["UserCreatedEvent", "UserConfirmedEvent", "UserUpdatedEvent"]
     },
     {
       "name": "Talent",
@@ -210,9 +200,7 @@
         "EducationService",
         "ResumeService"
       ],
-      "controllers": [
-        "TalentController"
-      ],
+      "controllers": ["TalentController"],
       "dtos": [
         "CreateTalentDto",
         "UpdateTalentDto",
@@ -420,15 +408,9 @@
           ]
         }
       ],
-      "repositories": [
-        "OrganizationRepository"
-      ],
-      "services": [
-        "OrganizationService"
-      ],
-      "controllers": [
-        "OrganizationController"
-      ],
+      "repositories": ["OrganizationRepository"],
+      "services": ["OrganizationService"],
+      "controllers": ["OrganizationController"],
       "dtos": [
         "CreateOrganizationDto",
         "UpdateOrganizationDto",
@@ -475,12 +457,8 @@
         "CountryRepository",
         "RegionRepository"
       ],
-      "services": [
-        "LocationService"
-      ],
-      "controllers": [
-        "LocationController"
-      ]
+      "services": ["LocationService"],
+      "controllers": ["LocationController"]
     },
     {
       "name": "Skill",
@@ -520,11 +498,7 @@
         "SpecialityRepository",
         "RoleRepository"
       ],
-      "services": [
-        "SkillService",
-        "SpecialityService",
-        "RoleService"
-      ],
+      "services": ["SkillService", "SpecialityService", "RoleService"],
       "controllers": [
         "SkillController",
         "SpecialityController",
@@ -568,13 +542,8 @@
         "PaymentDistributionRepository",
         "WalletAddressRepository"
       ],
-      "services": [
-        "PaymentService",
-        "WalletService"
-      ],
-      "controllers": [
-        "PaymentDistributionController"
-      ]
+      "services": ["PaymentService", "WalletService"],
+      "controllers": ["PaymentDistributionController"]
     },
     {
       "name": "Social",
@@ -606,17 +575,9 @@
           }
         }
       ],
-      "repositories": [
-        "SocialAccountRepository",
-        "ExternalLinkRepository"
-      ],
-      "services": [
-        "SocialAccountService",
-        "ExternalLinkService"
-      ],
-      "controllers": [
-        "SocialAccountController"
-      ]
+      "repositories": ["SocialAccountRepository", "ExternalLinkRepository"],
+      "services": ["SocialAccountService", "ExternalLinkService"],
+      "controllers": ["SocialAccountController"]
     },
     {
       "name": "Partner",
@@ -659,9 +620,7 @@
         "PartnerHostRepository",
         "PartnerHostNetworkRepository"
       ],
-      "services": [
-        "PartnerService"
-      ]
+      "services": ["PartnerService"]
     },
     {
       "name": "Notification",
@@ -679,17 +638,9 @@
           }
         }
       ],
-      "repositories": [
-        "NoteRepository"
-      ],
-      "services": [
-        "EmailService",
-        "NotificationService"
-      ],
-      "mailers": [
-        "JobMailer",
-        "UserMailer"
-      ]
+      "repositories": ["NoteRepository"],
+      "services": ["EmailService", "NotificationService"],
+      "mailers": ["JobMailer", "UserMailer"]
     }
   ],
   "shared": {
@@ -718,10 +669,7 @@
       "email": {
         "provider": "AWS SES",
         "templates": "Email templates",
-        "mailers": [
-          "JobSesMailer",
-          "UserSesMailer"
-        ]
+        "mailers": ["JobSesMailer", "UserSesMailer"]
       },
       "fileStorage": {
         "provider": "AWS S3",
@@ -817,7 +765,12 @@
     {
       "name": "LocationModule",
       "imports": ["TypeOrmModule"],
-      "providers": ["LocationService", "CityRepository", "CountryRepository", "RegionRepository"],
+      "providers": [
+        "LocationService",
+        "CityRepository",
+        "CountryRepository",
+        "RegionRepository"
+      ],
       "controllers": ["LocationController"],
       "exports": ["LocationService"]
     },
@@ -842,7 +795,12 @@
     {
       "name": "PaymentModule",
       "imports": ["TypeOrmModule"],
-      "providers": ["PaymentService", "WalletService", "PaymentDistributionRepository", "WalletAddressRepository"],
+      "providers": [
+        "PaymentService",
+        "WalletService",
+        "PaymentDistributionRepository",
+        "WalletAddressRepository"
+      ],
       "controllers": ["PaymentDistributionController"],
       "exports": ["PaymentService"]
     },
@@ -924,7 +882,14 @@
         {
           "path": "/jobs",
           "methods": ["GET", "POST", "PATCH"],
-          "actions": ["index", "show", "create", "apply", "closed_job", "update_referral_info"]
+          "actions": [
+            "index",
+            "show",
+            "create",
+            "apply",
+            "closed_job",
+            "update_referral_info"
+          ]
         },
         {
           "path": "/organizations",
@@ -1020,45 +985,49 @@
       {
         "name": "users",
         "columns": [
-          {"name": "id", "type": "uuid", "primary": true},
-          {"name": "email", "type": "varchar", "unique": true},
-          {"name": "name", "type": "varchar"},
-          {"name": "phone_number", "type": "varchar"},
-          {"name": "encrypted_password", "type": "varchar"},
-          {"name": "firebase_uid", "type": "varchar", "unique": true},
-          {"name": "thirdweb_metadata", "type": "jsonb"},
-          {"name": "created_at", "type": "timestamp"},
-          {"name": "updated_at", "type": "timestamp"}
+          { "name": "id", "type": "uuid", "primary": true },
+          { "name": "email", "type": "varchar", "unique": true },
+          { "name": "name", "type": "varchar" },
+          { "name": "phone_number", "type": "varchar" },
+          { "name": "encrypted_password", "type": "varchar" },
+          { "name": "firebase_uid", "type": "varchar", "unique": true },
+          { "name": "thirdweb_metadata", "type": "jsonb" },
+          { "name": "created_at", "type": "timestamp" },
+          { "name": "updated_at", "type": "timestamp" }
         ]
       },
       {
         "name": "talents",
         "columns": [
-          {"name": "id", "type": "uuid", "primary": true},
-          {"name": "user_id", "type": "uuid", "foreign_key": "users.id"},
-          {"name": "about", "type": "text"},
-          {"name": "employment_status", "type": "varchar"},
-          {"name": "english_proficiency", "type": "varchar"},
-          {"name": "experience_level", "type": "integer"},
-          {"name": "status", "type": "varchar"},
-          {"name": "created_at", "type": "timestamp"},
-          {"name": "updated_at", "type": "timestamp"}
+          { "name": "id", "type": "uuid", "primary": true },
+          { "name": "user_id", "type": "uuid", "foreign_key": "users.id" },
+          { "name": "about", "type": "text" },
+          { "name": "employment_status", "type": "varchar" },
+          { "name": "english_proficiency", "type": "varchar" },
+          { "name": "experience_level", "type": "integer" },
+          { "name": "status", "type": "varchar" },
+          { "name": "created_at", "type": "timestamp" },
+          { "name": "updated_at", "type": "timestamp" }
         ]
       },
       {
         "name": "jobs",
         "columns": [
-          {"name": "id", "type": "uuid", "primary": true},
-          {"name": "job_number", "type": "bigint", "unique": true},
-          {"name": "title", "type": "varchar"},
-          {"name": "about", "type": "text"},
-          {"name": "experience_level", "type": "integer"},
-          {"name": "management_level", "type": "integer"},
-          {"name": "status", "type": "varchar"},
-          {"name": "organization_id", "type": "uuid", "foreign_key": "organizations.id"},
-          {"name": "created_by", "type": "uuid", "foreign_key": "users.id"},
-          {"name": "created_at", "type": "timestamp"},
-          {"name": "updated_at", "type": "timestamp"}
+          { "name": "id", "type": "uuid", "primary": true },
+          { "name": "job_number", "type": "bigint", "unique": true },
+          { "name": "title", "type": "varchar" },
+          { "name": "about", "type": "text" },
+          { "name": "experience_level", "type": "integer" },
+          { "name": "management_level", "type": "integer" },
+          { "name": "status", "type": "varchar" },
+          {
+            "name": "organization_id",
+            "type": "uuid",
+            "foreign_key": "organizations.id"
+          },
+          { "name": "created_by", "type": "uuid", "foreign_key": "users.id" },
+          { "name": "created_at", "type": "timestamp" },
+          { "name": "updated_at", "type": "timestamp" }
         ]
       }
     ]
@@ -1151,11 +1120,7 @@
       "@types/jest",
       "@types/node"
     ],
-    "graphql": [
-      "graphql",
-      "apollo-server-express",
-      "@nestjs/apollo"
-    ]
+    "graphql": ["graphql", "apollo-server-express", "@nestjs/apollo"]
   },
   "environmentVariables": {
     "database": [
@@ -1180,16 +1145,7 @@
       "AWS_S3_BUCKET",
       "AWS_SES_FROM_EMAIL"
     ],
-    "redis": [
-      "REDIS_URL",
-      "REDIS_HOST",
-      "REDIS_PORT"
-    ],
-    "app": [
-      "NODE_ENV",
-      "PORT",
-      "FRONTEND_URL",
-      "API_BASE_URL"
-    ]
+    "redis": ["REDIS_URL", "REDIS_HOST", "REDIS_PORT"],
+    "app": ["NODE_ENV", "PORT", "FRONTEND_URL", "API_BASE_URL"]
   }
-} 
+}

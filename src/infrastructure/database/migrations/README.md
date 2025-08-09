@@ -7,22 +7,27 @@ Thư mục này chứa tất cả các migration files cho toàn bộ hệ thố
 ## 🗄️ Migration Files
 
 ### Core Infrastructure
+
 1. **1700000000000-CreateUuidExtension.ts** - Tạo extension uuid-ossp
 
 ### Location Domain
+
 2. **1700000000011-CreateCountries.ts** - Tạo bảng countries
 3. **1700000000012-CreateRegions.ts** - Tạo bảng regions
 4. **1700000000013-CreateCities.ts** - Tạo bảng cities
 
 ### User Domain
+
 5. **1700000000010-CreateUsers.ts** - Tạo bảng users
 
 ### Skill Domain
+
 6. **1700000000014-CreateRoles.ts** - Tạo bảng roles
 7. **1700000000015-CreateSkills.ts** - Tạo bảng skills
 8. **1700000000016-CreateSpecialities.ts** - Tạo bảng specialities
 
 ### Talent Domain
+
 9. **1700000000001-CreateTalents.ts** - Tạo bảng talents
 10. **1700000000002-CreateExperiences.ts** - Tạo bảng experiences
 11. **1700000000003-CreateEducations.ts** - Tạo bảng educations
@@ -56,17 +61,20 @@ npm run migration:generate src/infrastructure/database/migrations/[MigrationName
 ## 📊 Database Schema
 
 ### Core Tables
+
 - **users** - Thông tin người dùng
 - **countries** - Quốc gia
 - **regions** - Khu vực
 - **cities** - Thành phố
 
 ### Skill Domain
+
 - **roles** - Vai trò công việc
 - **skills** - Kỹ năng
 - **specialities** - Chuyên môn
 
 ### Talent Domain
+
 - **talents** - Thông tin chính của talent
 - **experiences** - Kinh nghiệm làm việc
 - **educations** - Học vấn
@@ -75,6 +83,7 @@ npm run migration:generate src/infrastructure/database/migrations/[MigrationName
 - **recommendation_jobs** - Jobs được recommend cho talent
 
 ### Junction Tables (many-to-many)
+
 - **talent_specialities** - Quan hệ talent - speciality
 - **talent_skills** - Quan hệ talent - skill
 - **talent_roles** - Quan hệ talent - role
@@ -89,21 +98,25 @@ npm run migration:generate src/infrastructure/database/migrations/[MigrationName
 ## 🐛 Troubleshooting
 
 ### Lỗi "uuid-ossp extension not found"
+
 ```bash
 # Kết nối vào PostgreSQL và chạy
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 ```
 
 ### Lỗi foreign key constraint
+
 - Kiểm tra các bảng được reference đã tồn tại
 - Chạy migrations theo đúng thứ tự
 - Đảm bảo bảng parent được tạo trước bảng child
 
 ### Lỗi enum type
+
 - Kiểm tra enum values có đúng với entity không
 - Đảm bảo enum được tạo trước khi sử dụng
 
 ### Lỗi duplicate migration
+
 - Kiểm tra tên migration class không trùng lặp
 - Đảm bảo timestamp trong tên file là duy nhất
 

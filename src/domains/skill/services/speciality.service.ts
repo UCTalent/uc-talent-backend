@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Speciality } from '@skill/entities/speciality.entity';
+
+import type { Speciality } from '@skill/entities/speciality.entity';
 import { SpecialityRepository } from '@skill/repositories/speciality.repository';
 
 @Injectable()

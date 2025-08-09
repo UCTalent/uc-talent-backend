@@ -1,6 +1,7 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+
 import { Job } from '@job/entities/job.entity';
+import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 
 @Entity('web3_events')
 export class Web3Event extends BaseEntity {
@@ -15,7 +16,7 @@ export class Web3Event extends BaseEntity {
   jobId: string;
 
   // Relationships
-  @ManyToOne(() => Job, job => job.web3Events)
+  @ManyToOne(() => Job, (job) => job.web3Events)
   @JoinColumn({ name: 'job_id' })
   job: Job;
 }

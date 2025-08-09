@@ -1,13 +1,17 @@
 import {
-  Entity,
   Column,
+  Entity,
+  Index,
+  JoinColumn,
   ManyToOne,
   OneToMany,
-  JoinColumn,
-  Index,
 } from 'typeorm';
-import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
 import { User } from '@domains/user/entities/user.entity';
+import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
+// Import at the end to avoid circular dependency
+import { SocialSyncLog } from './social-sync-log.entity';
 
 export enum SocialProvider {
   FACEBOOK = 'facebook',
@@ -67,13 +71,10 @@ export class SocialAccount extends BaseEntity {
   userId: string;
 
   // Relationships
-  @ManyToOne(() => User, user => user.socialAccounts)
+  @ManyToOne(() => User, (user) => user.socialAccounts)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToMany(() => SocialSyncLog, syncLog => syncLog.socialAccount)
+  @OneToMany(() => SocialSyncLog, (syncLog) => syncLog.socialAccount)
   syncLogs: SocialSyncLog[];
 }
-
-// Import at the end to avoid circular dependency
-import { SocialSyncLog } from './social-sync-log.entity';

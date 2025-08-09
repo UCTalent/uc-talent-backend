@@ -1,10 +1,5 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableIndex,
-  TableForeignKey,
-} from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+import { Table, TableForeignKey, TableIndex } from 'typeorm';
 
 export class CreateJobs1700000000008 implements MigrationInterface {
   name = 'CreateJobs1700000000008';
@@ -267,7 +262,7 @@ export class CreateJobs1700000000008 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create foreign keys
@@ -278,7 +273,7 @@ export class CreateJobs1700000000008 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -288,7 +283,7 @@ export class CreateJobs1700000000008 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -298,7 +293,7 @@ export class CreateJobs1700000000008 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'organizations',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -308,7 +303,7 @@ export class CreateJobs1700000000008 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'specialities',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -318,7 +313,7 @@ export class CreateJobs1700000000008 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'cities',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -328,7 +323,7 @@ export class CreateJobs1700000000008 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'countries',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -338,7 +333,7 @@ export class CreateJobs1700000000008 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'regions',
         onDelete: 'SET NULL',
-      }),
+      })
     );
 
     // Create indexes
@@ -347,7 +342,7 @@ export class CreateJobs1700000000008 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_JOBS_JOB_NUMBER',
         columnNames: ['job_number'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -355,7 +350,7 @@ export class CreateJobs1700000000008 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_JOBS_STATUS',
         columnNames: ['status'],
-      }),
+      })
     );
   }
 
@@ -371,7 +366,7 @@ export class CreateJobs1700000000008 implements MigrationInterface {
     }
 
     await queryRunner.dropTable('jobs');
-    await queryRunner.query(`DROP TYPE "public"."location_type_enum"`);
-    await queryRunner.query(`DROP TYPE "public"."job_status_enum"`);
+    await queryRunner.query('DROP TYPE "public"."location_type_enum"');
+    await queryRunner.query('DROP TYPE "public"."job_status_enum"');
   }
 }

@@ -1,5 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
-import {
+
+import type {
   ErrorResponseDto,
   SuccessResponseDto,
 } from '@shared/dtos/response.dto';
@@ -36,7 +37,7 @@ export class ResponseHandler {
       ? stack
           .split('\n')
           .slice(1)
-          .map(line => line.trim())
+          .map((line) => line.trim())
       : undefined;
   }
 }

@@ -1,23 +1,24 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
+
+import type { LinkSocialAccountDto } from '@domains/social/dtos/link-social-account.dto';
+import type { SocialSearchDto } from '@domains/social/dtos/social-search.dto';
+import type { SocialSettingsDto } from '@domains/social/dtos/social-settings.dto';
+import type { SocialProvider } from '@domains/social/entities/social-account.entity';
 import {
   SocialAccount,
-  SocialProvider,
   SocialAccountStatus,
 } from '@domains/social/entities/social-account.entity';
 import { SocialSetting } from '@domains/social/entities/social-setting.entity';
 import { SyncStatus } from '@domains/social/entities/social-sync-log.entity';
-import { User } from '@domains/user/entities/user.entity';
 import { SocialAccountRepository } from '@domains/social/repositories/social-account.repository';
 import { SocialSettingRepository } from '@domains/social/repositories/social-setting.repository';
 import { SocialSyncLogRepository } from '@domains/social/repositories/social-sync-log.repository';
+import { User } from '@domains/user/entities/user.entity';
 import { UserRepository } from '@domains/user/repositories/user.repository';
-import { LinkSocialAccountDto } from '@domains/social/dtos/link-social-account.dto';
-import { SocialSettingsDto } from '@domains/social/dtos/social-settings.dto';
-import { SocialSearchDto } from '@domains/social/dtos/social-search.dto';
 
 @Injectable()
 export class SocialAccountService {
@@ -25,7 +26,7 @@ export class SocialAccountService {
     private readonly socialAccountRepository: SocialAccountRepository,
     private readonly socialSettingRepository: SocialSettingRepository,
     private readonly socialSyncLogRepository: SocialSyncLogRepository,
-    private readonly userRepo: UserRepository,
+    private readonly userRepo: UserRepository
   ) {}
 
   async getUserSocialAccounts(userId: string) {
@@ -43,7 +44,7 @@ export class SocialAccountService {
     const existingAccount =
       await this.socialAccountRepository.findByProviderAndUid(
         linkDto.provider as SocialProvider,
-        linkDto.uid,
+        linkDto.uid
       );
 
     if (existingAccount) {
@@ -54,7 +55,7 @@ export class SocialAccountService {
     const userExistingAccount =
       await this.socialAccountRepository.findByUserAndProvider(
         userId,
-        linkDto.provider as SocialProvider,
+        linkDto.provider as SocialProvider
       );
 
     const socialAccount = userExistingAccount || new SocialAccount();
@@ -160,7 +161,9 @@ export class SocialAccountService {
       await this.socialAccountRepository.findActiveByUser(userId);
 
     const syncResults = await Promise.allSettled(
-      socialAccounts.map(account => this.syncSocialAccount(userId, account.id)),
+      socialAccounts.map((account) =>
+        this.syncSocialAccount(userId, account.id)
+      )
     );
 
     const results = syncResults.map((result, index) => ({
@@ -177,8 +180,8 @@ export class SocialAccountService {
 
     const summary = {
       totalAccounts: socialAccounts.length,
-      successfulSyncs: results.filter(r => r.status === 'success').length,
-      failedSyncs: results.filter(r => r.status === 'failed').length,
+      successfulSyncs: results.filter((r) => r.status === 'success').length,
+      failedSyncs: results.filter((r) => r.status === 'failed').length,
       totalChanges: results.reduce((sum, r) => sum + (r.changesCount || 0), 0),
     };
 
@@ -229,11 +232,11 @@ export class SocialAccountService {
     if (query) {
       socialAccounts = await this.socialAccountRepository.searchByMetadata(
         query,
-        provider as SocialProvider,
+        provider as SocialProvider
       );
     } else if (provider) {
       socialAccounts = await this.socialAccountRepository.findByProvider(
-        provider as SocialProvider,
+        provider as SocialProvider
       );
     } else {
       socialAccounts = await this.socialAccountRepository.findAll();
@@ -242,7 +245,7 @@ export class SocialAccountService {
     // Apply pagination
     const paginatedAccounts = socialAccounts.slice(skip, skip + limit);
 
-    const profiles = paginatedAccounts.map(account => ({
+    const profiles = paginatedAccounts.map((account) => ({
       userId: account.userId,
       user: {
         firstName: account.user?.name?.split(' ')[0],
@@ -308,7 +311,7 @@ export class SocialAccountService {
 
     const updatedSettings = await this.socialSettingRepository.update(
       settings.id,
-      settings,
+      settings
     );
 
     return {
@@ -356,7 +359,7 @@ export class SocialAccountService {
   }
 
   private async fetchProfileDataFromProvider(
-    socialAccount: SocialAccount,
+    socialAccount: SocialAccount
   ): Promise<any> {
     // Mock implementation - in real scenario, use OAuth service
     const mockData = {
@@ -398,7 +401,7 @@ export class SocialAccountService {
 
   // Legacy methods for backward compatibility
   async createSocialAccount(
-    data: Partial<SocialAccount>,
+    data: Partial<SocialAccount>
   ): Promise<SocialAccount> {
     return this.socialAccountRepository.create(data);
   }
@@ -419,11 +422,11 @@ export class SocialAccountService {
 
   async findSocialAccountByProviderAndUid(
     provider: string,
-    uid: string,
+    uid: string
   ): Promise<SocialAccount | null> {
     return this.socialAccountRepository.findByProviderAndUid(
       provider as SocialProvider,
-      uid,
+      uid
     );
   }
 

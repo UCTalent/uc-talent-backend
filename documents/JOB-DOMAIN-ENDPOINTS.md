@@ -7,6 +7,7 @@ Document này mô tả chi tiết các endpoint và business logic liên quan đ
 ## 🏗️ Job Domain Architecture
 
 ### Core Entities
+
 - **Job**: Job posting chính
 - **JobApply**: Job application từ talent
 - **JobReferral**: Job referral từ user
@@ -15,6 +16,7 @@ Document này mô tả chi tiết các endpoint và business logic liên quan đ
 - **Web3Event**: Web3 events cho job
 
 ### Supporting Entities
+
 - **Organization**: Công ty đăng job
 - **Speciality**: Chuyên môn của job
 - **Skill**: Kỹ năng cần thiết
@@ -30,6 +32,7 @@ Document này mô tả chi tiết các endpoint và business logic liên quan đ
 #### Endpoint: `GET /api/v1/jobs`
 
 #### Query Parameters
+
 ```typescript
 interface JobIndexQuery {
   page?: number;
@@ -52,6 +55,7 @@ interface JobIndexQuery {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "jobs": [
@@ -111,7 +115,7 @@ async getJobs(@Query() query: JobIndexQuery) {
 // job.service.ts
 async getJobs(query: JobIndexQuery) {
   const { page = 1, perPage = 10, ...filters } = query;
-  
+
   const jobsQuery = this.jobRepository.createQueryBuilder('job')
     .leftJoinAndSelect('job.organization', 'organization')
     .leftJoinAndSelect('job.speciality', 'speciality')
@@ -133,21 +137,21 @@ async getJobs(query: JobIndexQuery) {
   }
 
   if (filters.experience_levels?.length) {
-    jobsQuery.andWhere('job.experience_level IN (:...levels)', { 
-      levels: filters.experience_levels 
+    jobsQuery.andWhere('job.experience_level IN (:...levels)', {
+      levels: filters.experience_levels
     });
   }
 
   if (filters.job_types?.length) {
-    jobsQuery.andWhere('job.job_type IN (:...types)', { 
-      types: filters.job_types 
+    jobsQuery.andWhere('job.job_type IN (:...types)', {
+      types: filters.job_types
     });
   }
 
   if (filters.salary_range) {
     jobsQuery.andWhere(
       'job.salary_from_cents >= :minSalary AND job.salary_to_cents <= :maxSalary',
-      { 
+      {
         minSalary: filters.salary_range.min * 100,
         maxSalary: filters.salary_range.max * 100
       }
@@ -159,8 +163,8 @@ async getJobs(query: JobIndexQuery) {
 
   // Partner host filter
   if (filters.partner_host) {
-    jobsQuery.andWhere('job.partner_host_id = :partnerHostId', { 
-      partnerHostId: filters.partner_host 
+    jobsQuery.andWhere('job.partner_host_id = :partnerHostId', {
+      partnerHostId: filters.partner_host
     });
   }
 
@@ -186,6 +190,7 @@ async getJobs(query: JobIndexQuery) {
 #### Endpoint: `GET /api/v1/jobs/:id`
 
 #### Response Success (200)
+
 ```json
 {
   "job": {
@@ -275,7 +280,7 @@ async getJob(id: string, userId?: string) {
     where: { id, status: 'published' },
     relations: [
       'organization',
-      'speciality', 
+      'speciality',
       'skills',
       'city',
       'country',
@@ -312,6 +317,7 @@ async getJob(id: string, userId?: string) {
 #### Endpoint: `GET /api/v1/jobs/:id/similar_jobs`
 
 #### Query Parameters
+
 ```typescript
 interface SimilarJobsQuery {
   page?: number;
@@ -320,6 +326,7 @@ interface SimilarJobsQuery {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "jobs": [
@@ -349,6 +356,7 @@ interface SimilarJobsQuery {
 #### Endpoint: `POST /api/v1/jobs`
 
 #### Request Body
+
 ```json
 {
   "job": {
@@ -414,6 +422,7 @@ interface SimilarJobsQuery {
 ```
 
 #### Response Success (201)
+
 ```json
 {
   "data": {
@@ -484,7 +493,7 @@ private async generateJobNumber(): Promise<number> {
   const lastJob = await this.jobRepository.findOne({
     order: { jobNumber: 'DESC' }
   });
-  
+
   return lastJob ? lastJob.jobNumber + 1 : 1;
 }
 ```
@@ -494,6 +503,7 @@ private async generateJobNumber(): Promise<number> {
 #### Endpoint: `PATCH /api/v1/jobs/:id/closed_job`
 
 #### Request Body
+
 ```json
 {
   "job": {
@@ -509,6 +519,7 @@ private async generateJobNumber(): Promise<number> {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "message": "Job closed successfully"
@@ -553,7 +564,7 @@ async closeJob(id: string, closeJobDto: CloseJobDto, userId: string) {
 
   // Create closure reasons
   if (closeJobDto.job_closure_reasons_attributes?.length) {
-    const closureReasons = closeJobDto.job_closure_reasons_attributes.map(reason => 
+    const closureReasons = closeJobDto.job_closure_reasons_attributes.map(reason =>
       this.jobClosureReasonRepository.create({
         jobId: job.id,
         otherReason: reason.other_reason,
@@ -578,6 +589,7 @@ async closeJob(id: string, closeJobDto: CloseJobDto, userId: string) {
 #### Endpoint: `POST /api/v1/jobs/:id/apply`
 
 #### Request Body
+
 ```json
 {
   "uploaded_resume_id": "resume-uuid",
@@ -591,6 +603,7 @@ async closeJob(id: string, closeJobDto: CloseJobDto, userId: string) {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "job_apply": {
@@ -607,6 +620,7 @@ async closeJob(id: string, closeJobDto: CloseJobDto, userId: string) {
 ```
 
 #### Response Error (400)
+
 ```json
 {
   "errors": "Resume is required"
@@ -630,9 +644,9 @@ async applyForJob(
 
 // job.service.ts
 async applyForJob(
-  jobId: string, 
-  applyJobDto: ApplyJobDto, 
-  user: User, 
+  jobId: string,
+  applyJobDto: ApplyJobDto,
+  user: User,
   resumeFile?: Express.Multer.File
 ) {
   // 1. Validate job
@@ -721,6 +735,7 @@ async applyForJob(
 #### Endpoint: `GET /api/v1/job_applies`
 
 #### Query Parameters
+
 ```typescript
 interface JobAppliesQuery {
   status?: string;
@@ -732,6 +747,7 @@ interface JobAppliesQuery {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "job_applies": [
@@ -765,6 +781,7 @@ interface JobAppliesQuery {
 #### Endpoint: `PATCH /api/v1/job_applies/:id/update_status`
 
 #### Request Body
+
 ```json
 {
   "job_apply": {
@@ -775,6 +792,7 @@ interface JobAppliesQuery {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "message": "Updated success!"
@@ -790,6 +808,7 @@ interface JobAppliesQuery {
 #### Endpoint: `GET /api/v1/jobs/:id/referral_link`
 
 #### Response Success (200)
+
 ```json
 {
   "link_token": "referral-link-uuid"
@@ -842,6 +861,7 @@ async generateReferralLink(jobId: string, userId: string) {
 #### Endpoint: `GET /api/v1/job_referrals/:id`
 
 #### Response Success (200)
+
 ```json
 {
   "id": "referral-link-uuid",
@@ -855,6 +875,7 @@ async generateReferralLink(jobId: string, userId: string) {
 #### Endpoint: `POST /api/v1/jobs/:id/referral_candidate`
 
 #### Request Body
+
 ```json
 {
   "candidate_name": "John Doe",
@@ -870,6 +891,7 @@ async generateReferralLink(jobId: string, userId: string) {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "id": "referral-uuid",
@@ -885,6 +907,7 @@ async generateReferralLink(jobId: string, userId: string) {
 #### Endpoint: `POST /api/v1/jobs/:id/referral_apply`
 
 #### Request Body
+
 ```json
 {
   "job_referral_id": "referral-uuid"
@@ -892,6 +915,7 @@ async generateReferralLink(jobId: string, userId: string) {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "id": "apply-uuid",
@@ -910,6 +934,7 @@ async generateReferralLink(jobId: string, userId: string) {
 #### Endpoint: `PATCH /api/v1/jobs/:id/update_transaction_details`
 
 #### Request Body
+
 ```json
 {
   "job": {
@@ -922,6 +947,7 @@ async generateReferralLink(jobId: string, userId: string) {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "job": {
@@ -939,6 +965,7 @@ async generateReferralLink(jobId: string, userId: string) {
 #### Endpoint: `PATCH /api/v1/jobs/:id/update_referral_info`
 
 #### Request Body
+
 ```json
 {
   "job": {
@@ -952,6 +979,7 @@ async generateReferralLink(jobId: string, userId: string) {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "data": "success!"
@@ -997,7 +1025,12 @@ export class JobService {
     // Implementation
   }
 
-  async applyForJob(jobId: string, applyJobDto: ApplyJobDto, user: User, resumeFile?: Express.Multer.File) {
+  async applyForJob(
+    jobId: string,
+    applyJobDto: ApplyJobDto,
+    user: User,
+    resumeFile?: Express.Multer.File
+  ) {
     // Implementation
   }
 
@@ -1005,7 +1038,11 @@ export class JobService {
     // Implementation
   }
 
-  async referCandidate(jobId: string, referCandidateDto: ReferCandidateDto, user: User) {
+  async referCandidate(
+    jobId: string,
+    referCandidateDto: ReferCandidateDto,
+    user: User
+  ) {
     // Implementation
   }
 
@@ -1013,11 +1050,19 @@ export class JobService {
     // Implementation
   }
 
-  async updateTransactionDetails(id: string, transactionDto: UpdateTransactionDto, userId: string) {
+  async updateTransactionDetails(
+    id: string,
+    transactionDto: UpdateTransactionDto,
+    userId: string
+  ) {
     // Implementation
   }
 
-  async updateReferralInfo(id: string, referralInfoDto: UpdateReferralInfoDto, userId: string) {
+  async updateReferralInfo(
+    id: string,
+    referralInfoDto: UpdateReferralInfoDto,
+    userId: string
+  ) {
     // Implementation
   }
 }
@@ -1039,7 +1084,11 @@ export class JobApplyService {
     // Implementation
   }
 
-  async updateJobApplyStatus(id: string, updateDto: UpdateJobApplyDto, userId: string) {
+  async updateJobApplyStatus(
+    id: string,
+    updateDto: UpdateJobApplyDto,
+    userId: string
+  ) {
     // Implementation
   }
 }
@@ -1245,10 +1294,10 @@ describe('JobController', () => {
             createJob: jest.fn(),
             closeJob: jest.fn(),
             applyForJob: jest.fn(),
-            generateReferralLink: jest.fn()
-          }
-        }
-      ]
+            generateReferralLink: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<JobController>(JobController);
@@ -1303,4 +1352,4 @@ describe('JobController', () => {
 
 ---
 
-**🎉 Ready for implementation!** 
+**🎉 Ready for implementation!**

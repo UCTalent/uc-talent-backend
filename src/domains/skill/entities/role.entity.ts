@@ -1,5 +1,7 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
 import { Skill } from './skill.entity';
 
 @Entity('roles')
@@ -11,6 +13,6 @@ export class Role extends BaseEntity {
   description: string;
 
   // Relationships
-  @OneToMany(() => Skill, skill => skill.role)
+  @OneToMany(() => Skill, (skill) => skill.role)
   skills: Skill[];
 }

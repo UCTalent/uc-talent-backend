@@ -46,6 +46,7 @@ The Partner domain manages partner organizations, their host configurations, and
 ### Services
 
 **PartnerService** provides comprehensive business logic for:
+
 - Partner CRUD operations
 - Partner host management
 - Network configuration
@@ -68,6 +69,7 @@ The Partner domain manages partner organizations, their host configurations, and
 ### Authentication
 
 **Partner Token Authentication**:
+
 - Uses `X-Partner-Token` and `X-Partner-Host` headers
 - `PartnerTokenGuard` validates token and host combination
 - `@Partner` and `@PartnerHost` decorators provide access to authenticated partner data
@@ -75,6 +77,7 @@ The Partner domain manages partner organizations, their host configurations, and
 ### Network Types
 
 Supported blockchain networks:
+
 - `ethereum` - Ethereum mainnet
 - `base` - Base network
 - `bnb` - BNB Smart Chain
@@ -83,6 +86,7 @@ Supported blockchain networks:
 ## API Examples
 
 ### Create Partner
+
 ```bash
 POST /api/v1/partners
 {
@@ -93,6 +97,7 @@ POST /api/v1/partners
 ```
 
 ### Create Partner Host with Networks
+
 ```bash
 POST /api/v1/partner-hosts
 {
@@ -114,6 +119,7 @@ POST /api/v1/partner-hosts
 ```
 
 ### Validate Partner Token
+
 ```bash
 POST /api/v1/partner-auth/validate
 Headers:

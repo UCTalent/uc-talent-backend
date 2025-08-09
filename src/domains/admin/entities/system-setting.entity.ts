@@ -1,4 +1,5 @@
-import { Entity, Column, Index } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
 
 @Entity('system_settings')

@@ -7,6 +7,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Admin dom
 ## 🏗️ Admin Domain Architecture
 
 ### Core Features
+
 - **Dashboard Management**: Statistics, charts, real-time data
 - **User Management**: CRUD operations, status management
 - **Job Management**: Job approval, status updates, bulk actions
@@ -23,6 +24,7 @@ Document này mô tả chi tiết các endpoint và business logic cho Admin dom
 #### Endpoint: `GET /api/admin/dashboard`
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -137,6 +139,7 @@ async getDashboardStats() {
 #### Endpoint: `GET /api/admin/users`
 
 #### Query Parameters
+
 ```typescript
 {
   page?: number;        // Default: 1
@@ -150,6 +153,7 @@ async getDashboardStats() {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -186,6 +190,7 @@ async getDashboardStats() {
 #### Endpoint: `PATCH /api/admin/users/:id/status`
 
 #### Request Body
+
 ```json
 {
   "status": "suspended",
@@ -194,6 +199,7 @@ async getDashboardStats() {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -308,6 +314,7 @@ async updateUserStatus(id: string, body: UpdateUserStatusDto) {
 #### Endpoint: `GET /api/admin/jobs`
 
 #### Query Parameters
+
 ```typescript
 {
   page?: number;
@@ -322,6 +329,7 @@ async updateUserStatus(id: string, body: UpdateUserStatusDto) {
 ```
 
 #### Response Success (200)
+
 ```json
 {
   "success": true,
@@ -363,6 +371,7 @@ async updateUserStatus(id: string, body: UpdateUserStatusDto) {
 #### Endpoint: `PATCH /api/admin/jobs/:id/status`
 
 #### Request Body
+
 ```json
 {
   "status": "active",
@@ -375,6 +384,7 @@ async updateUserStatus(id: string, body: UpdateUserStatusDto) {
 #### Endpoint: `POST /api/admin/jobs/bulk-actions`
 
 #### Request Body
+
 ```json
 {
   "action": "approve",
@@ -519,6 +529,7 @@ async updateJobStatus(id: string, body: UpdateJobStatusDto) {
 #### Endpoint: `GET /api/admin/talents`
 
 #### Query Parameters
+
 ```typescript
 {
   page?: number;
@@ -536,6 +547,7 @@ async updateJobStatus(id: string, body: UpdateJobStatusDto) {
 #### Endpoint: `POST /api/admin/talents/:id/review`
 
 #### Request Body
+
 ```json
 {
   "action": "approve",
@@ -553,6 +565,7 @@ async updateJobStatus(id: string, body: UpdateJobStatusDto) {
 #### Endpoint: `GET /api/admin/payment-distributions`
 
 #### Query Parameters
+
 ```typescript
 {
   page?: number;
@@ -570,6 +583,7 @@ async updateJobStatus(id: string, body: UpdateJobStatusDto) {
 #### Endpoint: `POST /api/admin/payment-distributions/:id/approve`
 
 #### Request Body
+
 ```json
 {
   "approved": true,
@@ -591,6 +605,7 @@ async updateJobStatus(id: string, body: UpdateJobStatusDto) {
 #### Endpoint: `PATCH /api/admin/settings`
 
 #### Request Body
+
 ```json
 {
   "platformFee": 0.05,
@@ -605,6 +620,7 @@ async updateJobStatus(id: string, body: UpdateJobStatusDto) {
 #### Endpoint: `GET /api/admin/audit-logs`
 
 #### Query Parameters
+
 ```typescript
 {
   page?: number;
@@ -740,13 +756,13 @@ export class AdminService {
     const { action, jobIds, reason, adminId } = body;
 
     const jobs = await this.jobRepository.find({
-      where: { id: In(jobIds) }
+      where: { id: In(jobIds) },
     });
 
     switch (action) {
       case 'approve':
         await Promise.all(
-          jobs.map(job => {
+          jobs.map((job) => {
             job.status = 'active';
             job.statusReason = reason;
             return this.jobRepository.save(job);
@@ -755,7 +771,7 @@ export class AdminService {
         break;
       case 'reject':
         await Promise.all(
-          jobs.map(job => {
+          jobs.map((job) => {
             job.status = 'rejected';
             job.statusReason = reason;
             return this.jobRepository.save(job);
@@ -770,7 +786,7 @@ export class AdminService {
     await this.auditLogService.log({
       action: 'BULK_JOB_ACTION',
       adminId,
-      details: { action, jobIds, reason }
+      details: { action, jobIds, reason },
     });
 
     return {
@@ -778,8 +794,8 @@ export class AdminService {
       data: {
         action,
         processedCount: jobs.length,
-        message: `Successfully ${action}ed ${jobs.length} jobs`
-      }
+        message: `Successfully ${action}ed ${jobs.length} jobs`,
+      },
     };
   }
 }
@@ -805,4 +821,4 @@ export class AdminService {
 
 ---
 
-**🎉 Ready for implementation!** 
+**🎉 Ready for implementation!**

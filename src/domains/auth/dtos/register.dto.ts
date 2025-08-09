@@ -1,7 +1,7 @@
 import {
   IsEmail,
-  IsString,
   IsOptional,
+  IsString,
   IsUUID,
   MinLength,
 } from 'class-validator';

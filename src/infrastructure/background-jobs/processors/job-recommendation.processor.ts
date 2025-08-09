@@ -30,7 +30,7 @@ export class JobRecommendationProcessor {
     try {
       // Update recommendation scores logic here
       this.logger.debug(
-        `Updated recommendation score for talent ${talentId} and job ${jobId}`,
+        `Updated recommendation score for talent ${talentId} and job ${jobId}`
       );
     } catch (error) {
       this.logger.error('Failed to update recommendation scores', error);

@@ -1,22 +1,23 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
-import { Repository, MoreThan, In } from 'typeorm';
+import { In, MoreThan, Repository } from 'typeorm';
+
+import type { AdminJobQueryDto } from '@admin/dtos/admin-job-query.dto';
+import type { AdminUserQueryDto } from '@admin/dtos/admin-user-query.dto';
+import type { BulkJobActionDto } from '@admin/dtos/bulk-job-action.dto';
+import type { UpdateJobStatusDto } from '@admin/dtos/update-job-status.dto';
+import type { UpdateUserStatusDto } from '@admin/dtos/update-user-status.dto';
 import { Admin } from '@admin/entities/admin.entity';
 import { AuditLog } from '@admin/entities/audit-log.entity';
 import { SystemSetting } from '@admin/entities/system-setting.entity';
 import { AdminRepository } from '@admin/repositories/admin.repository';
 import { AuditLogRepository } from '@admin/repositories/audit-log.repository';
 import { SystemSettingRepository } from '@admin/repositories/system-setting.repository';
-import { JobRepository } from '@job/repositories/job.repository';
 import { JobStatus } from '@job/entities/job.entity';
-import { AdminUserQueryDto } from '@admin/dtos/admin-user-query.dto';
-import { UpdateUserStatusDto } from '@admin/dtos/update-user-status.dto';
-import { AdminJobQueryDto } from '@admin/dtos/admin-job-query.dto';
-import { UpdateJobStatusDto } from '@admin/dtos/update-job-status.dto';
-import { BulkJobActionDto } from '@admin/dtos/bulk-job-action.dto';
+import { JobRepository } from '@job/repositories/job.repository';
 
 @Injectable()
 export class AdminService {
@@ -24,7 +25,7 @@ export class AdminService {
     private adminRepo: AdminRepository,
     private auditLogRepo: AuditLogRepository,
     private systemSettingRepo: SystemSettingRepository,
-    private jobRepo: JobRepository,
+    private jobRepo: JobRepository
   ) {}
 
   async getDashboardStats() {

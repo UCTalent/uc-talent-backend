@@ -1,5 +1,5 @@
-import { IsString, IsOptional, IsArray } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
 export class JobClosureReasonDto {
   @ApiProperty({ required: false, description: 'Other reason for closure' })

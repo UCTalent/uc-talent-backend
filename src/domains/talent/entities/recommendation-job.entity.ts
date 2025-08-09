@@ -1,7 +1,9 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { BaseEntity } from '@shared/infrastructure/database/base.entity';
-import { Talent } from './talent.entity';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+
 import { Job } from '@job/entities/job.entity';
+import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
+import { Talent } from './talent.entity';
 
 @Entity('recommendation_jobs')
 export class RecommendationJob extends BaseEntity {
@@ -24,7 +26,7 @@ export class RecommendationJob extends BaseEntity {
   isApplied: boolean;
 
   // Relationships
-  @ManyToOne(() => Talent, talent => talent.recommendationJobs)
+  @ManyToOne(() => Talent, (talent) => talent.recommendationJobs)
   @JoinColumn({ name: 'talent_id' })
   talent: Talent;
 

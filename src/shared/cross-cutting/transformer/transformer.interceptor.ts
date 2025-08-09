@@ -1,14 +1,15 @@
-import {
+import type {
   CallHandler,
   ExecutionContext,
-  HttpStatus,
-  Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { Response } from 'express';
-import { map, Observable } from 'rxjs';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import type { Response } from 'express';
+import type { Observable } from 'rxjs';
+import { map } from 'rxjs';
 
-import { SuccessResponseDto } from '@/shared/dtos/response.dto';
+import type { SuccessResponseDto } from '@/shared/dtos/response.dto';
+import { env } from '@/shared/infrastructure/env';
 import { ResponseHandler } from '@shared/utils/response-handler';
 
 const NO_RETURN: SuccessResponseDto = {
@@ -34,12 +35,12 @@ export class TransformerInterceptor implements NestInterceptor {
           const errorStatusCode = data.statusCode || HttpStatus.BAD_REQUEST;
           response.status(errorStatusCode);
 
-          const isDev = process.env.NODE_ENV; // process.env.NODE_ENV === 'development';
+          const isLocal = env.NODE_ENV === 'local';
 
           return ResponseHandler.error({
             statusCode: errorStatusCode,
             message: data.message,
-            stack: isDev ? data.stack : undefined, // return stack only in development
+            stack: isLocal ? data.stack : undefined,
           });
         }
 
@@ -56,7 +57,7 @@ export class TransformerInterceptor implements NestInterceptor {
         const successStatusCode = data.statusCode || HttpStatus.OK;
         response.status(successStatusCode);
         return data;
-      }),
+      })
     );
   }
 }

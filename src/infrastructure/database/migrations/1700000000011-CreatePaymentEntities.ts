@@ -1,9 +1,5 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableForeignKey,
-} from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+import { Table, TableForeignKey } from 'typeorm';
 
 export class CreatePaymentEntities1700000000011 implements MigrationInterface {
   name = 'CreatePaymentEntities1700000000011';
@@ -45,7 +41,7 @@ export class CreatePaymentEntities1700000000011 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create payment_distributions table
@@ -130,7 +126,7 @@ export class CreatePaymentEntities1700000000011 implements MigrationInterface {
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create foreign keys for wallet_addresses
@@ -141,7 +137,7 @@ export class CreatePaymentEntities1700000000011 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for payment_distributions
@@ -152,7 +148,7 @@ export class CreatePaymentEntities1700000000011 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'jobs',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -162,14 +158,14 @@ export class CreatePaymentEntities1700000000011 implements MigrationInterface {
         referencedColumnNames: ['id'],
         referencedTableName: 'users',
         onDelete: 'SET NULL',
-      }),
+      })
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop foreign keys for payment_distributions
     const paymentDistributionsTable = await queryRunner.getTable(
-      'payment_distributions',
+      'payment_distributions'
     );
     const paymentDistributionsForeignKeys =
       paymentDistributionsTable.foreignKeys;
@@ -180,12 +176,12 @@ export class CreatePaymentEntities1700000000011 implements MigrationInterface {
     // Drop foreign keys for wallet_addresses
     const walletAddressesTable = await queryRunner.getTable('wallet_addresses');
     const walletAddressesForeignKey = walletAddressesTable.foreignKeys.find(
-      fk => fk.columnNames.indexOf('owner_id') !== -1,
+      (fk) => fk.columnNames.indexOf('owner_id') !== -1
     );
     if (walletAddressesForeignKey) {
       await queryRunner.dropForeignKey(
         'wallet_addresses',
-        walletAddressesForeignKey,
+        walletAddressesForeignKey
       );
     }
 

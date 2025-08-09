@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { Region } from '@location/entities/region.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
 
 @Injectable()
 export class RegionRepository implements IBaseRepository<Region> {
   constructor(
     @InjectRepository(Region)
-    private readonly repository: Repository<Region>,
+    private readonly repository: Repository<Region>
   ) {}
 
   async findById(id: string): Promise<Region | null> {

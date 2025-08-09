@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  JobApply,
-  JobApplyStatus,
-} from '../../../domains/job/entities/job-apply.entity';
-import { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+import { Repository } from 'typeorm';
+
+import type { IBaseRepository } from '@shared/infrastructure/database/base.repository.interface';
+
+import type { JobApplyStatus } from '../../../domains/job/entities/job-apply.entity';
+import { JobApply } from '../../../domains/job/entities/job-apply.entity';
 
 @Injectable()
 export class JobApplyRepository implements IBaseRepository<JobApply> {
   constructor(
     @InjectRepository(JobApply)
-    private readonly repository: Repository<JobApply>,
+    private readonly repository: Repository<JobApply>
   ) {}
 
   async findById(id: string): Promise<JobApply | null> {
@@ -46,7 +46,7 @@ export class JobApplyRepository implements IBaseRepository<JobApply> {
 
   async findByJobAndTalent(
     jobId: string,
-    talentId: string,
+    talentId: string
   ): Promise<JobApply | null> {
     return this.repository.findOne({
       where: { jobId, talentId },

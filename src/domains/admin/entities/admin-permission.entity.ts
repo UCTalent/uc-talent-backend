@@ -1,5 +1,7 @@
-import { Entity, Column, Index, ManyToMany, JoinTable } from 'typeorm';
+import { Column, Entity, Index, JoinTable, ManyToMany } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
 import { Admin } from './admin.entity';
 
 @Entity('admin_permissions')
@@ -21,7 +23,7 @@ export class AdminPermission extends BaseEntity {
   isActive: boolean;
 
   // Relationships
-  @ManyToMany(() => Admin, admin => admin.permissions)
+  @ManyToMany(() => Admin, (admin) => admin.permissions)
   @JoinTable({
     name: 'admin_permission_mappings',
     joinColumn: { name: 'permission_id', referencedColumnName: 'id' },

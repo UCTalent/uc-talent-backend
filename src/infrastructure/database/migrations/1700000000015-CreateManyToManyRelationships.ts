@@ -1,10 +1,5 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableIndex,
-  TableForeignKey,
-} from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
+import { Table, TableForeignKey, TableIndex } from 'typeorm';
 
 export class CreateManyToManyRelationships1700000000015
   implements MigrationInterface
@@ -34,7 +29,7 @@ export class CreateManyToManyRelationships1700000000015
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create talent_specialities junction table
@@ -59,7 +54,7 @@ export class CreateManyToManyRelationships1700000000015
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create talent_roles junction table
@@ -84,7 +79,7 @@ export class CreateManyToManyRelationships1700000000015
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create job_skills junction table
@@ -109,7 +104,7 @@ export class CreateManyToManyRelationships1700000000015
           },
         ],
       }),
-      true,
+      true
     );
 
     // Create foreign keys for talent_skills
@@ -120,7 +115,7 @@ export class CreateManyToManyRelationships1700000000015
         referencedColumnNames: ['id'],
         referencedTableName: 'talents',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -130,7 +125,7 @@ export class CreateManyToManyRelationships1700000000015
         referencedColumnNames: ['id'],
         referencedTableName: 'skills',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for talent_specialities
@@ -141,7 +136,7 @@ export class CreateManyToManyRelationships1700000000015
         referencedColumnNames: ['id'],
         referencedTableName: 'talents',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -151,7 +146,7 @@ export class CreateManyToManyRelationships1700000000015
         referencedColumnNames: ['id'],
         referencedTableName: 'specialities',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for talent_roles
@@ -162,7 +157,7 @@ export class CreateManyToManyRelationships1700000000015
         referencedColumnNames: ['id'],
         referencedTableName: 'talents',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -172,7 +167,7 @@ export class CreateManyToManyRelationships1700000000015
         referencedColumnNames: ['id'],
         referencedTableName: 'roles',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create foreign keys for job_skills
@@ -183,7 +178,7 @@ export class CreateManyToManyRelationships1700000000015
         referencedColumnNames: ['id'],
         referencedTableName: 'jobs',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     await queryRunner.createForeignKey(
@@ -193,7 +188,7 @@ export class CreateManyToManyRelationships1700000000015
         referencedColumnNames: ['id'],
         referencedTableName: 'skills',
         onDelete: 'CASCADE',
-      }),
+      })
     );
 
     // Create additional indexes for better performance
@@ -202,7 +197,7 @@ export class CreateManyToManyRelationships1700000000015
       new TableIndex({
         name: 'IDX_TALENTS_USER_ID',
         columnNames: ['user_id'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -210,7 +205,7 @@ export class CreateManyToManyRelationships1700000000015
       new TableIndex({
         name: 'IDX_TALENTS_STATUS',
         columnNames: ['status'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -218,7 +213,7 @@ export class CreateManyToManyRelationships1700000000015
       new TableIndex({
         name: 'IDX_JOBS_ORGANIZATION_ID',
         columnNames: ['organization_id'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -226,7 +221,7 @@ export class CreateManyToManyRelationships1700000000015
       new TableIndex({
         name: 'IDX_JOBS_CREATED_BY',
         columnNames: ['created_by'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -234,7 +229,7 @@ export class CreateManyToManyRelationships1700000000015
       new TableIndex({
         name: 'IDX_JOB_APPLIES_JOB_ID',
         columnNames: ['job_id'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -242,7 +237,7 @@ export class CreateManyToManyRelationships1700000000015
       new TableIndex({
         name: 'IDX_JOB_APPLIES_TALENT_ID',
         columnNames: ['talent_id'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -250,7 +245,7 @@ export class CreateManyToManyRelationships1700000000015
       new TableIndex({
         name: 'IDX_JOB_APPLIES_STATUS',
         columnNames: ['status'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -258,7 +253,7 @@ export class CreateManyToManyRelationships1700000000015
       new TableIndex({
         name: 'IDX_PAYMENT_DISTRIBUTIONS_JOB_ID',
         columnNames: ['job_id'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -266,7 +261,7 @@ export class CreateManyToManyRelationships1700000000015
       new TableIndex({
         name: 'IDX_PAYMENT_DISTRIBUTIONS_RECIPIENT_ID',
         columnNames: ['recipient_id'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -274,7 +269,7 @@ export class CreateManyToManyRelationships1700000000015
       new TableIndex({
         name: 'IDX_PAYMENT_DISTRIBUTIONS_STATUS',
         columnNames: ['status'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -282,7 +277,7 @@ export class CreateManyToManyRelationships1700000000015
       new TableIndex({
         name: 'IDX_WALLET_ADDRESSES_OWNER_ID',
         columnNames: ['owner_id'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -290,7 +285,7 @@ export class CreateManyToManyRelationships1700000000015
       new TableIndex({
         name: 'IDX_ORGANIZATIONS_CITY_ID',
         columnNames: ['city_id'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -298,7 +293,7 @@ export class CreateManyToManyRelationships1700000000015
       new TableIndex({
         name: 'IDX_ORGANIZATIONS_COUNTRY_ID',
         columnNames: ['country_id'],
-      }),
+      })
     );
 
     await queryRunner.createIndex(
@@ -306,7 +301,7 @@ export class CreateManyToManyRelationships1700000000015
       new TableIndex({
         name: 'IDX_CITIES_COUNTRY_ID',
         columnNames: ['country_id'],
-      }),
+      })
     );
   }
 
@@ -315,24 +310,24 @@ export class CreateManyToManyRelationships1700000000015
     await queryRunner.dropIndex('cities', 'IDX_CITIES_COUNTRY_ID');
     await queryRunner.dropIndex(
       'organizations',
-      'IDX_ORGANIZATIONS_COUNTRY_ID',
+      'IDX_ORGANIZATIONS_COUNTRY_ID'
     );
     await queryRunner.dropIndex('organizations', 'IDX_ORGANIZATIONS_CITY_ID');
     await queryRunner.dropIndex(
       'wallet_addresses',
-      'IDX_WALLET_ADDRESSES_OWNER_ID',
+      'IDX_WALLET_ADDRESSES_OWNER_ID'
     );
     await queryRunner.dropIndex(
       'payment_distributions',
-      'IDX_PAYMENT_DISTRIBUTIONS_STATUS',
+      'IDX_PAYMENT_DISTRIBUTIONS_STATUS'
     );
     await queryRunner.dropIndex(
       'payment_distributions',
-      'IDX_PAYMENT_DISTRIBUTIONS_RECIPIENT_ID',
+      'IDX_PAYMENT_DISTRIBUTIONS_RECIPIENT_ID'
     );
     await queryRunner.dropIndex(
       'payment_distributions',
-      'IDX_PAYMENT_DISTRIBUTIONS_JOB_ID',
+      'IDX_PAYMENT_DISTRIBUTIONS_JOB_ID'
     );
     await queryRunner.dropIndex('job_applies', 'IDX_JOB_APPLIES_STATUS');
     await queryRunner.dropIndex('job_applies', 'IDX_JOB_APPLIES_TALENT_ID');
@@ -358,7 +353,7 @@ export class CreateManyToManyRelationships1700000000015
 
     // Drop foreign keys for talent_specialities
     const talentSpecialitiesTable = await queryRunner.getTable(
-      'talent_specialities',
+      'talent_specialities'
     );
     const talentSpecialitiesForeignKeys = talentSpecialitiesTable.foreignKeys;
     for (const foreignKey of talentSpecialitiesForeignKeys) {

@@ -1,5 +1,7 @@
-import { Entity, Column, Index, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
+
 import { BaseEntity } from '@shared/infrastructure/database/base.entity';
+
 import { Admin } from './admin.entity';
 
 @Entity('admin_sessions')
@@ -24,7 +26,7 @@ export class AdminSession extends BaseEntity {
   isActive: boolean;
 
   // Relationships
-  @ManyToOne(() => Admin, admin => admin.sessions)
+  @ManyToOne(() => Admin, (admin) => admin.sessions)
   @JoinColumn({ name: 'admin_id' })
   admin: Admin;
 }

@@ -1,27 +1,34 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  Put,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { PaymentService } from '@payment/services/payment.service';
-import { PaymentDistribution } from '@payment/entities/payment-distribution.entity';
 import {
-  PaymentDistributionResponseDto,
-  PaymentDistributionListResponseDto,
-} from '@payment/dtos/payment-response.dto';
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+
+import { Docs } from '@documents/payment/payment.document';
 import { ClaimPaymentDto } from '@payment/dtos/claim-payment.dto';
+import type {
+  PaymentDistributionListResponseDto,
+  PaymentDistributionResponseDto,
+} from '@payment/dtos/payment-response.dto';
 import { UpdateBlockchainStatusDto } from '@payment/dtos/update-blockchain-status.dto';
-import { JwtAuthGuard } from '@shared/cross-cutting/authorization';
-import { CurrentUser } from '@shared/cross-cutting/authorization';
+import type { PaymentDistribution } from '@payment/entities/payment-distribution.entity';
+import { PaymentService } from '@payment/services/payment.service';
+import { CurrentUser, JwtAuthGuard } from '@shared/cross-cutting/authorization';
 import { User } from '@user/entities/user.entity';
 
 @ApiTags('payment-distributions')
@@ -30,23 +37,12 @@ export class PaymentDistributionController {
   constructor(private readonly paymentService: PaymentService) {}
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get payment distribution by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'Payment distribution ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Payment distribution found successfully',
-    type: PaymentDistributionResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Payment distribution not found',
-  })
+  @ApiOperation(Docs.getPaymentDistributionById.operation)
+  @ApiParam(Docs.getPaymentDistributionById.param)
+  @ApiResponse(Docs.getPaymentDistributionById.responses.success[0])
+  @ApiResponse(Docs.getPaymentDistributionById.responses.error[0])
   async findById(
-    @Param('id') id: string,
+    @Param('id') id: string
   ): Promise<PaymentDistributionResponseDto> {
     const paymentDistribution =
       await this.paymentService.findPaymentDistributionById(id);
@@ -54,27 +50,19 @@ export class PaymentDistributionController {
   }
 
   @Get('recipient/:recipientId')
-  @ApiOperation({ summary: 'Get payment distributions by recipient ID' })
-  @ApiParam({
-    name: 'recipientId',
-    description: 'Recipient ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Payment distributions found successfully',
-    type: PaymentDistributionListResponseDto,
-  })
+  @ApiOperation(Docs.getByRecipient.operation)
+  @ApiParam(Docs.getByRecipient.param)
+  @ApiResponse(Docs.getByRecipient.responses.success[0])
   async findByRecipient(
-    @Param('recipientId') recipientId: string,
+    @Param('recipientId') recipientId: string
   ): Promise<PaymentDistributionListResponseDto> {
     const paymentDistributions =
       await this.paymentService.findPaymentDistributionsByRecipient(
-        recipientId,
+        recipientId
       );
     return {
-      paymentDistributions: paymentDistributions.map(pd =>
-        this.mapToResponseDto(pd),
+      paymentDistributions: paymentDistributions.map((pd) =>
+        this.mapToResponseDto(pd)
       ),
       total: paymentDistributions.length,
       page: 1,
@@ -84,23 +72,12 @@ export class PaymentDistributionController {
 
   @Put(':id/claim')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Claim payment distribution' })
-  @ApiParam({
-    name: 'id',
-    description: 'Payment distribution ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Payment claimed successfully',
-    type: PaymentDistributionResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Payment distribution not found',
-  })
+  @ApiOperation(Docs.claimPaymentById.operation)
+  @ApiParam(Docs.claimPaymentById.param)
+  @ApiResponse(Docs.claimPaymentById.responses.success[0])
+  @ApiResponse(Docs.claimPaymentById.responses.error[0])
   async claimPaymentById(
-    @Param('id') id: string,
+    @Param('id') id: string
   ): Promise<PaymentDistributionResponseDto> {
     const paymentDistribution = await this.paymentService.claimPaymentById(id);
     return this.mapToResponseDto(paymentDistribution);
@@ -108,23 +85,12 @@ export class PaymentDistributionController {
 
   @Put(':id/mark-paid')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Mark payment distribution as paid' })
-  @ApiParam({
-    name: 'id',
-    description: 'Payment distribution ID',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Payment marked as paid successfully',
-    type: PaymentDistributionResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Payment distribution not found',
-  })
+  @ApiOperation(Docs.markAsPaid.operation)
+  @ApiParam(Docs.markAsPaid.param)
+  @ApiResponse(Docs.markAsPaid.responses.success[0])
+  @ApiResponse(Docs.markAsPaid.responses.error[0])
   async markAsPaid(
-    @Param('id') id: string,
+    @Param('id') id: string
   ): Promise<PaymentDistributionResponseDto> {
     const paymentDistribution = await this.paymentService.markAsPaid(id);
     return this.mapToResponseDto(paymentDistribution);
@@ -133,71 +99,28 @@ export class PaymentDistributionController {
   @Post('claim')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Claim payment' })
-  @ApiResponse({
-    status: 200,
-    description: 'Payment claimed successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean' },
-        data: {
-          type: 'object',
-          properties: {
-            id: { type: 'string' },
-            status: { type: 'string' },
-            claimed_at: { type: 'string', format: 'date-time' },
-          },
-        },
-      },
-    },
-  })
-  @ApiResponse({
-    status: 422,
-    description: 'Failed to claim payment',
-  })
+  @ApiOperation(Docs.claimPayment.operation)
+  @ApiBody(Docs.claimPayment.body)
+  @ApiResponse(Docs.claimPayment.responses.success[0])
+  @ApiResponse(Docs.claimPayment.responses.error[0])
   async claimPayment(
     @Body() claimDto: ClaimPaymentDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: User
   ) {
     return this.paymentService.claimPayment(claimDto, user.id);
   }
 
   @Patch('update_blockchain_status')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Update blockchain status' })
-  @ApiResponse({
-    status: 200,
-    description: 'Blockchain status updated successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean' },
-        data: {
-          type: 'object',
-          properties: {
-            id: { type: 'string' },
-            status: { type: 'string' },
-            transaction_hash: { type: 'string' },
-          },
-        },
-      },
-    },
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Payment distribution not found',
-  })
-  @ApiResponse({
-    status: 422,
-    description: 'Invalid status',
-  })
+  @ApiOperation(Docs.updateBlockchainStatus.operation)
+  @ApiResponse(Docs.updateBlockchainStatus.responses.success[0])
+  @ApiResponse(Docs.updateBlockchainStatus.responses.error[0])
   async updateBlockchainStatus(@Body() updateDto: UpdateBlockchainStatusDto) {
     return this.paymentService.updateBlockchainStatus(updateDto);
   }
 
   private mapToResponseDto(
-    paymentDistribution: PaymentDistribution,
+    paymentDistribution: PaymentDistribution
   ): PaymentDistributionResponseDto {
     return {
       id: paymentDistribution.id,

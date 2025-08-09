@@ -1,12 +1,12 @@
-import {
-  IsOptional,
-  IsString,
-  IsNumber,
-  IsArray,
-  IsObject,
-} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
+import {
+  IsArray,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class SalaryRangeDto {
   @ApiProperty({ required: false })
@@ -88,7 +88,7 @@ export class JobIndexQueryDto {
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
-  @Transform(({ value }) => value.map(v => parseInt(v)))
+  @Transform(({ value }) => value.map((v) => parseInt(v)))
   experience_levels?: number[];
 
   @ApiProperty({
@@ -99,7 +99,7 @@ export class JobIndexQueryDto {
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
-  @Transform(({ value }) => value.map(v => parseInt(v)))
+  @Transform(({ value }) => value.map((v) => parseInt(v)))
   management_levels?: number[];
 
   @ApiProperty({

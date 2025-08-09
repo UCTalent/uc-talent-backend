@@ -7,22 +7,27 @@
 ## 📊 Migration Files Created
 
 ### 1. Core Infrastructure
+
 - ✅ **1700000000000-CreateUuidExtension.ts** - Tạo extension uuid-ossp
 
 ### 2. Location Domain
+
 - ✅ **1700000000011-CreateCountries.ts** - Bảng countries
-- ✅ **1700000000012-CreateRegions.ts** - Bảng regions  
+- ✅ **1700000000012-CreateRegions.ts** - Bảng regions
 - ✅ **1700000000013-CreateCities.ts** - Bảng cities với FK đến countries
 
 ### 3. User Domain
+
 - ✅ **1700000000010-CreateUsers.ts** - Bảng users với đầy đủ fields
 
 ### 4. Skill Domain
+
 - ✅ **1700000000014-CreateRoles.ts** - Bảng roles
 - ✅ **1700000000015-CreateSkills.ts** - Bảng skills với FK đến roles
 - ✅ **1700000000016-CreateSpecialities.ts** - Bảng specialities
 
 ### 5. Talent Domain
+
 - ✅ **1700000000001-CreateTalents.ts** - Bảng talents chính
 - ✅ **1700000000002-CreateExperiences.ts** - Bảng experiences
 - ✅ **1700000000003-CreateEducations.ts** - Bảng educations
@@ -31,6 +36,7 @@
 - ✅ **1700000000006-CreateRecommendationJobs.ts** - Bảng recommendation_jobs
 
 ### 6. Junction Tables (Many-to-Many)
+
 - ✅ **1700000000007-CreateTalentSpecialities.ts** - talent_specialities
 - ✅ **1700000000008-CreateTalentSkills.ts** - talent_skills
 - ✅ **1700000000009-CreateTalentRoles.ts** - talent_roles
@@ -38,6 +44,7 @@
 ## 🗄️ Database Schema Overview
 
 ### Core Tables (4 tables)
+
 ```
 users (id, email, name, phoneNumber, ...)
 countries (id, name, code)
@@ -46,6 +53,7 @@ cities (id, name, nameAscii, countryId)
 ```
 
 ### Skill Domain (3 tables)
+
 ```
 roles (id, name, description)
 skills (id, name, roleId)
@@ -53,6 +61,7 @@ specialities (id, name, description)
 ```
 
 ### Talent Domain (6 main tables + 3 junction tables)
+
 ```
 talents (id, userId, about, employmentStatus, ...)
 experiences (id, title, companyName, talentId, ...)
@@ -69,6 +78,7 @@ talent_roles (talentId, roleId)
 ## 🔗 Relationships
 
 ### Foreign Key Relationships
+
 - `users.locationCityId` → `cities.id`
 - `cities.countryId` → `countries.id`
 - `talents.userId` → `users.id`
@@ -83,6 +93,7 @@ talent_roles (talentId, roleId)
 - `skills.roleId` → `roles.id`
 
 ### Many-to-Many Relationships
+
 - `talents` ↔ `specialities` (via talent_specialities)
 - `talents` ↔ `skills` (via talent_skills)
 - `talents` ↔ `roles` (via talent_roles)
@@ -90,6 +101,7 @@ talent_roles (talentId, roleId)
 ## 🚀 Cách sử dụng
 
 ### 1. Chạy migrations
+
 ```bash
 # Sử dụng npm script
 npm run migration:run
@@ -99,11 +111,13 @@ npm run migration:run
 ```
 
 ### 2. Kiểm tra status
+
 ```bash
 ./scripts/run-migrations.sh status
 ```
 
 ### 3. Revert migration cuối
+
 ```bash
 ./scripts/run-migrations.sh revert
 ```

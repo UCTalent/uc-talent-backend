@@ -3,13 +3,15 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Talent, TalentStatus } from '@talent/entities/talent.entity';
-import { CreateTalentDto } from '@talent/dtos/create-talent.dto';
-import { UpdateTalentDto } from '@talent/dtos/update-talent.dto';
-import { TalentIndexQueryDto } from '@talent/dtos/talent-index-query.dto';
-import { CreateExperienceDto } from '@talent/dtos/create-experience.dto';
-import { CreateEducationDto } from '@talent/dtos/create-education.dto';
-import { CreateExternalLinkDto } from '@talent/dtos/create-external-link.dto';
+
+import type { CreateEducationDto } from '@talent/dtos/create-education.dto';
+import type { CreateExperienceDto } from '@talent/dtos/create-experience.dto';
+import type { CreateExternalLinkDto } from '@talent/dtos/create-external-link.dto';
+import type { CreateTalentDto } from '@talent/dtos/create-talent.dto';
+import type { TalentIndexQueryDto } from '@talent/dtos/talent-index-query.dto';
+import type { UpdateTalentDto } from '@talent/dtos/update-talent.dto';
+import type { Talent } from '@talent/entities/talent.entity';
+import { TalentStatus } from '@talent/entities/talent.entity';
 import { TalentRepository } from '@talent/repositories/talent.repository';
 
 @Injectable()
@@ -18,7 +20,7 @@ export class TalentService {
 
   async create(
     createTalentDto: CreateTalentDto,
-    userId: string,
+    userId: string
   ): Promise<Talent> {
     const talent = await this.talentRepository.create({
       ...createTalentDto,
@@ -49,7 +51,7 @@ export class TalentService {
   async update(
     id: string,
     updateTalentDto: UpdateTalentDto,
-    userId: string,
+    userId: string
   ): Promise<Talent> {
     const talent = await this.findById(id);
 
@@ -86,7 +88,7 @@ export class TalentService {
   }
 
   async getTalents(
-    query: TalentIndexQueryDto,
+    query: TalentIndexQueryDto
   ): Promise<{ talents: Talent[]; pagination: any }> {
     const { page = 1, ...filters } = query;
     const perPage = 10;
@@ -117,13 +119,13 @@ export class TalentService {
 
   async getProfileCompletion(
     talentId: string,
-    userId: string,
+    userId: string
   ): Promise<{ step: number; completed: boolean }> {
     const talent = await this.findById(talentId);
 
     if (talent.userId !== userId) {
       throw new UnauthorizedException(
-        'Only talent owner can view profile completion',
+        'Only talent owner can view profile completion'
       );
     }
 
@@ -133,7 +135,7 @@ export class TalentService {
   async addExperience(
     talentId: string,
     createExperienceDto: CreateExperienceDto,
-    userId: string,
+    userId: string
   ): Promise<any> {
     const talent = await this.findById(talentId);
 
@@ -156,7 +158,7 @@ export class TalentService {
   async addEducation(
     talentId: string,
     createEducationDto: CreateEducationDto,
-    userId: string,
+    userId: string
   ): Promise<any> {
     const talent = await this.findById(talentId);
 
@@ -179,13 +181,13 @@ export class TalentService {
   async addExternalLink(
     talentId: string,
     createExternalLinkDto: CreateExternalLinkDto,
-    userId: string,
+    userId: string
   ): Promise<any> {
     const talent = await this.findById(talentId);
 
     if (talent.userId !== userId) {
       throw new UnauthorizedException(
-        'Only talent owner can add external link',
+        'Only talent owner can add external link'
       );
     }
 
@@ -203,7 +205,7 @@ export class TalentService {
 
   async getSimilarTalents(
     talentId: string,
-    limit: number = 10,
+    limit: number = 10
   ): Promise<Talent[]> {
     return this.talentRepository.findSimilarTalents(talentId, limit);
   }
@@ -211,13 +213,13 @@ export class TalentService {
   async updateProfileStep(
     talentId: string,
     step: number,
-    userId: string,
+    userId: string
   ): Promise<Talent> {
     const talent = await this.findById(talentId);
 
     if (talent.userId !== userId) {
       throw new UnauthorizedException(
-        'Only talent owner can update profile step',
+        'Only talent owner can update profile step'
       );
     }
 
