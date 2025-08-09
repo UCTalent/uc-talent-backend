@@ -300,11 +300,17 @@ export class JobRepository implements IBaseRepository<Job> {
   }
 
   async generateJobNumber(): Promise<number> {
-    const lastJob = await this.repository.findOne({
-      order: { jobNumber: 'DESC' },
-    });
+    return await this.repository.manager.transaction(async manager => {
+      const lastJob = await manager
+        .createQueryBuilder(this.repository.target, 'job')
+        .setLock('pessimistic_write')
+        .orderBy('job.jobNumber', 'DESC')
+        .getOne();
 
-    return lastJob ? lastJob.jobNumber + 1 : 1;
+      const newJobNumber = lastJob ? lastJob.jobNumber + 1 : 1;
+
+      return newJobNumber;
+    });
   }
 
   async count(options?: any): Promise<number> {
